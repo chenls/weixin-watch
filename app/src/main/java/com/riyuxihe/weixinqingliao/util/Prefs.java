@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.content.SharedPreferences
- *  android.content.SharedPreferences$Editor
- *  android.content.SharedPreferences$OnSharedPreferenceChangeListener
- *  android.text.TextUtils
- */
 package com.riyuxihe.weixinqingliao.util;
 
 import android.content.Context;
@@ -17,77 +7,71 @@ import com.alibaba.fastjson.JSON;
 import com.riyuxihe.weixinqingliao.model.Token;
 
 public class Prefs {
-    private static final long EXPIRE = 10800000L;
+    private static final long EXPIRE = 10800000;
     private static final String PREFERENCE_FILE_KEY = "com.riyuxihe.weixinqingliao.PREFERENCE_FILE_KEY";
     private static final String TAG = "Prefs";
     private static Prefs sInstance;
     private final Context mCtx;
     SharedPreferences.OnSharedPreferenceChangeListener mListener = null;
 
-    private Prefs(Context context) {
-        this.mCtx = context.getApplicationContext();
+    public interface Key {
+        public static final String AVATAR = "avatar";
+        public static final String EXPIRE_AT = "expire";
+        public static final String TOKEN = "token";
     }
 
-    /*
-     * Enabled aggressive block sorting
-     * Enabled unnecessary exception pruning
-     * Enabled aggressive exception aggregation
-     */
-    public static Prefs getInstance(Context context) {
+    private Prefs(Context ctx) {
+        this.mCtx = ctx.getApplicationContext();
+    }
+
+    public static Prefs getInstance(Context ctx) {
         if (sInstance == null) {
             synchronized (Prefs.class) {
                 if (sInstance == null) {
-                    sInstance = new Prefs(context);
+                    sInstance = new Prefs(ctx);
                 }
             }
         }
         return sInstance;
     }
 
-    private static SharedPreferences getPrefs(Context context) {
-        return context.getSharedPreferences(PREFERENCE_FILE_KEY, 0);
-    }
-
-    public void clear() {
-        SharedPreferences.Editor editor = Prefs.getPrefs(this.mCtx).edit();
-        editor.clear();
-        editor.apply();
-    }
-
-    public String getAvatar() {
-        return Prefs.getPrefs(this.mCtx).getString("avatar", "");
-    }
-
-    public Long getExpireAt() {
-        return Prefs.getPrefs(this.mCtx).getLong("expire", -1L);
+    private static SharedPreferences getPrefs(Context ctx) {
+        return ctx.getSharedPreferences(PREFERENCE_FILE_KEY, 0);
     }
 
     public Token getToken() {
-        String string2 = Prefs.getPrefs(this.mCtx).getString("token", "");
+        String encodedToken = getPrefs(this.mCtx).getString(Key.TOKEN, "");
         Token token = new Token();
-        if (!TextUtils.isEmpty((CharSequence)string2)) {
-            token = JSON.parseObject(string2, Token.class);
+        if (!TextUtils.isEmpty(encodedToken)) {
+            return (Token) JSON.parseObject(encodedToken, Token.class);
         }
         return token;
     }
 
-    public void setAvatar(String string2) {
-        SharedPreferences.Editor editor = Prefs.getPrefs(this.mCtx).edit();
-        editor.putString("avatar", string2);
+    public void clear() {
+        SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
+        editor.clear();
         editor.apply();
     }
 
     public void setToken(Token token) {
-        SharedPreferences.Editor editor = Prefs.getPrefs(this.mCtx).edit();
-        editor.putString("token", JSON.toJSONString(token));
-        editor.putLong("expire", System.currentTimeMillis() + 10800000L);
+        SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
+        editor.putString(Key.TOKEN, JSON.toJSONString(token));
+        editor.putLong(Key.EXPIRE_AT, System.currentTimeMillis() + EXPIRE);
         editor.apply();
     }
 
-    static interface Key {
-        public static final String AVATAR = "avatar";
-        public static final String EXPIRE_AT = "expire";
-        public static final String TOKEN = "token";
+    public Long getExpireAt() {
+        return Long.valueOf(getPrefs(this.mCtx).getLong(Key.EXPIRE_AT, -1));
+    }
+
+    public String getAvatar() {
+        return getPrefs(this.mCtx).getString(Key.AVATAR, "");
+    }
+
+    public void setAvatar(String avatar) {
+        SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
+        editor.putString(Key.AVATAR, avatar);
+        editor.apply();
     }
 }
-

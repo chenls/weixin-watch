@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ticwear.design.internal.view.menu.MenuItemView android:gravity="center" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <ImageButton android:layout_gravity="center_horizontal" android:id="@android:id/icon" android:background="@drawable/tic_selectable_round_item_background" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="@dimen/tic_menu_item_content_margin_large" android:tint="@android:color/white" android:contentDescription="@null" style="@style/Widget.Ticwear.ImageButton.Large" />
-    <TextView android:textSize="@dimen/tic_menu_item_title_size_2" android:gravity="center_horizontal" android:layout_gravity="center_horizontal" android:id="@android:id/title" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/tic_menu_item_content_margin_large" android:layout_marginBottom="@dimen/tic_menu_item_content_margin_large" android:maxLines="2" style="@style/TextAppearance.Ticwear.Subhead" />
-</ticwear.design.internal.view.menu.MenuItemView>

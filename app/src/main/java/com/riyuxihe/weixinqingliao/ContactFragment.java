@@ -1,22 +1,5 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.content.Intent
- *  android.os.Bundle
- *  android.util.Log
- *  android.view.LayoutInflater
- *  android.view.View
- *  android.view.ViewGroup
- *  android.widget.AdapterView
- *  android.widget.AdapterView$OnItemClickListener
- *  android.widget.ListAdapter
- *  android.widget.ListView
- */
 package com.riyuxihe.weixinqingliao;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,104 +9,97 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
-import com.riyuxihe.weixinqingliao.ChatActivity;
-import com.riyuxihe.weixinqingliao.ListViewAdapter;
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Token;
 import com.riyuxihe.weixinqingliao.model.User;
 import com.riyuxihe.weixinqingliao.net.VolleySingleton;
+import com.riyuxihe.weixinqingliao.util.Prefs;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ContactFragment
-extends Fragment {
+public class ContactFragment extends Fragment {
     private static final String TAG = "ContactFragment";
     private ArrayList<Contact> contactList;
     private ListView listView;
-    private List<HashMap<String, Object>> mData;
+    /* access modifiers changed from: private */
+    public List<HashMap<String, Object>> mData;
     private RequestQueue mQueue;
-    private Token token;
-    private User user;
+    /* access modifiers changed from: private */
+    public Token token;
+    /* access modifiers changed from: private */
+    public User user;
 
-    private List<HashMap<String, Object>> getData(List<Contact> object) {
-        ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
-        object = object.iterator();
-        while (object.hasNext()) {
-            Contact contact = (Contact)object.next();
-            if (contact.isPublic()) continue;
-            HashMap<String, String> hashMap = new HashMap<String, String>();
-            hashMap.put("title", contact.getShowName());
-            hashMap.put("time", "");
-            hashMap.put("info", "");
-            hashMap.put("img", WxHome.getHeadImgUrl(contact.HeadImgUrl));
-            hashMap.put("userName", contact.UserName);
-            arrayList.add(hashMap);
+    @Nullable
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_contact, container, false);
+        initView(view);
+        return view;
+    }
+
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            this.token = new Token();
+            this.token.fromBundle(getArguments().getBundle(Prefs.Key.TOKEN));
+            this.user = new User();
+            this.user.fromBundle(getArguments().getBundle("user"));
+            this.contactList = getArguments().getParcelableArrayList("contact");
         }
-        return arrayList;
+        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
+        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
     }
 
-    private void initView(View view) {
-        this.mData = this.getData(this.contactList);
-        ListViewAdapter listViewAdapter = new ListViewAdapter(this.getActivity(), this.token.cookie, this.mData);
-        this.listView = (ListView)view.findViewById(2131689654);
-        view = this.getActivity().getLayoutInflater().inflate(2130968628, (ViewGroup)this.listView, false);
-        this.listView.addFooterView(view);
-        this.listView.setAdapter((ListAdapter)listViewAdapter);
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            public void onItemClick(AdapterView<?> intent, View object, int n2, long l2) {
-                if (n2 >= ContactFragment.this.mData.size()) {
-                    return;
-                }
-                intent = new Intent((Context)ContactFragment.this.getActivity(), ChatActivity.class);
-                intent.putExtra("token", ContactFragment.this.token.toBundle());
-                object = new User();
-                ((User)object).UserName = ((HashMap)ContactFragment.this.mData.get(n2)).get("userName").toString();
-                ((User)object).NickName = ((HashMap)ContactFragment.this.mData.get(n2)).get("title").toString();
-                ((User)object).HeadImgUrl = ((HashMap)ContactFragment.this.mData.get(n2)).get("img").toString();
-                intent.putExtra("to", ((User)object).toBundle());
-                intent.putExtra("from", ContactFragment.this.user.toBundle());
-                ContactFragment.this.startActivity(intent);
-            }
-        });
-    }
-
-    public static ContactFragment newInstance(Token token, User user, ArrayList<Contact> arrayList) {
+    public static ContactFragment newInstance(Token token2, User user2, ArrayList<Contact> contacts) {
         ContactFragment contactFragment = new ContactFragment();
         Bundle bundle = new Bundle();
-        bundle.putBundle("token", token.toBundle());
-        bundle.putBundle("user", user.toBundle());
-        bundle.putParcelableArrayList("contact", arrayList);
+        bundle.putBundle(Prefs.Key.TOKEN, token2.toBundle());
+        bundle.putBundle("user", user2.toBundle());
+        bundle.putParcelableArrayList("contact", contacts);
         contactFragment.setArguments(bundle);
         return contactFragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle bundle) {
-        super.onCreate(bundle);
-        if (this.getArguments() != null) {
-            this.token = new Token();
-            this.token.fromBundle(this.getArguments().getBundle("token"));
-            this.user = new User();
-            this.user.fromBundle(this.getArguments().getBundle("user"));
-            this.contactList = this.getArguments().getParcelableArrayList("contact");
-        }
-        Log.d((String)TAG, (String)("onCreate:token=" + JSON.toJSONString(this.token)));
-        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
+    private void initView(View view) {
+        this.mData = getData(this.contactList);
+        ListViewAdapter adapter = new ListViewAdapter(getActivity(), this.token.cookie, this.mData);
+        this.listView = (ListView) view.findViewById(R.id.listView2);
+        this.listView.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.footer_view, this.listView, false));
+        this.listView.setAdapter(adapter);
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i < ContactFragment.this.mData.size()) {
+                    Intent intent = new Intent(ContactFragment.this.getActivity(), ChatActivity.class);
+                    intent.putExtra(Prefs.Key.TOKEN, ContactFragment.this.token.toBundle());
+                    User toUser = new User();
+                    toUser.UserName = ((HashMap) ContactFragment.this.mData.get(i)).get("userName").toString();
+                    toUser.NickName = ((HashMap) ContactFragment.this.mData.get(i)).get("title").toString();
+                    toUser.HeadImgUrl = ((HashMap) ContactFragment.this.mData.get(i)).get("img").toString();
+                    intent.putExtra("to", toUser.toBundle());
+                    intent.putExtra("from", ContactFragment.this.user.toBundle());
+                    ContactFragment.this.startActivity(intent);
+                }
+            }
+        });
     }
 
-    @Override
-    @Nullable
-    public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
-        layoutInflater = layoutInflater.inflate(2130968629, viewGroup, false);
-        this.initView((View)layoutInflater);
-        return layoutInflater;
+    private List<HashMap<String, Object>> getData(List<Contact> contacts) {
+        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+        for (Contact contact : contacts) {
+            if (!contact.isPublic()) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("title", contact.getShowName());
+                map.put("time", "");
+                map.put("info", "");
+                map.put("img", WxHome.getHeadImgUrl(contact.HeadImgUrl));
+                map.put("userName", contact.UserName);
+                list.add(map);
+            }
+        }
+        return list;
     }
 }
-

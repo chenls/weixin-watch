@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- */
 package com.riyuxihe.weixinqingliao.model;
 
 public class ChatMsgEntity {
@@ -17,76 +14,75 @@ public class ChatMsgEntity {
     public ChatMsgEntity() {
     }
 
-    public ChatMsgEntity(String string2, String string3, String string4, String string5, boolean bl2) {
-        this.userName = string2;
-        this.nickName = string3;
-        this.date = string4;
-        this.text = string5;
-        this.isComMeg = bl2;
-    }
-
-    public String getDate() {
-        return this.date;
-    }
-
-    public String getMemberNickName() {
-        return this.memberNickName;
-    }
-
-    public String getMemberUserName() {
-        return this.memberUserName;
-    }
-
-    public boolean getMsgType() {
-        return this.isComMeg;
-    }
-
-    public String getNickName() {
-        return this.nickName;
-    }
-
-    public String getText() {
-        return this.text;
+    public ChatMsgEntity(String userName2, String nickName2, String date2, String text2, boolean isComMsg) {
+        this.userName = userName2;
+        this.nickName = nickName2;
+        this.date = date2;
+        this.text = text2;
+        this.isComMeg = isComMsg;
     }
 
     public String getTime() {
         return this.time;
     }
 
+    public void setTime(String time2) {
+        this.time = time2;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setDate(String date2) {
+        this.date = date2;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setText(String text2) {
+        this.text = text2;
+    }
+
+    public boolean getMsgType() {
+        return this.isComMeg;
+    }
+
+    public void setMsgType(boolean isComMsg) {
+        this.isComMeg = isComMsg;
+    }
+
     public String getUserName() {
         return this.userName;
     }
 
-    public void setDate(String string2) {
-        this.date = string2;
+    public void setUserName(String userName2) {
+        this.userName = userName2;
     }
 
-    public void setMemberNickName(String string2) {
-        this.memberNickName = string2;
+    public String getNickName() {
+        return this.nickName;
     }
 
-    public void setMemberUserName(String string2) {
-        this.memberUserName = string2;
+    public void setNickName(String nickName2) {
+        this.nickName = nickName2;
     }
 
-    public void setMsgType(boolean bl2) {
-        this.isComMeg = bl2;
+    public String getMemberUserName() {
+        return this.memberUserName;
     }
 
-    public void setNickName(String string2) {
-        this.nickName = string2;
+    public void setMemberUserName(String memberUserName2) {
+        this.memberUserName = memberUserName2;
     }
 
-    public void setText(String string2) {
-        this.text = string2;
+    public String getMemberNickName() {
+        return this.memberNickName;
     }
 
-    public void setTime(String string2) {
-        this.time = string2;
-    }
-
-    public void setUserName(String string2) {
-        this.userName = string2;
+    public void setMemberNickName(String memberNickName2) {
+        this.memberNickName = memberNickName2;
     }
 }
-

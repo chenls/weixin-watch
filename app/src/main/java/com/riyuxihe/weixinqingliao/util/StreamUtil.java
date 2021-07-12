@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- */
 package com.riyuxihe.weixinqingliao.util;
 
 import java.io.IOException;
@@ -10,58 +7,43 @@ import java.io.OutputStream;
 import java.io.Reader;
 
 public class StreamUtil {
-    public static int BUFFER_SIZE;
-    public static int CHUNK_LENGTH;
-    public static String SPEECH_TO_TEXT;
+    public static int BUFFER_SIZE = 2048;
+    public static int CHUNK_LENGTH = 2048;
+    public static String SPEECH_TO_TEXT = "http://streaming.mobvoi.com/speech2text";
 
-    static {
-        SPEECH_TO_TEXT = "http://streaming.mobvoi.com/speech2text";
-        BUFFER_SIZE = 2048;
-        CHUNK_LENGTH = 2048;
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     * Enabled unnecessary exception pruning
-     * Enabled aggressive exception aggregation
-     */
-    public static void fromInStreamToOutStream(InputStream inputStream, OutputStream outputStream) throws IOException {
-        if (outputStream == null) {
+    public static void fromInStreamToOutStream(InputStream inStream, OutputStream outStream) throws IOException {
+        if (outStream == null) {
             throw new IllegalArgumentException("Output stream may not be null");
         }
         try {
-            int n2;
-            byte[] byArray = new byte[BUFFER_SIZE];
-            while ((n2 = inputStream.read(byArray)) != -1) {
-                outputStream.write(byArray, 0, n2);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while (true) {
+                int l = inStream.read(buffer);
+                if (l != -1) {
+                    outStream.write(buffer, 0, l);
+                } else {
+                    return;
+                }
             }
-            return;
-        }
-        finally {
-            inputStream.close();
+        } finally {
+            inStream.close();
         }
     }
 
-    /*
-     * Enabled aggressive block sorting
-     * Enabled unnecessary exception pruning
-     * Enabled aggressive exception aggregation
-     */
-    public static String readFromStream(InputStream inputStream, String object) throws IOException {
+    public static String readFromStream(InputStream inStream, String charset) throws IOException {
         try {
-            int n2;
-            object = new InputStreamReader(inputStream, (String)object);
-            StringBuffer stringBuffer = new StringBuffer();
-            char[] cArray = new char[1024];
-            while ((n2 = ((Reader)object).read(cArray)) != -1) {
-                stringBuffer.append(cArray, 0, n2);
+            Reader reader = new InputStreamReader(inStream, charset);
+            StringBuffer buffer = new StringBuffer();
+            char[] tmp = new char[1024];
+            while (true) {
+                int l = reader.read(tmp);
+                if (l == -1) {
+                    return buffer.toString();
+                }
+                buffer.append(tmp, 0, l);
             }
-            object = stringBuffer.toString();
-            return object;
-        }
-        finally {
-            inputStream.close();
+        } finally {
+            inStream.close();
         }
     }
 }
-

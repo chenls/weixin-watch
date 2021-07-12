@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set android:ordering="sequentially"
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <objectAnimator android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="0" android:propertyName="trimPathEnd" />
-    <objectAnimator android:interpolator="@android:interpolator/decelerate_cubic" android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="1" android:propertyName="trimPathEnd" />
+    <objectAnimator android:duration="150" android:valueFrom="0" android:valueTo="0" android:propertyName="trimPathEnd" />
+    <objectAnimator android:interpolator="@android:interpolator/decelerate_cubic" android:duration="150" android:valueFrom="0" android:valueTo="1" android:propertyName="trimPathEnd" />
 </set>

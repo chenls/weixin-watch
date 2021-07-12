@@ -1,38 +1,5 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.app.Activity
- *  android.app.Notification
- *  android.app.NotificationManager
- *  android.app.PendingIntent
- *  android.app.job.JobInfo$Builder
- *  android.app.job.JobScheduler
- *  android.content.BroadcastReceiver
- *  android.content.ComponentName
- *  android.content.Context
- *  android.content.Intent
- *  android.content.IntentFilter
- *  android.content.ServiceConnection
- *  android.net.ConnectivityManager
- *  android.net.NetworkInfo$DetailedState
- *  android.os.AsyncTask
- *  android.os.Bundle
- *  android.os.Environment
- *  android.os.Handler
- *  android.os.IBinder
- *  android.os.Message
- *  android.os.Messenger
- *  android.os.Parcelable
- *  android.text.TextUtils
- *  android.util.Log
- *  android.widget.ProgressBar
- *  org.json.JSONObject
- */
 package com.riyuxihe.weixinqingliao;
 
-import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -42,17 +9,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -61,20 +25,13 @@ import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ProgressBar;
+
 import com.alibaba.fastjson.JSON;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.mobvoi.wear.app.PermissionCompat;
-import com.riyuxihe.weixinqingliao.ChatActivity;
-import com.riyuxihe.weixinqingliao.ContactFragment;
-import com.riyuxihe.weixinqingliao.HomeJobService;
-import com.riyuxihe.weixinqingliao.HomeService;
-import com.riyuxihe.weixinqingliao.InitFragment;
-import com.riyuxihe.weixinqingliao.SwipeActivity;
 import com.riyuxihe.weixinqingliao.dao.MessageManager;
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Msg;
@@ -91,453 +48,556 @@ import com.riyuxihe.weixinqingliao.protocol.InitResponse;
 import com.riyuxihe.weixinqingliao.protocol.MsgSyncRequest;
 import com.riyuxihe.weixinqingliao.protocol.MsgSyncResponse;
 import com.riyuxihe.weixinqingliao.protocol.StatusNotifyRequest;
+import com.riyuxihe.weixinqingliao.util.Constants;
 import com.riyuxihe.weixinqingliao.util.FileUtil;
 import com.riyuxihe.weixinqingliao.util.NetUtil;
+import com.riyuxihe.weixinqingliao.util.Prefs;
 import com.riyuxihe.weixinqingliao.util.StreamUtil;
 import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.TimeUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
-import com.umeng.analytics.MobclickAgent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import org.json.JSONObject;
 
-public class HomeActivity
-extends SwipeActivity {
+public class HomeActivity extends SwipeActivity {
     public static final int HOME_SERVICE_OBJ = 20;
     private static final int PERMISSIONS_REQUEST_INTERNET = 1;
     private static final String TAG = "HomeActivity";
     private static int VIEW_COUNT = 2;
     private static int kJobId = 2;
-    private List<String> chatSet;
+    /* access modifiers changed from: private */
+    public List<String> chatSet = new ArrayList();
     private CloseReceiver closeReceiver;
-    private HomeConnection conn;
     private ContactFragment contactFragment;
-    private ArrayList<Contact> contactList;
-    private boolean contactLoaded = false;
-    private ArrayList<Contact> exContactList;
-    private boolean exContactLoaded = false;
+    /* access modifiers changed from: private */
+    public ArrayList<Contact> contactList = new ArrayList<>();
+    /* access modifiers changed from: private */
+    public boolean contactLoaded = false;
+    /* access modifiers changed from: private */
+    public ArrayList<Contact> exContactList = new ArrayList<>();
+    /* access modifiers changed from: private */
+    public boolean exContactLoaded = false;
     private InitFragment initFragment;
-    private ArrayList<Contact> initList;
-    private boolean initLoaded = false;
+    /* access modifiers changed from: private */
+    public ArrayList<Contact> initList;
+    /* access modifiers changed from: private */
+    public boolean initLoaded = false;
     private FragmentPagerAdapter mAdapter;
-    private List<Fragment> mFragments = new ArrayList<Fragment>();
-    Handler mHandler;
+    /* access modifiers changed from: private */
+    public List<Fragment> mFragments = new ArrayList();
+    Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 20:
+                    HomeActivity.this.mHomeJobService = (HomeJobService) msg.obj;
+                    HomeActivity.this.mHomeJobService.setUiCallback(HomeActivity.this);
+                    HomeActivity.this.scheduleJob(HomeActivity.this.getPreferences(0).getLong(SettingActivity.PERIOD_KEY, Constants.Period.HOME_STANDARD));
+                    return;
+                default:
+                    return;
+            }
+        }
+    };
     HomeJobService mHomeJobService;
     private boolean mIsLoaded = false;
     private ProgressBar mProgressBar;
     private RequestQueue mQueue;
     private TabLayout mTabLayout;
-    private List<String> mTitles = new ArrayList<String>();
+    /* access modifiers changed from: private */
+    public List<String> mTitles = new ArrayList();
     private ViewPager mViewPager;
-    private HomeService.HomeBinder myBinder;
+    /* access modifiers changed from: private */
     private NetworkStateReceiver networkStateReceiver;
     private RescheduleReceiver rescheduleReceiver;
-    private SyncKey syncKey;
-    private Token token;
-    private User user;
-
-    public HomeActivity() {
-        this.contactList = new ArrayList();
-        this.exContactList = new ArrayList();
-        this.chatSet = new ArrayList<String>();
-        this.mHandler = new Handler(){
-
-            public void handleMessage(Message message) {
-                switch (message.what) {
-                    default: {
-                        return;
-                    }
-                    case 20: 
-                }
-                HomeActivity.this.mHomeJobService = (HomeJobService)((Object)message.obj);
-                HomeActivity.this.mHomeJobService.setUiCallback(HomeActivity.this);
-                message = HomeActivity.this.getPreferences(0);
-                HomeActivity.this.scheduleJob(message.getLong("sync_period", 60000L));
-            }
-        };
-    }
-
-    static /* synthetic */ boolean access$1302(HomeActivity homeActivity, boolean bl2) {
-        homeActivity.initLoaded = bl2;
-        return bl2;
-    }
-
-    static /* synthetic */ boolean access$1602(HomeActivity homeActivity, boolean bl2) {
-        homeActivity.contactLoaded = bl2;
-        return bl2;
-    }
-
-    static /* synthetic */ boolean access$1902(HomeActivity homeActivity, boolean bl2) {
-        homeActivity.exContactLoaded = bl2;
-        return bl2;
-    }
-
-    static /* synthetic */ HomeService.HomeBinder access$2302(HomeActivity homeActivity, HomeService.HomeBinder homeBinder) {
-        homeActivity.myBinder = homeBinder;
-        return homeBinder;
-    }
+    /* access modifiers changed from: private */
+    public SyncKey syncKey;
+    /* access modifiers changed from: private */
+    public Token token;
+    /* access modifiers changed from: private */
+    public User user;
 
     static /* synthetic */ int access$3208() {
-        int n2 = kJobId;
-        kJobId = n2 + 1;
-        return n2;
+        int i = kJobId;
+        kJobId = i + 1;
+        return i;
     }
 
-    static /* synthetic */ User access$402(HomeActivity homeActivity, User user) {
-        homeActivity.user = user;
-        return user;
+    /* access modifiers changed from: protected */
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView((int) R.layout.activity_home);
+        new MessageManager(this).reCreateTable();
+        Intent intent = getIntent();
+        this.token = new Token();
+        this.token.fromBundle(intent.getExtras());
+        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
+        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
+        initViews();
+        initWx();
+        initContact(0);
+        this.closeReceiver = new CloseReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.Action.CLOSE_APP);
+        registerReceiver(this.closeReceiver, intentFilter);
+        this.rescheduleReceiver = new RescheduleReceiver();
+        IntentFilter intentFilter2 = new IntentFilter();
+        intentFilter2.addAction(Constants.Action.RESCHEDULE);
+        registerReceiver(this.rescheduleReceiver, intentFilter2);
+        Log.d(TAG, "onCreate: ");
     }
 
-    static /* synthetic */ ArrayList access$502(HomeActivity homeActivity, ArrayList arrayList) {
-        homeActivity.initList = arrayList;
-        return arrayList;
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
     }
 
-    static /* synthetic */ SyncKey access$702(HomeActivity homeActivity, SyncKey syncKey) {
-        homeActivity.syncKey = syncKey;
-        return syncKey;
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
     }
 
-    private void addNewGroupThenProcessMsg(String object, final Msg msg) {
-        final ArrayList<String> arrayList = new ArrayList<String>();
-        arrayList.add((String)object);
-        object = WxHome.getBatchContactUrl(this.token);
-        BatchContactRequest batchContactRequest = WxHome.formBatchContactRequest(this.token, arrayList);
-        if (batchContactRequest == null || batchContactRequest.List.isEmpty()) {
-            return;
-        }
-        Log.d((String)TAG, (String)("addNewGroupThenProcessMsg:" + JSON.toJSONString(batchContactRequest)));
-        object = new CookieRequest(1, (String)object, JSON.toJSONString(batchContactRequest), new Response.Listener<JSONObject>(){
+    /* access modifiers changed from: private */
+    public void startHomeJobService(Token token2, String deviceId) {
+        Intent startServiceIntent = new Intent(this, HomeJobService.class);
+        startServiceIntent.putExtra("messenger", new Messenger(this.mHandler));
+        startServiceIntent.putExtra(Prefs.Key.TOKEN, token2.toBundle());
+        startServiceIntent.putExtra("deviceId", deviceId);
+        startServiceIntent.putExtra("syncKey", this.syncKey.toString());
+        startService(startServiceIntent);
+        Log.d(TAG, "startHomeJobService: ");
+    }
 
-            @Override
-            public void onResponse(JSONObject object) {
-                Log.d((String)HomeActivity.TAG, (String)("addNewGroupThenProcessMsg:" + object.toString()));
-                HomeActivity.this.chatSet.addAll(arrayList);
-                object = JSON.parseObject(object.toString(), BatchContactResponse.class);
-                HomeActivity.this.exContactList.addAll(object.ContactList);
-                HomeActivity.this.processMsg(msg);
+    private void initWx() {
+        String url = WxHome.getInitUrl(this.token);
+        InitRequest initRequest = WxHome.formInitRequest(this.token);
+        Log.d(TAG, "initWx:" + JSON.toJSONString(initRequest));
+        CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(initRequest), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+            public void onResponse(JSONObject response) {
+                Log.d(HomeActivity.TAG, "initWx:" + response.toString());
+                InitResponse initResponse = (InitResponse) JSON.parseObject(response.toString(), InitResponse.class);
+                User unused = HomeActivity.this.user = initResponse.User;
+                ArrayList unused2 = HomeActivity.this.initList = initResponse.ContactList;
+                HomeActivity.this.filterDunpFilehelper(HomeActivity.this.initList);
+                SyncKey unused3 = HomeActivity.this.syncKey = initResponse.SyncKey;
+                HomeActivity.this.notifyStatus();
+                for (String chat : initResponse.ChatSet.split(",")) {
+                    if (chat.startsWith("@") || "filehelper".equals(chat)) {
+                        HomeActivity.this.chatSet.add(chat);
+                    }
+                }
+                HomeActivity.this.initBatchContact(HomeActivity.this.chatSet);
+                HomeActivity.this.startHomeJobService(HomeActivity.this.token, WxHome.randomDeviceId());
+                boolean unused4 = HomeActivity.this.initLoaded = true;
+                HomeActivity.this.onInitComplete();
             }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e((String)HomeActivity.TAG, (String)("addNewGroupThenProcessMsg:error " + volleyError.getMessage()), (Throwable)volleyError);
+        }, (Response.ErrorListener) new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                Log.e(HomeActivity.TAG, "initWx:error " + error.getMessage(), error);
             }
         });
-        ((CookieRequest)object).setCookie(this.token.cookie);
-        ((Request)object).setRetryPolicy(new DefaultRetryPolicy(2500, 1, 2.0f));
-        this.mQueue.add(object);
+        cookieRequest.setCookie(this.token.cookie);
+        cookieRequest.setRetryPolicy(new DefaultRetryPolicy(7000, 1, 2.0f));
+        this.mQueue.add(cookieRequest);
     }
 
-    private void bindHomeService(Token token, String string2) {
-        Intent intent = new Intent((Context)this, HomeService.class);
-        intent.putExtra("token", token.toBundle());
-        intent.putExtra("deviceId", string2);
-        intent.putExtra("syncKey", this.syncKey.toString());
-        this.conn = new HomeConnection();
-        this.bindService(intent, this.conn, 1);
-    }
-
-    private void broadcastMsg(Msg msg) {
-        Intent intent = new Intent("com.riyuxihe.weixinqingliao.MSG");
-        intent.putExtras(msg.toBundle());
-        this.sendBroadcast(intent);
-    }
-
-    private void cancelJob() {
-        ((JobScheduler)this.getSystemService("jobscheduler")).cancel(kJobId);
-    }
-
-    private void clearFiles() {
-        File file = new File(Environment.getExternalStorageDirectory() + "/weixinQingliao/");
-        if (file.isDirectory()) {
-            String[] stringArray = file.list();
-            for (int i2 = 0; i2 < stringArray.length; ++i2) {
-                new File(file, stringArray[i2]).delete();
+    /* access modifiers changed from: private */
+    public void filterDunpFilehelper(ArrayList<Contact> initList2) {
+        boolean found = false;
+        for (int i = 0; i < initList2.size(); i++) {
+            if (initList2.get(i).UserName.equals("filehelper")) {
+                if (found) {
+                    initList2.remove(i);
+                } else {
+                    found = true;
+                }
+            } else if (!initList2.get(i).UserName.startsWith("@")) {
+                initList2.remove(i);
             }
         }
     }
 
-    private void closeApp() {
-        this.runOnUiThread(new Runnable(){
+    /* access modifiers changed from: private */
+    public void initContact(int seq) {
+        CookieRequest contactRequest = new CookieRequest(1, WxHome.getContactUrl(this.token, seq), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+            public void onResponse(JSONObject response) {
+                Log.d(HomeActivity.TAG, "initContact:" + response.toString());
+                ContactResponse contactResponse = (ContactResponse) JSON.parseObject(response.toString(), ContactResponse.class);
+                HomeActivity.this.contactList.addAll(contactResponse.MemberList);
+                if (contactResponse.Seq == 0) {
+                    Collections.sort(HomeActivity.this.contactList);
+                    boolean unused = HomeActivity.this.contactLoaded = true;
+                    HomeActivity.this.onInitComplete();
+                    return;
+                }
+                HomeActivity.this.initContact(contactResponse.Seq);
+            }
+        }, (Response.ErrorListener) new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof NoConnectionError) {
+                    boolean unused = HomeActivity.this.contactLoaded = true;
+                    HomeActivity.this.onInitComplete();
+                    Log.w(HomeActivity.TAG, "initContact:error " + error.getMessage());
+                    return;
+                }
+                Log.e(HomeActivity.TAG, "initContact:error " + error.getMessage(), error);
+            }
+        });
+        contactRequest.setCookie(this.token.cookie);
+        contactRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 1, 2.0f));
+        this.mQueue.add(contactRequest);
+    }
 
-            @Override
+    /* access modifiers changed from: private */
+    public void scheduleJob(long period) {
+        JobInfo.Builder builder = new JobInfo.Builder(kJobId, new ComponentName(this, HomeJobService.class));
+        builder.setPeriodic(period);
+        ((JobScheduler) getSystemService("jobscheduler")).schedule(builder.build());
+    }
+
+    /* access modifiers changed from: private */
+    public void cancelJob() {
+        ((JobScheduler) getSystemService("jobscheduler")).cancel(kJobId);
+    }
+
+    /* access modifiers changed from: private */
+    public void initBatchContact(List<String> chatSet2) {
+        String url = WxHome.getBatchContactUrl(this.token);
+        BatchContactRequest request = WxHome.formBatchContactRequest(this.token, chatSet2);
+        if (request == null || request.List.isEmpty()) {
+            Log.d(TAG, "intBatchContact:skipping get BatchContact");
+            this.exContactLoaded = true;
+            return;
+        }
+        Log.d(TAG, "initBatchContact:" + JSON.toJSONString(request));
+        CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+            public void onResponse(JSONObject response) {
+                Log.d(HomeActivity.TAG, "initBatchContact:" + response.toString());
+                HomeActivity.this.exContactList.addAll(((BatchContactResponse) JSON.parseObject(response.toString(), BatchContactResponse.class)).ContactList);
+                boolean unused = HomeActivity.this.exContactLoaded = true;
+                HomeActivity.this.onExComplete();
+            }
+        }, (Response.ErrorListener) new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                Log.e(HomeActivity.TAG, "initBatchContact:error " + error.getMessage(), error);
+            }
+        });
+        cookieRequest.setCookie(this.token.cookie);
+        cookieRequest.setRetryPolicy(new DefaultRetryPolicy(8000, 1, 2.0f));
+        this.mQueue.add(cookieRequest);
+    }
+
+    /* access modifiers changed from: private */
+    public void notifyStatus() {
+        String url = WxHome.getWxStatusNotifyUrl(this.token);
+        StatusNotifyRequest request = WxHome.formStatusNotifyRequest(this.token, this.user.UserName);
+        Log.d(TAG, "notifyStatus:" + JSON.toJSONString(request));
+        CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+            public void onResponse(JSONObject response) {
+                Log.d(HomeActivity.TAG, "notifyStatus:" + response.toString());
+            }
+        }, (Response.ErrorListener) new Response.ErrorListener() {
+            public void onErrorResponse(VolleyError error) {
+                Log.e(HomeActivity.TAG, "notifyStatus:error " + error.getMessage(), error);
+            }
+        });
+        cookieRequest.setCookie(this.token.cookie);
+        cookieRequest.setRetryPolicy(new DefaultRetryPolicy(8000, 1, 2.0f));
+        this.mQueue.add(cookieRequest);
+    }
+
+    public String getShowName(String groupUserName, String userName) {
+        if (this.exContactList == null) {
+            Log.w(TAG, "getShowName:extra Contact list not initial");
+            return "";
+        } else if (StringUtil.isNullOrEmpty(groupUserName)) {
+            Log.w(TAG, "getShowName:groupUserName can not be empty");
+            return "";
+        } else {
+            Iterator<Contact> it = this.exContactList.iterator();
+            while (it.hasNext()) {
+                Contact contact = it.next();
+                if (contact.UserName.equals(groupUserName)) {
+                    for (Contact member : contact.MemberList) {
+                        if (member.UserName.equals(userName)) {
+                            return member.getShowName();
+                        }
+                    }
+                    continue;
+                }
+            }
+            return "";
+        }
+    }
+
+    public String getShowName(String userName) {
+        Contact contact = getContact(userName);
+        if (contact == null) {
+            return "";
+        }
+        return contact.getShowName();
+    }
+
+    public Contact getContact(String userName) {
+        if (this.contactList == null) {
+            Log.w(TAG, "getShowName:contact list not initial");
+            return null;
+        }
+        Iterator<Contact> it = this.contactList.iterator();
+        while (it.hasNext()) {
+            Contact contact = it.next();
+            if (contact.UserName.equals(userName)) {
+                return contact;
+            }
+        }
+        Iterator<Contact> it2 = this.exContactList.iterator();
+        while (it2.hasNext()) {
+            Contact contact2 = it2.next();
+            if (contact2.UserName.equals(userName)) {
+                return contact2;
+            }
+        }
+        return null;
+    }
+
+    public boolean isMutedByUserName(String userName) {
+        if (userName == null) {
+            return false;
+        }
+        Iterator<Contact> it = this.exContactList.iterator();
+        while (it.hasNext()) {
+            Contact contact = it.next();
+            if (userName.equals(contact.UserName)) {
+                return contact.isMuted();
+            }
+        }
+        if (this.contactList == null) {
+            return false;
+        }
+        Iterator<Contact> it2 = this.contactList.iterator();
+        while (it2.hasNext()) {
+            Contact contact2 = it2.next();
+            if (userName.equals(contact2.UserName)) {
+                return contact2.isMuted();
+            }
+        }
+        return false;
+    }
+
+    /* access modifiers changed from: private */
+    public void onInitComplete() {
+        if (this.initLoaded && this.contactLoaded) {
+            if (this.contactList.isEmpty() && this.initList != null && !this.initList.isEmpty()) {
+                this.contactList.addAll(this.initList);
+                Collections.sort(this.contactList);
+            }
+            this.mProgressBar.setVisibility(8);
+            this.mTitles.add("消息");
+            this.mTitles.add("联系人");
+            this.initFragment = InitFragment.newInstance(this.token, this.user, this.initList);
+            this.mFragments.add(this.initFragment);
+            this.contactFragment = ContactFragment.newInstance(this.token, this.user, this.contactList);
+            this.mFragments.add(this.contactFragment);
+            this.mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+                public Fragment getItem(int position) {
+                    return (Fragment) HomeActivity.this.mFragments.get(position);
+                }
+
+                public int getCount() {
+                    return HomeActivity.this.mFragments.size();
+                }
+
+                public CharSequence getPageTitle(int position) {
+                    return (CharSequence) HomeActivity.this.mTitles.get(position);
+                }
+            };
+            this.mViewPager.setAdapter(this.mAdapter);
+            for (int i = 0; i < VIEW_COUNT; i++) {
+                this.mTabLayout.addTab(this.mTabLayout.newTab());
+            }
+            this.mTabLayout.setTabMode(0);
+            this.mTabLayout.setupWithViewPager(this.mViewPager);
+            this.mIsLoaded = true;
+            onExComplete();
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public void onExComplete() {
+        if (this.mIsLoaded && this.exContactLoaded) {
+            if (this.exContactList != null) {
+                this.initFragment.addExInitList(this.exContactList);
+            }
+            syncMsg();
+            syncMsg();
+        }
+    }
+
+    private void initViews() {
+        this.mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        this.mTabLayout = (TabLayout) findViewById(R.id.tablayout);
+        this.mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+    public void onSyncChecked(Properties prop) {
+        if (prop != null && !prop.isEmpty()) {
+            String syncCheckStr = prop.getProperty(WxHome.SYNC_CHECK_KEY);
+            Log.d(TAG, "onSyncChecked:syncCheckStr=" + syncCheckStr);
+            com.alibaba.fastjson.JSONObject syncCheckObj = JSON.parseObject(syncCheckStr);
+            if (Constants.SyncCheckCode.SUCCESS.equals(syncCheckObj.getString(WxHome.RETCODE))) {
+                int code = Integer.parseInt(syncCheckObj.getString(WxHome.SELECTOR));
+                if (code != 0) {
+                    Log.d(TAG, "onSyncChecked:new message, code=" + code);
+                    syncMsg();
+                    return;
+                }
+                return;
+            }
+            Log.d(TAG, "onSyncChecked:sync fail");
+            if (this.mHomeJobService.unSync()) {
+                cancelJob();
+                closeApp();
+                clearFiles();
+            }
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public void closeApp() {
+        runOnUiThread(new Runnable() {
             public void run() {
                 HomeActivity.this.finish();
             }
         });
-        Notification notification = new NotificationCompat.Builder((Context)this).setSmallIcon(2130903040).setContentTitle(this.getString(2131230783)).setContentText("\u5df2\u9000\u51fa").setAutoCancel(true).build();
-        ((NotificationManager)this.getSystemService("notification")).notify(10010, notification);
+        ((NotificationManager) getSystemService("notification")).notify(10010, new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(getString(R.string.app_name)).setContentText("已退出").setAutoCancel(true).build());
     }
 
-    /*
-     * Enabled aggressive block sorting
-     */
-    private void filterDunpFilehelper(ArrayList<Contact> arrayList) {
-        boolean bl2 = false;
-        int n2 = 0;
-        while (n2 < arrayList.size()) {
-            boolean bl3;
-            if (arrayList.get((int)n2).UserName.equals("filehelper")) {
-                if (bl2) {
-                    arrayList.remove(n2);
-                    bl3 = bl2;
-                } else {
-                    bl3 = true;
+    /* access modifiers changed from: private */
+    public void clearFiles() {
+        File dir = new File(Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY);
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String file : children) {
+                new File(dir, file).delete();
+            }
+        }
+    }
+
+    private void sendNotification(Msg msg) {
+        Log.d(TAG, "sendNotification:content=" + msg.Content);
+        Intent notificationIntent = new Intent(this, ChatActivity.class);
+        notificationIntent.putExtra(Prefs.Key.TOKEN, this.token.toBundle());
+        User toUser = new User();
+        toUser.UserName = msg.FromUserName;
+        toUser.NickName = msg.fromNickName;
+        toUser.HeadImgUrl = "";
+        notificationIntent.putExtra("to", toUser.toBundle());
+        notificationIntent.putExtra("from", this.user.toBundle());
+        ((NotificationManager) getSystemService("notification")).notify(msg.FromUserName.hashCode(), new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(msg.fromNickName).setContentText(msg.Content).setContentIntent(PendingIntent.getActivity(this, msg.FromUserName.hashCode(), notificationIntent, 134217728)).setAutoCancel(true).build());
+    }
+
+    /* access modifiers changed from: private */
+    public void syncMsg() {
+        if (this.mIsLoaded && this.exContactLoaded) {
+            String url = WxHome.getMsgSyncUrl(this.token);
+            MsgSyncRequest msgSyncRequest = WxHome.formMsgSyncRequest(this.token, this.syncKey);
+            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
+            CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(msgSyncRequest), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+                public void onResponse(JSONObject response) {
+                    Log.d(HomeActivity.TAG, "syncMsg:" + response.toString());
+                    MsgSyncResponse msgSyncResponse = (MsgSyncResponse) JSON.parseObject(response.toString(), MsgSyncResponse.class);
+                    if (msgSyncResponse.BaseResponse.Ret == 0 && !msgSyncResponse.SyncKey.toString().equals(HomeActivity.this.syncKey.toString())) {
+                        Log.d(HomeActivity.TAG, "syncMsg:receive " + msgSyncResponse.AddMsgList.size() + " messages");
+                        for (Msg msg : msgSyncResponse.AddMsgList) {
+                            if (msg.MsgType == 51) {
+                                HomeActivity.this.handleInitNotifyMsg(msg);
+                            }
+                            if (msg.MsgType == 1 || msg.MsgType == 34) {
+                                Log.d(HomeActivity.TAG, "syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId);
+                                if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
+                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
+                                } else if (!WxHome.isGroupUserName(msg.ToUserName) || HomeActivity.this.chatSet.contains(msg.ToUserName)) {
+                                    HomeActivity.this.processMsg(msg);
+                                } else {
+                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
+                                }
+                            }
+                        }
+                        SyncKey unused = HomeActivity.this.syncKey = msgSyncResponse.SyncKey;
+                        HomeActivity.this.mHomeJobService.setSyncKey(HomeActivity.this.syncKey.toString());
+                    }
                 }
-            } else {
-                bl3 = bl2;
-                if (!arrayList.get((int)n2).UserName.startsWith("@")) {
-                    arrayList.remove(n2);
-                    bl3 = bl2;
+            }, (Response.ErrorListener) new Response.ErrorListener() {
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(HomeActivity.TAG, "syncMsg:error" + error.getMessage(), error);
+                }
+            });
+            cookieRequest.setCookie(this.token.cookie);
+            this.mQueue.add(cookieRequest);
+        }
+    }
+
+    /* access modifiers changed from: private */
+    public void handleInitNotifyMsg(Msg initMsg) {
+        Log.d(TAG, "handleInitNotifyMsg:" + JSON.toJSONString(initMsg));
+        if (!TextUtils.isEmpty(initMsg.StatusNotifyUserName)) {
+            for (String name : initMsg.StatusNotifyUserName.split(",")) {
+                if (name.startsWith("@")) {
+                    Msg msg = new Msg();
+                    msg.MsgType = 51;
+                    msg.FromUserName = name;
+                    msg.ToUserName = this.user.UserName;
+                    if (!WxHome.isGroupUserName(msg.FromUserName) || this.chatSet.contains(msg.FromUserName)) {
+                        processMsg(msg);
+                    } else {
+                        addNewGroupThenProcessMsg(msg.FromUserName, msg);
+                    }
                 }
             }
-            ++n2;
-            bl2 = bl3;
-        }
-        return;
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
-    private void handleInitNotifyMsg(Msg stringArray) {
-        Log.d((String)TAG, (String)("handleInitNotifyMsg:" + JSON.toJSONString(stringArray)));
-        if (!TextUtils.isEmpty((CharSequence)stringArray.StatusNotifyUserName)) {
-            for (String string2 : stringArray.StatusNotifyUserName.split(",")) {
-                if (!string2.startsWith("@")) continue;
-                Msg msg = new Msg();
-                msg.MsgType = 51;
-                msg.FromUserName = string2;
-                msg.ToUserName = this.user.UserName;
-                if (WxHome.isGroupUserName(msg.FromUserName) && !this.chatSet.contains(msg.FromUserName)) {
-                    this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
-                    continue;
-                }
-                this.processMsg(msg);
-            }
         }
     }
 
-    private void initBatchContact(List<String> object) {
-        String string2 = WxHome.getBatchContactUrl(this.token);
-        if ((object = WxHome.formBatchContactRequest(this.token, object)) == null || ((BatchContactRequest)object).List.isEmpty()) {
-            Log.d((String)TAG, (String)"intBatchContact:skipping get BatchContact");
-            this.exContactLoaded = true;
-            return;
-        }
-        Log.d((String)TAG, (String)("initBatchContact:" + JSON.toJSONString(object)));
-        object = new CookieRequest(1, string2, JSON.toJSONString(object), new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject object) {
-                Log.d((String)HomeActivity.TAG, (String)("initBatchContact:" + object.toString()));
-                object = JSON.parseObject(object.toString(), BatchContactResponse.class);
-                HomeActivity.this.exContactList.addAll(object.ContactList);
-                HomeActivity.access$1902(HomeActivity.this, true);
-                HomeActivity.this.onExComplete();
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e((String)HomeActivity.TAG, (String)("initBatchContact:error " + volleyError.getMessage()), (Throwable)volleyError);
-            }
-        });
-        ((CookieRequest)object).setCookie(this.token.cookie);
-        ((Request)object).setRetryPolicy(new DefaultRetryPolicy(8000, 1, 2.0f));
-        this.mQueue.add(object);
-    }
-
-    private void initContact(int n2) {
-        CookieRequest cookieRequest = new CookieRequest(1, WxHome.getContactUrl(this.token, n2), new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject object) {
-                Log.d((String)HomeActivity.TAG, (String)("initContact:" + object.toString()));
-                object = JSON.parseObject(object.toString(), ContactResponse.class);
-                HomeActivity.this.contactList.addAll(object.MemberList);
-                if (object.Seq == 0) {
-                    Collections.sort(HomeActivity.this.contactList);
-                    HomeActivity.access$1602(HomeActivity.this, true);
-                    HomeActivity.this.onInitComplete();
-                    return;
-                }
-                HomeActivity.this.initContact(object.Seq);
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                if (volleyError instanceof NoConnectionError) {
-                    HomeActivity.access$1602(HomeActivity.this, true);
-                    HomeActivity.this.onInitComplete();
-                    Log.w((String)HomeActivity.TAG, (String)("initContact:error " + volleyError.getMessage()));
-                    return;
-                }
-                Log.e((String)HomeActivity.TAG, (String)("initContact:error " + volleyError.getMessage()), (Throwable)volleyError);
-            }
-        });
-        cookieRequest.setCookie(this.token.cookie);
-        cookieRequest.setRetryPolicy(new DefaultRetryPolicy(15000, 1, 2.0f));
-        this.mQueue.add(cookieRequest);
-    }
-
-    private void initViews() {
-        this.mViewPager = (ViewPager)this.findViewById(2131689611);
-        this.mTabLayout = (TabLayout)this.findViewById(2131689610);
-        this.mProgressBar = (ProgressBar)this.findViewById(2131689612);
-    }
-
-    private void initWx() {
-        Object object = WxHome.getInitUrl(this.token);
-        InitRequest initRequest = WxHome.formInitRequest(this.token);
-        Log.d((String)TAG, (String)("initWx:" + JSON.toJSONString(initRequest)));
-        object = new CookieRequest(1, (String)object, JSON.toJSONString(initRequest), new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject stringArray) {
-                Log.d((String)HomeActivity.TAG, (String)("initWx:" + stringArray.toString()));
-                stringArray = JSON.parseObject(stringArray.toString(), InitResponse.class);
-                HomeActivity.access$402(HomeActivity.this, stringArray.User);
-                HomeActivity.access$502(HomeActivity.this, stringArray.ContactList);
-                HomeActivity.this.filterDunpFilehelper(HomeActivity.this.initList);
-                HomeActivity.access$702(HomeActivity.this, stringArray.SyncKey);
-                HomeActivity.this.notifyStatus();
-                for (String string2 : stringArray.ChatSet.split(",")) {
-                    if (!string2.startsWith("@") && !"filehelper".equals(string2)) continue;
-                    HomeActivity.this.chatSet.add(string2);
-                }
-                HomeActivity.this.initBatchContact(HomeActivity.this.chatSet);
-                HomeActivity.this.startHomeJobService(HomeActivity.this.token, WxHome.randomDeviceId());
-                HomeActivity.access$1302(HomeActivity.this, true);
-                HomeActivity.this.onInitComplete();
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e((String)HomeActivity.TAG, (String)("initWx:error " + volleyError.getMessage()), (Throwable)volleyError);
-            }
-        });
-        ((CookieRequest)object).setCookie(this.token.cookie);
-        ((Request)object).setRetryPolicy(new DefaultRetryPolicy(7000, 1, 2.0f));
-        this.mQueue.add(object);
-    }
-
-    private void notifyStatus() {
-        Object object = WxHome.getWxStatusNotifyUrl(this.token);
-        StatusNotifyRequest statusNotifyRequest = WxHome.formStatusNotifyRequest(this.token, this.user.UserName);
-        Log.d((String)TAG, (String)("notifyStatus:" + JSON.toJSONString(statusNotifyRequest)));
-        object = new CookieRequest(1, (String)object, JSON.toJSONString(statusNotifyRequest), new Response.Listener<JSONObject>(){
-
-            @Override
-            public void onResponse(JSONObject jSONObject) {
-                Log.d((String)HomeActivity.TAG, (String)("notifyStatus:" + jSONObject.toString()));
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e((String)HomeActivity.TAG, (String)("notifyStatus:error " + volleyError.getMessage()), (Throwable)volleyError);
-            }
-        });
-        ((CookieRequest)object).setCookie(this.token.cookie);
-        ((Request)object).setRetryPolicy(new DefaultRetryPolicy(8000, 1, 2.0f));
-        this.mQueue.add(object);
-    }
-
-    private void onExComplete() {
-        if (!this.mIsLoaded || !this.exContactLoaded) {
-            return;
-        }
-        if (this.exContactList != null) {
-            this.initFragment.addExInitList(this.exContactList);
-        }
-        this.syncMsg();
-        this.syncMsg();
-    }
-
-    private void onInitComplete() {
-        if (!this.initLoaded || !this.contactLoaded) {
-            return;
-        }
-        if (this.contactList.isEmpty() && this.initList != null && !this.initList.isEmpty()) {
-            this.contactList.addAll(this.initList);
-            Collections.sort(this.contactList);
-        }
-        this.mProgressBar.setVisibility(8);
-        this.mTitles.add("\u6d88\u606f");
-        this.mTitles.add("\u8054\u7cfb\u4eba");
-        this.initFragment = InitFragment.newInstance(this.token, this.user, this.initList);
-        this.mFragments.add(this.initFragment);
-        this.contactFragment = ContactFragment.newInstance(this.token, this.user, this.contactList);
-        this.mFragments.add(this.contactFragment);
-        this.mAdapter = new FragmentPagerAdapter(this.getSupportFragmentManager()){
-
-            @Override
-            public int getCount() {
-                return HomeActivity.this.mFragments.size();
-            }
-
-            @Override
-            public Fragment getItem(int n2) {
-                return (Fragment)HomeActivity.this.mFragments.get(n2);
-            }
-
-            @Override
-            public CharSequence getPageTitle(int n2) {
-                return (CharSequence)HomeActivity.this.mTitles.get(n2);
-            }
-        };
-        this.mViewPager.setAdapter(this.mAdapter);
-        for (int i2 = 0; i2 < VIEW_COUNT; ++i2) {
-            this.mTabLayout.addTab(this.mTabLayout.newTab());
-        }
-        this.mTabLayout.setTabMode(0);
-        this.mTabLayout.setupWithViewPager(this.mViewPager);
-        this.mIsLoaded = true;
-        this.onExComplete();
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
-    private void processMsg(Msg msg) {
-        String[] stringArray;
+    /* access modifiers changed from: private */
+    public void processMsg(Msg msg) {
+        String[] cols;
         if (msg.MsgType == 51) {
-            Contact contact = this.getContact(msg.FromUserName);
-            if (contact == null || contact.isPublic()) return;
-            msg.fromNickName = contact.getShowName();
-            msg.toNickName = this.user.NickName;
-            this.initFragment.comeNewMessage(msg);
+            Contact contact = getContact(msg.FromUserName);
+            if (contact != null && !contact.isPublic()) {
+                msg.fromNickName = contact.getShowName();
+                msg.toNickName = this.user.NickName;
+                this.initFragment.comeNewMessage(msg);
+                return;
+            }
             return;
         }
-        if (WxHome.isGroupUserName(msg.FromUserName) && (stringArray = msg.Content.split(":<br/>")) != null && stringArray.length == 2) {
-            msg.fromMemberUserName = stringArray[0].trim();
-            msg.fromMemberNickName = this.getShowName(msg.FromUserName, msg.fromMemberUserName);
-            msg.Content = stringArray[1].trim();
+        if (WxHome.isGroupUserName(msg.FromUserName) && (cols = msg.Content.split(":<br/>")) != null && cols.length == 2) {
+            msg.fromMemberUserName = cols[0].trim();
+            msg.fromMemberNickName = getShowName(msg.FromUserName, msg.fromMemberUserName);
+            msg.Content = cols[1].trim();
         }
         msg.Content = msg.Content.replaceAll("<br/>", "\n");
         if (msg.FromUserName.equals(this.user.UserName)) {
             msg.fromNickName = this.user.NickName;
-            msg.toNickName = msg.ToUserName.equals(this.user.UserName) ? this.user.NickName : this.getShowName(msg.ToUserName);
+            if (msg.ToUserName.equals(this.user.UserName)) {
+                msg.toNickName = this.user.NickName;
+            } else {
+                msg.toNickName = getShowName(msg.ToUserName);
+            }
         } else {
-            msg.fromNickName = this.getShowName(msg.FromUserName);
+            msg.fromNickName = getShowName(msg.FromUserName);
             msg.toNickName = this.user.NickName;
         }
-        Log.d((String)TAG, (String)("processMsg:fromNickname=" + msg.fromNickName + " toNickName=" + msg.toNickName));
+        Log.d(TAG, "processMsg:fromNickname=" + msg.fromNickName + " toNickName=" + msg.toNickName);
         msg.CreateTime = TimeUtil.toTimeMillis(msg.CreateTime);
         if (msg.MsgType == 34) {
             msg.Content = msg.MsgId + ".mp3";
@@ -545,433 +605,180 @@ extends SwipeActivity {
         }
         msg.ClientMsgId = WxHome.randomClientMsgId();
         this.initFragment.comeNewMessage(msg);
-        Log.d((String)TAG, (String)("processMsg:send broadcast, msgType=" + msg.MsgType));
-        this.broadcastMsg(msg);
-        if (msg.FromUserName.equals(this.user.UserName) || this.isMutedByUserName(msg.FromUserName)) {
-            return;
+        Log.d(TAG, "processMsg:send broadcast, msgType=" + msg.MsgType);
+        broadcastMsg(msg);
+        if (!msg.FromUserName.equals(this.user.UserName) && !isMutedByUserName(msg.FromUserName)) {
+            sendNotification(msg);
         }
-        this.sendNotification(msg);
     }
 
-    private void requestInternetPermission(Activity activity) {
-        block3: {
-            block2: {
-                if (PermissionCompat.checkSelfPermission((Context)activity, "android.permission.INTERNET") == 0) break block2;
-                if (!PermissionCompat.shouldShowRequestPermissionRationale(activity, "android.permission.INTERNET")) break block3;
-                this.updateForgroundNotification(this.getString(2131230805), HomeJobService.NotificationStatus.permissionRational);
-            }
-            return;
-        }
-        PermissionCompat.requestPermissions(activity, new String[]{"android.permission.INTERNET"}, 1);
-    }
-
-    private void scheduleJob(long l2) {
-        JobInfo.Builder builder = new JobInfo.Builder(kJobId, new ComponentName((Context)this, HomeJobService.class));
-        builder.setPeriodic(l2);
-        ((JobScheduler)this.getSystemService("jobscheduler")).schedule(builder.build());
-    }
-
-    private void sendNotification(Msg msg) {
-        Log.d((String)TAG, (String)("sendNotification:content=" + msg.Content));
-        Intent intent = new Intent((Context)this, ChatActivity.class);
-        intent.putExtra("token", this.token.toBundle());
-        User user = new User();
-        user.UserName = msg.FromUserName;
-        user.NickName = msg.fromNickName;
-        user.HeadImgUrl = "";
-        intent.putExtra("to", user.toBundle());
-        intent.putExtra("from", this.user.toBundle());
-        intent = PendingIntent.getActivity((Context)this, (int)msg.FromUserName.hashCode(), (Intent)intent, (int)0x8000000);
-        intent = new NotificationCompat.Builder((Context)this).setSmallIcon(2130903040).setContentTitle(msg.fromNickName).setContentText(msg.Content).setContentIntent((PendingIntent)intent).setAutoCancel(true).build();
-        ((NotificationManager)this.getSystemService("notification")).notify(msg.FromUserName.hashCode(), (Notification)intent);
-    }
-
-    private void startHomeJobService(Token token, String string2) {
-        Intent intent = new Intent((Context)this, HomeJobService.class);
-        intent.putExtra("messenger", (Parcelable)new Messenger(this.mHandler));
-        intent.putExtra("token", token.toBundle());
-        intent.putExtra("deviceId", string2);
-        intent.putExtra("syncKey", this.syncKey.toString());
-        this.startService(intent);
-    }
-
-    private void syncMsg() {
-        if (!this.mIsLoaded || !this.exContactLoaded) {
-            return;
-        }
-        Object object = WxHome.getMsgSyncUrl(this.token);
-        MsgSyncRequest msgSyncRequest = WxHome.formMsgSyncRequest(this.token, this.syncKey);
-        Log.d((String)TAG, (String)("syncMsg:" + JSON.toJSONString(msgSyncRequest)));
-        object = new CookieRequest(1, (String)object, JSON.toJSONString(msgSyncRequest), new Response.Listener<JSONObject>(){
-
-            /*
-             * Enabled aggressive block sorting
-             */
-            @Override
-            public void onResponse(JSONObject object) {
-                Log.d((String)HomeActivity.TAG, (String)("syncMsg:" + object.toString()));
-                MsgSyncResponse msgSyncResponse = JSON.parseObject(object.toString(), MsgSyncResponse.class);
-                if (msgSyncResponse.BaseResponse.Ret != 0 || msgSyncResponse.SyncKey.toString().equals(HomeActivity.this.syncKey.toString())) {
-                    return;
-                }
-                Log.d((String)HomeActivity.TAG, (String)("syncMsg:receive " + msgSyncResponse.AddMsgList.size() + " messages"));
-                Iterator<Msg> iterator = msgSyncResponse.AddMsgList.iterator();
-                while (true) {
-                    if (!iterator.hasNext()) {
-                        HomeActivity.access$702(HomeActivity.this, msgSyncResponse.SyncKey);
-                        HomeActivity.this.mHomeJobService.setSyncKey(HomeActivity.this.syncKey.toString());
-                        return;
-                    }
-                    Msg msg = iterator.next();
-                    if (msg.MsgType == 51) {
-                        HomeActivity.this.handleInitNotifyMsg(msg);
-                    }
-                    if (msg.MsgType != 1 && msg.MsgType != 34) continue;
-                    Log.d((String)HomeActivity.TAG, (String)("syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId));
-                    if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
-                        HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
-                        continue;
-                    }
-                    if (WxHome.isGroupUserName(msg.ToUserName) && !HomeActivity.this.chatSet.contains(msg.ToUserName)) {
-                        HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
-                        continue;
-                    }
+    /* access modifiers changed from: private */
+    public void addNewGroupThenProcessMsg(String newGroupName, final Msg msg) {
+        final List<String> newChatSet = new ArrayList<>();
+        newChatSet.add(newGroupName);
+        String url = WxHome.getBatchContactUrl(this.token);
+        BatchContactRequest request = WxHome.formBatchContactRequest(this.token, newChatSet);
+        if (request != null && !request.List.isEmpty()) {
+            Log.d(TAG, "addNewGroupThenProcessMsg:" + JSON.toJSONString(request));
+            CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+                public void onResponse(JSONObject response) {
+                    Log.d(HomeActivity.TAG, "addNewGroupThenProcessMsg:" + response.toString());
+                    HomeActivity.this.chatSet.addAll(newChatSet);
+                    HomeActivity.this.exContactList.addAll(((BatchContactResponse) JSON.parseObject(response.toString(), BatchContactResponse.class)).ContactList);
                     HomeActivity.this.processMsg(msg);
                 }
-            }
-        }, new Response.ErrorListener(){
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e((String)HomeActivity.TAG, (String)("syncMsg:error" + volleyError.getMessage()), (Throwable)volleyError);
-            }
-        });
-        ((CookieRequest)object).setCookie(this.token.cookie);
-        this.mQueue.add(object);
-    }
-
-    private void updateForgroundNotification(String string2, HomeJobService.NotificationStatus notificationStatus) {
-        if (this.mHomeJobService != null) {
-            this.mHomeJobService.updateNotification(string2, notificationStatus);
-        }
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
-    public boolean checkMobileDataConnection(Context context) {
-        if ((context = ((ConnectivityManager)context.getSystemService("connectivity")).getActiveNetworkInfo()) == null) return false;
-        if (context.isConnectedOrConnecting()) {
-            if (context.getType() == 0) {
-                this.updateForgroundNotification(this.getString(2131230807), HomeJobService.NotificationStatus.mobileData);
-                return true;
-            }
-            this.updateForgroundNotification(this.getString(2131230806), HomeJobService.NotificationStatus.normal);
-            return true;
-        }
-        boolean bl2 = context.getDetailedState() == NetworkInfo.DetailedState.BLOCKED;
-        if (bl2) {
-            Log.d((String)TAG, (String)"Internet permission is blocked, request for permission.");
-            this.runOnUiThread(new Runnable(){
-
-                @Override
-                public void run() {
-                    HomeActivity.this.requestInternetPermission(HomeActivity.this);
+            }, (Response.ErrorListener) new Response.ErrorListener() {
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(HomeActivity.TAG, "addNewGroupThenProcessMsg:error " + error.getMessage(), error);
                 }
             });
-            return false;
+            cookieRequest.setCookie(this.token.cookie);
+            cookieRequest.setRetryPolicy(new DefaultRetryPolicy(2500, 1, 2.0f));
+            this.mQueue.add(cookieRequest);
         }
-        this.updateForgroundNotification(this.getString(2131230803), HomeJobService.NotificationStatus.badNetwork);
-        return false;
     }
 
-    public Contact getContact(String string2) {
-        if (this.contactList == null) {
-            Log.w((String)TAG, (String)"getShowName:contact list not initial");
-            return null;
-        }
-        for (Contact contact : this.contactList) {
-            if (!contact.UserName.equals(string2)) continue;
-            return contact;
-        }
-        for (Contact contact : this.exContactList) {
-            if (!contact.UserName.equals(string2)) continue;
-            return contact;
-        }
-        return null;
+    private void broadcastMsg(Msg msg) {
+        Intent intent = new Intent(Constants.Action.NEW_MSG);
+        intent.putExtras(msg.toBundle());
+        sendBroadcast(intent);
     }
 
-    public String getShowName(String object) {
-        if ((object = this.getContact((String)object)) == null) {
-            return "";
-        }
-        return ((Contact)object).getShowName();
-    }
-
-    public String getShowName(String string2, String string3) {
-        if (this.exContactList == null) {
-            Log.w((String)TAG, (String)"getShowName:extra Contact list not initial");
-            return "";
-        }
-        if (StringUtil.isNullOrEmpty(string2)) {
-            Log.w((String)TAG, (String)"getShowName:groupUserName can not be empty");
-            return "";
-        }
-        for (Contact contact : this.exContactList) {
-            if (!contact.UserName.equals(string2)) continue;
-            for (Contact contact2 : contact.MemberList) {
-                if (!contact2.UserName.equals(string3)) continue;
-                return contact2.getShowName();
-            }
-        }
-        return "";
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     * Lifted jumps to return sites
-     */
-    public boolean isMutedByUserName(String string2) {
-        Contact contact2;
-        if (string2 == null) {
-            return false;
-        }
-        for (Contact contact2 : this.exContactList) {
-            if (!string2.equals(contact2.UserName)) continue;
-            return contact2.isMuted();
-        }
-        if (this.contactList == null) return false;
-        Iterator<Contact> iterator = this.contactList.iterator();
-        do {
-            if (!iterator.hasNext()) return false;
-            contact2 = iterator.next();
-        } while (!string2.equals(contact2.UserName));
-        return contact2.isMuted();
-    }
-
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        this.setContentView(2130968602);
-        new MessageManager((Context)this).reCreateTable();
-        bundle = this.getIntent();
-        this.token = new Token();
-        this.token.fromBundle(bundle.getExtras());
-        Log.d((String)TAG, (String)("onCreate:token=" + JSON.toJSONString(this.token)));
-        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
-        this.initViews();
-        this.initWx();
-        this.initContact(0);
-        this.closeReceiver = new CloseReceiver();
-        bundle = new IntentFilter();
-        bundle.addAction("com.riyuxihe.weixinqingliao.CLOSEAPP");
-        this.registerReceiver(this.closeReceiver, (IntentFilter)bundle);
-        this.rescheduleReceiver = new RescheduleReceiver();
-        bundle = new IntentFilter();
-        bundle.addAction("com.riyuxihe.weixinqingliao.RESCHEDULE");
-        this.registerReceiver(this.rescheduleReceiver, (IntentFilter)bundle);
-    }
-
-    @Override
-    protected void onDestroy() {
+    /* access modifiers changed from: protected */
+    public void onDestroy() {
         if (this.closeReceiver != null) {
-            this.unregisterReceiver(this.closeReceiver);
+            unregisterReceiver(this.closeReceiver);
         }
         if (this.rescheduleReceiver != null) {
-            this.unregisterReceiver(this.rescheduleReceiver);
+            unregisterReceiver(this.rescheduleReceiver);
         }
         if (this.networkStateReceiver != null) {
-            this.unregisterReceiver(this.networkStateReceiver);
+            unregisterReceiver(this.networkStateReceiver);
         }
         super.onDestroy();
-        if (this.conn != null) {
-            this.unbindService(this.conn);
-        }
         if (this.mHomeJobService != null) {
             this.mHomeJobService.stopSelf();
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause((Context)this);
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
-    @Override
-    public void onRequestPermissionsResult(int n2, String[] stringArray, int[] nArray) {
-        switch (n2) {
-            default: {
-                return;
-            }
-            case 1: {
-                if (nArray.length > 0 && nArray[0] == 0) return;
-                this.updateForgroundNotification(this.getString(2131230804), HomeJobService.NotificationStatus.permissionDenied);
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onResume((Context)this);
-    }
-
-    @Override
-    protected void onSwipeBack() {
+    /* access modifiers changed from: protected */
+    public void onSwipeBack() {
         if (this.mIsLoaded) {
             super.onSwipeBack();
             return;
         }
-        this.cancelJob();
-        this.finish();
+        cancelJob();
+        finish();
     }
 
-    /*
-     * Enabled aggressive block sorting
-     */
-    public void onSyncChecked(Properties object) {
-        if (object == null || ((Hashtable)object).isEmpty()) return;
-        object = ((Properties)object).getProperty("window.synccheck");
-        Log.d((String)TAG, (String)("onSyncChecked:syncCheckStr=" + (String)object));
-        object = JSON.parseObject((String)object);
-        if ("0".equals(((com.alibaba.fastjson.JSONObject)object).getString("retcode"))) {
-            int n2 = Integer.parseInt(((com.alibaba.fastjson.JSONObject)object).getString("selector"));
-            if (n2 == 0) return;
-            Log.d((String)TAG, (String)("onSyncChecked:new message, code=" + n2));
-            this.syncMsg();
-            return;
-        }
-        Log.d((String)TAG, (String)"onSyncChecked:sync fail");
-        if (!this.mHomeJobService.unSync()) {
-            return;
-        }
-        this.cancelJob();
-        this.closeApp();
-        this.clearFiles();
-    }
-
-    private class CloseReceiver
-    extends BroadcastReceiver {
-        private CloseReceiver() {
-        }
-
-        public void onReceive(Context context, Intent intent) {
-            if (!"com.riyuxihe.weixinqingliao.CLOSEAPP".equals(intent.getAction())) {
-                return;
-            }
-            HomeActivity.this.cancelJob();
-            HomeActivity.this.closeApp();
-            HomeActivity.this.clearFiles();
-        }
-    }
-
-    private class HomeConnection
-    implements ServiceConnection {
-        private HomeConnection() {
-        }
-
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            HomeActivity.access$2302(HomeActivity.this, (HomeService.HomeBinder)iBinder);
-            HomeActivity.this.myBinder.getService().setCallBack(new HomeService.CallBack(){
-
-                /*
-                 * Enabled aggressive block sorting
-                 */
-                @Override
-                public void handleServiceData(Properties object) {
-                    if (object == null || ((Hashtable)object).isEmpty()) return;
-                    object = ((Properties)object).getProperty("window.synccheck");
-                    Log.d((String)HomeActivity.TAG, (String)("CallBack::handleServiceData:syncCheckStr=" + (String)object));
-                    object = JSON.parseObject((String)object);
-                    String string2 = ((com.alibaba.fastjson.JSONObject)object).getString("retcode");
-                    if ("0".equals(string2)) {
-                        int n2 = Integer.parseInt(((com.alibaba.fastjson.JSONObject)object).getString("selector"));
-                        if (n2 == 0) return;
-                        Log.d((String)HomeActivity.TAG, (String)("CallBack::handleServiceData:new message, code=" + n2));
-                        HomeActivity.this.syncMsg();
-                        return;
-                    }
-                    if (!"1100".equals(string2)) {
-                        return;
-                    }
-                    HomeActivity.this.myBinder.stopTimer();
-                    HomeActivity.this.closeApp();
-                    HomeActivity.this.clearFiles();
-                }
-            });
-            HomeActivity.this.myBinder.startTimer();
-        }
-
-        public void onServiceDisconnected(ComponentName componentName) {
-        }
-    }
-
-    private class NetworkStateReceiver
-    extends BroadcastReceiver {
-        private NetworkStateReceiver() {
-        }
-
-        public void onReceive(Context context, Intent intent) {
-            if (!"android.net.conn.CONNECTIVITY_CHANGE".equals(intent.getAction())) {
-                return;
-            }
-            HomeActivity.this.checkMobileDataConnection(context);
-        }
-    }
-
-    private class RescheduleReceiver
-    extends BroadcastReceiver {
-        private RescheduleReceiver() {
-        }
-
-        public void onReceive(Context context, Intent intent) {
-            if (!"com.riyuxihe.weixinqingliao.RESCHEDULE".equals(intent.getAction())) {
-                return;
-            }
-            long l2 = intent.getLongExtra("period", 60000L);
-            Log.d((String)"setting", (String)("period=" + l2));
-            HomeActivity.this.cancelJob();
-            HomeActivity.access$3208();
-            HomeActivity.this.scheduleJob(l2);
-        }
-    }
-
-    private class VoiceTask
-    extends AsyncTask<String, Void, String> {
+    private class VoiceTask extends AsyncTask<String, Void, String> {
         private VoiceTask() {
         }
 
-        protected String doInBackground(String ... object) {
-            Object object2 = WxHome.getVoiceUrl(HomeActivity.this.token, object[0]);
-            Object object3 = Environment.getExternalStorageDirectory() + "/weixinQingliao/";
-            FileUtil.createDir((String)object3);
-            object = (String)object3 + object[0] + ".mp3";
-            Log.d((String)HomeActivity.TAG, (String)("VoiceTask::audio output path=" + (String)object));
+        /* access modifiers changed from: protected */
+        public String doInBackground(String... strings) {
+            String url = WxHome.getVoiceUrl(HomeActivity.this.token, strings[0]);
+            String outDir = Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY;
+            FileUtil.createDir(outDir);
+            String outPutPath = outDir + strings[0] + ".mp3";
+            Log.d(HomeActivity.TAG, "VoiceTask::audio output path=" + outPutPath);
             try {
-                object2 = NetUtil.getHttpsConnection((String)object2, 0);
-                ((URLConnection)object2).setRequestProperty("Cookie", ((HomeActivity)HomeActivity.this).token.cookie);
-                ((HttpURLConnection)object2).setChunkedStreamingMode(StreamUtil.CHUNK_LENGTH);
-                ((URLConnection)object2).connect();
-                object3 = new FileOutputStream((String)object);
-                StreamUtil.fromInStreamToOutStream(((URLConnection)object2).getInputStream(), (OutputStream)object3);
-                ((FileOutputStream)object3).close();
-                ((HttpURLConnection)object2).disconnect();
-                return object;
-            }
-            catch (IOException iOException) {
-                Log.w((String)HomeActivity.TAG, (String)"VoiceTask::exception", (Throwable)iOException);
+                HttpsURLConnection conn = NetUtil.getHttpsConnection(url, 0);
+                conn.setRequestProperty(Token.COOKIE, HomeActivity.this.token.cookie);
+                conn.setChunkedStreamingMode(StreamUtil.CHUNK_LENGTH);
+                conn.connect();
+                FileOutputStream fileOutputStream = new FileOutputStream(outPutPath);
+                StreamUtil.fromInStreamToOutStream(conn.getInputStream(), fileOutputStream);
+                fileOutputStream.close();
+                conn.disconnect();
+                return outPutPath;
+            } catch (IOException e) {
+                Log.w(HomeActivity.TAG, "VoiceTask::exception", e);
                 return "";
             }
         }
 
-        protected void onPostExecute(String string2) {
-            Log.d((String)HomeActivity.TAG, (String)("VoiceTask::onPostExecute:filePath=" + string2));
+        /* access modifiers changed from: protected */
+        public void onPostExecute(String filePath) {
+            Log.d(HomeActivity.TAG, "VoiceTask::onPostExecute:filePath=" + filePath);
+        }
+    }
+
+    private class CloseReceiver extends BroadcastReceiver {
+        private CloseReceiver() {
+        }
+
+        public void onReceive(Context context, Intent intent) {
+            if (Constants.Action.CLOSE_APP.equals(intent.getAction())) {
+                HomeActivity.this.cancelJob();
+                HomeActivity.this.closeApp();
+                HomeActivity.this.clearFiles();
+            }
+        }
+    }
+
+    private class RescheduleReceiver extends BroadcastReceiver {
+        private RescheduleReceiver() {
+        }
+
+        public void onReceive(Context context, Intent intent) {
+            if (Constants.Action.RESCHEDULE.equals(intent.getAction())) {
+                long period = intent.getLongExtra("period", Constants.Period.HOME_STANDARD);
+                Log.d("setting", "period=" + period);
+                HomeActivity.this.cancelJob();
+                HomeActivity.access$3208();
+                HomeActivity.this.scheduleJob(period);
+            }
+        }
+    }
+
+    private class NetworkStateReceiver extends BroadcastReceiver {
+        private NetworkStateReceiver() {
+        }
+
+        public void onReceive(Context context, Intent intent) {
+            if ("android.net.conn.CONNECTIVITY_CHANGE".equals(intent.getAction())) {
+                HomeActivity.this.checkMobileDataConnection(context);
+            }
+        }
+    }
+
+    public boolean checkMobileDataConnection(Context context) {
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService("connectivity")).getActiveNetworkInfo();
+        if (activeNetworkInfo != null) {
+            if (!activeNetworkInfo.isConnectedOrConnecting()) {
+                if (activeNetworkInfo.getDetailedState() == NetworkInfo.DetailedState.BLOCKED) {
+                    Log.d(TAG, "Internet permission is blocked, request for permission.");
+                } else {
+                    updateForgroundNotification(getString(R.string.notification_bad_net_notice), HomeJobService.NotificationStatus.badNetwork);
+                }
+            } else if (activeNetworkInfo.getType() == 0) {
+                updateForgroundNotification(getString(R.string.notification_using_mobile_data), HomeJobService.NotificationStatus.mobileData);
+                return true;
+            } else {
+                updateForgroundNotification(getString(R.string.notification_normal), HomeJobService.NotificationStatus.normal);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateForgroundNotification(String content, HomeJobService.NotificationStatus notificationStatus) {
+        if (this.mHomeJobService != null) {
+            this.mHomeJobService.updateNotification(content, notificationStatus);
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length <= 0 || grantResults[0] != 0) {
+                    updateForgroundNotification(getString(R.string.notification_internet_permission_denied), HomeJobService.NotificationStatus.permissionDenied);
+                    return;
+                }
+                return;
+            default:
+                return;
         }
     }
 }
-

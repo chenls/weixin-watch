@@ -1,22 +1,14 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.graphics.Bitmap
- *  android.graphics.BitmapFactory
- *  android.util.Base64
- *  android.util.Log
- */
 package com.riyuxihe.weixinqingliao.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.riyuxihe.weixinqingliao.model.Token;
-import com.riyuxihe.weixinqingliao.util.NetUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpCookie;
@@ -24,6 +16,9 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Properties;
 import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class WxLogin {
     public static final String AVATAR_KEY = "window.userAvatar";
@@ -41,218 +36,239 @@ public class WxLogin {
     public static final String UNKNOWN_HOST = "UNKNOWN_HOST";
     private static final String UUID_KEY = "window.QRLogin.uuid";
 
-    public static Properties checkLoginStatus(String object) {
-        long l2 = System.currentTimeMillis();
+    public static String formatQRUrl(String uuid) {
+        return QR_URL + uuid;
+    }
+
+    public static String getUUid() {
         try {
-            object = String.format(LOGIN_CHECK_URL, object) + l2;
-            Log.d((String)TAG, (String)("checkLoginStatus:url=" + (String)object));
-            object = NetUtil.getHttpsResponse((String)object, 30000);
-            Log.d((String)TAG, (String)("checkLoginStatus:result=" + (String)object));
-            object = WxLogin.parseText((String)object);
-            return object;
+            Properties prop = parseText(NetUtil.getHttpsResponse(JS_LOGIN_WX_URL + System.currentTimeMillis(), 0));
+            if (Constants.LoginCode.LOGIN.equals(prop.getProperty(CODE_KEY))) {
+                return prop.getProperty(UUID_KEY).replaceAll("\"", "");
+            }
+            return "";
+        } catch (UnknownHostException e) {
+            Log.w(TAG, "getUUid:unknownHostException");
+            return UNKNOWN_HOST;
+        } catch (IOException e2) {
+            Log.w(TAG, "getUUid:exception", e2);
+            return "";
         }
-        catch (IOException iOException) {
-            Log.w((String)TAG, (String)"checkLoginStatus:exception", (Throwable)iOException);
+    }
+
+    public static String pushLogin(String wxuin, String cookie) {
+        try {
+            String text = NetUtil.getHttpsResponse(String.format(PUSH_LOGIN, new Object[]{wxuin}), 0, cookie);
+            Log.i(TAG, "pushLogin:httpRes=" + text);
+            JSONObject res = JSON.parseObject(text);
+            if (Constants.SyncCheckCode.SUCCESS.equals(res.getString(Token.RET))) {
+                return res.getString("uuid");
+            }
+            return "";
+        } catch (IOException e) {
+            Log.w(TAG, "fastLogin:exception", e);
             return null;
         }
     }
 
-    private static String cookiesToStr(List<String> object) {
+    public static Properties parseText(String text) {
+        Properties prop = new Properties();
+        if (text != null && !text.isEmpty()) {
+            char[] chars = text.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            String key = null;
+            boolean singleQuoteCouple = true;
+            boolean doubleQuoteCouple = true;
+            for (int i = 0; i < chars.length; i++) {
+                char c = chars[i];
+                if (!doubleQuoteCouple && '\"' != c) {
+                    builder.append(chars[i]);
+                } else if (singleQuoteCouple || '\'' == c) {
+                    switch (c) {
+                        case 9:
+                        case 10:
+                        case 13:
+                        case ' ':
+                            break;
+                        case '\"':
+                            if (doubleQuoteCouple) {
+                                doubleQuoteCouple = false;
+                                break;
+                            } else {
+                                doubleQuoteCouple = true;
+                                break;
+                            }
+                        case '\'':
+                            if (singleQuoteCouple) {
+                                singleQuoteCouple = false;
+                                break;
+                            } else {
+                                singleQuoteCouple = true;
+                                break;
+                            }
+                        case ';':
+                            String value = builder.toString();
+                            builder.delete(0, builder.length());
+                            prop.setProperty(key, value);
+                            break;
+                        case '=':
+                            key = builder.toString();
+                            builder.delete(0, builder.length());
+                            break;
+                        default:
+                            builder.append(c);
+                            break;
+                    }
+                } else {
+                    builder.append(c);
+                }
+            }
+            if (!(key == null || builder.length() == 0)) {
+                String value2 = builder.toString();
+                builder.delete(0, builder.length());
+                prop.setProperty(key, value2);
+            }
+        }
+        return prop;
+    }
+
+    public static Properties checkLoginStatus(String uuid) {
+        try {
+            String url = String.format(LOGIN_CHECK_URL, new Object[]{uuid}) + System.currentTimeMillis();
+            Log.d(TAG, "checkLoginStatus:url=" + url);
+            String text = NetUtil.getHttpsResponse(url, 30000);
+            Log.d(TAG, "checkLoginStatus:result=" + text);
+            return parseText(text);
+        } catch (IOException e) {
+            Log.w(TAG, "checkLoginStatus:exception", e);
+            return null;
+        }
+    }
+
+    public static Token getToken(String url) {
+        Uri uri = Uri.parse(url);
+        WxHome.setWxBaseUri(uri.getScheme(), uri.getHost());
+        try {
+            HttpsURLConnection conn = NetUtil.getHttpsConnection(url + REDIRECT_SUFFIX, 30000);
+            conn.connect();
+            NodeList error = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(conn.getInputStream()).getElementsByTagName("error");
+            if (error == null || error.getLength() == 0) {
+                conn.disconnect();
+                return null;
+            }
+            Token token = new Token();
+            token.cookie = cookiesToStr((List) conn.getHeaderFields().get("Set-Cookie"));
+            Log.d(TAG, "getToken:cookie=" + token.cookie);
+            NodeList elements = error.item(0).getChildNodes();
+            for (int i = 0; i < elements.getLength(); i++) {
+                Node e = elements.item(i);
+                String value = e.getTextContent().trim();
+                String nodeName = e.getNodeName();
+                char c = 65535;
+                switch (nodeName.hashCode()) {
+                    case -1730959651:
+                        if (nodeName.equals(Token.IS_GRAY_SCALE)) {
+                            c = 6;
+                            break;
+                        }
+                        break;
+                    case 112801:
+                        if (nodeName.equals(Token.RET)) {
+                            c = 0;
+                            break;
+                        }
+                        break;
+                    case 3532044:
+                        if (nodeName.equals(Token.SKEY)) {
+                            c = 2;
+                            break;
+                        }
+                        break;
+                    case 113587789:
+                        if (nodeName.equals(Token.WXSID)) {
+                            c = 3;
+                            break;
+                        }
+                        break;
+                    case 113589721:
+                        if (nodeName.equals(Token.WXUIN)) {
+                            c = 4;
+                            break;
+                        }
+                        break;
+                    case 954925063:
+                        if (nodeName.equals("message")) {
+                            c = 1;
+                            break;
+                        }
+                        break;
+                    case 1713340154:
+                        if (nodeName.equals(Token.PASS_TICKET)) {
+                            c = 5;
+                            break;
+                        }
+                        break;
+                }
+                switch (c) {
+                    case 0:
+                        token.ret = Integer.parseInt(value);
+                        break;
+                    case 1:
+                        token.message = value;
+                        break;
+                    case 2:
+                        token.setSkey(value);
+                        break;
+                    case 3:
+                        token.setWxsid(value);
+                        break;
+                    case 4:
+                        token.setWxuin(value);
+                        break;
+                    case 5:
+                        token.setPassTicket(value);
+                        break;
+                    case 6:
+                        token.setIsGrayScale(value);
+                        break;
+                }
+            }
+            conn.disconnect();
+            Log.i(TAG, "getToken:token=" + JSON.toJSONString(token));
+            return token;
+        } catch (Exception e2) {
+            Log.w(TAG, "getToken:exception", e2);
+            return null;
+        }
+    }
+
+    private static String cookiesToStr(List<String> cookies) {
         StringBuilder stringBuilder = new StringBuilder();
-        object = object.iterator();
-        while (object.hasNext()) {
-            String string2 = (String)object.next();
-            stringBuilder.append(HttpCookie.parse(string2).get(0).toString() + ";");
+        for (String cookie : cookies) {
+            stringBuilder.append(HttpCookie.parse(cookie).get(0).toString() + ";");
         }
         return stringBuilder.toString();
     }
 
-    public static String formatQRUrl(String string2) {
-        return QR_URL + string2;
-    }
-
-    public static Bitmap getBase64Image(String object) {
-        object = Base64.decode((String)((String)object).replace("data:img/jpg;base64,", ""), (int)0);
-        return BitmapFactory.decodeByteArray((byte[])object, (int)0, (int)((Object)object).length);
-    }
-
-    /*
-     * Exception decompiling
-     */
-    public static Token getToken(String var0) {
-        /*
-         * This method has failed to decompile.  When submitting a bug report, please provide this stack trace, and (if you hold appropriate legal rights) the relevant class file.
-         * 
-         * org.benf.cfr.reader.util.ConfusedCFRException: Back jump on a try block [egrp 12[TRYBLOCK] [14 : 422->509)] java.lang.Exception
-         *     at org.benf.cfr.reader.bytecode.analysis.opgraph.Op02WithProcessedDataAndRefs.insertExceptionBlocks(Op02WithProcessedDataAndRefs.java:2289)
-         *     at org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysisInner(CodeAnalyser.java:414)
-         *     at org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysisOrWrapFail(CodeAnalyser.java:278)
-         *     at org.benf.cfr.reader.bytecode.CodeAnalyser.getAnalysis(CodeAnalyser.java:201)
-         *     at org.benf.cfr.reader.entities.attributes.AttributeCode.analyse(AttributeCode.java:94)
-         *     at org.benf.cfr.reader.entities.Method.analyse(Method.java:531)
-         *     at org.benf.cfr.reader.entities.ClassFile.analyseMid(ClassFile.java:1042)
-         *     at org.benf.cfr.reader.entities.ClassFile.analyseTop(ClassFile.java:929)
-         *     at org.benf.cfr.reader.Driver.doJarVersionTypes(Driver.java:257)
-         *     at org.benf.cfr.reader.Driver.doJar(Driver.java:139)
-         *     at org.benf.cfr.reader.CfrDriverImpl.analyse(CfrDriverImpl.java:73)
-         *     at org.benf.cfr.reader.Main.main(Main.java:49)
-         */
-        throw new IllegalStateException("Decompilation failed");
-    }
-
-    public static Bitmap getURLImage(String string2) {
-        HttpsURLConnection httpsURLConnection;
-        String string3;
-        String string4 = string3 = null;
+    public static Bitmap getURLImage(String url) {
+        Bitmap bmp = null;
         try {
-            httpsURLConnection = NetUtil.getHttpsConnection(string2, 6000);
-            string4 = string3;
-        }
-        catch (Exception exception) {
-            Log.w((String)TAG, (String)"getURLImage:exception", (Throwable)exception);
-            return string4;
-        }
-        httpsURLConnection.setUseCaches(false);
-        string4 = string3;
-        httpsURLConnection.connect();
-        string4 = string3;
-        InputStream inputStream = httpsURLConnection.getInputStream();
-        string4 = string3;
-        string4 = string2 = BitmapFactory.decodeStream((InputStream)inputStream);
-        inputStream.close();
-        string4 = string2;
-        httpsURLConnection.disconnect();
-        return string2;
-    }
-
-    public static String getUUid() {
-        long l2 = System.currentTimeMillis();
-        Properties properties = WxLogin.parseText(NetUtil.getHttpsResponse(JS_LOGIN_WX_URL + l2, 0));
-        String string2 = properties.getProperty(CODE_KEY);
-        String string3 = "";
-        try {
-            if ("200".equals(string2)) {
-                string3 = properties.getProperty(UUID_KEY).replaceAll("\"", "");
-            }
-            return string3;
-        }
-        catch (UnknownHostException unknownHostException) {
-            Log.w((String)TAG, (String)"getUUid:unknownHostException");
-            return UNKNOWN_HOST;
-        }
-        catch (IOException iOException) {
-            Log.w((String)TAG, (String)"getUUid:exception", (Throwable)iOException);
-            return "";
+            HttpsURLConnection conn = NetUtil.getHttpsConnection(url, 6000);
+            conn.setUseCaches(false);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bmp = BitmapFactory.decodeStream(is);
+            is.close();
+            conn.disconnect();
+            return bmp;
+        } catch (Exception e) {
+            Log.w(TAG, "getURLImage:exception", e);
+            return bmp;
         }
     }
 
-    /*
-     * Enabled aggressive block sorting
-     */
-    public static Properties parseText(String string2) {
-        String string3;
-        StringBuilder stringBuilder;
-        Properties properties;
-        block16: {
-            block15: {
-                properties = new Properties();
-                if (string2 == null || string2.isEmpty()) break block15;
-                char[] cArray = string2.toCharArray();
-                stringBuilder = new StringBuilder();
-                string2 = null;
-                boolean bl2 = true;
-                boolean bl3 = true;
-                for (int i2 = 0; i2 < cArray.length; ++i2) {
-                    boolean bl4;
-                    boolean bl5;
-                    char c2 = cArray[i2];
-                    if (!bl3 && '\"' != c2) {
-                        stringBuilder.append(cArray[i2]);
-                        bl5 = bl2;
-                        string3 = string2;
-                        bl4 = bl3;
-                    } else if (!bl2 && '\'' != c2) {
-                        stringBuilder.append(c2);
-                        bl4 = bl3;
-                        string3 = string2;
-                        bl5 = bl2;
-                    } else {
-                        bl4 = bl3;
-                        string3 = string2;
-                        bl5 = bl2;
-                        switch (c2) {
-                            case '\t': 
-                            case '\n': 
-                            case '\r': 
-                            case ' ': {
-                                break;
-                            }
-                            default: {
-                                stringBuilder.append(c2);
-                                bl4 = bl3;
-                                string3 = string2;
-                                bl5 = bl2;
-                                break;
-                            }
-                            case '\'': {
-                                bl5 = !bl2;
-                                bl4 = bl3;
-                                string3 = string2;
-                                break;
-                            }
-                            case '\"': {
-                                bl5 = !bl3;
-                                bl4 = bl5;
-                                string3 = string2;
-                                bl5 = bl2;
-                                break;
-                            }
-                            case '=': {
-                                string3 = stringBuilder.toString();
-                                stringBuilder.delete(0, stringBuilder.length());
-                                bl4 = bl3;
-                                bl5 = bl2;
-                                break;
-                            }
-                            case ';': {
-                                string3 = stringBuilder.toString();
-                                stringBuilder.delete(0, stringBuilder.length());
-                                properties.setProperty(string2, string3);
-                                bl4 = bl3;
-                                string3 = string2;
-                                bl5 = bl2;
-                            }
-                        }
-                    }
-                    bl3 = bl4;
-                    string2 = string3;
-                    bl2 = bl5;
-                }
-                if (string2 != null && stringBuilder.length() != 0) break block16;
-            }
-            return properties;
-        }
-        string3 = stringBuilder.toString();
-        stringBuilder.delete(0, stringBuilder.length());
-        properties.setProperty(string2, string3);
-        return properties;
-    }
-
-    public static String pushLogin(String object, String string2) {
-        object = String.format(PUSH_LOGIN, object);
-        try {
-            object = NetUtil.getHttpsResponse((String)object, 0, string2);
-            Log.i((String)TAG, (String)("pushLogin:httpRes=" + (String)object));
-            object = JSON.parseObject((String)object);
-            if ("0".equals(((JSONObject)object).getString("ret"))) {
-                return ((JSONObject)object).getString("uuid");
-            }
-            return "";
-        }
-        catch (IOException iOException) {
-            Log.w((String)TAG, (String)"fastLogin:exception", (Throwable)iOException);
-            return null;
-        }
+    public static Bitmap getBase64Image(String avatarUrl) {
+        byte[] decode = Base64.decode(avatarUrl.replace("data:img/jpg;base64,", ""), 0);
+        return BitmapFactory.decodeByteArray(decode, 0, decode.length);
     }
 }
-

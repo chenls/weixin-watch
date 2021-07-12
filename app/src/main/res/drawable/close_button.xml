@@ -5,7 +5,7 @@
         <layer-list>
             <item>
                 <shape android:shape="oval">
-                    <size android:height="@dimen/close_button_diameter" android:width="@dimen/close_button_diameter" />
+                    <size android:height="104.0dip" android:width="104.0dip" />
                     <solid android:color="@color/dismiss_close_pressed" />
                 </shape>
             </item>
@@ -18,7 +18,7 @@
         <layer-list>
             <item>
                 <shape android:shape="oval">
-                    <size android:height="@dimen/close_button_diameter" android:width="@dimen/close_button_diameter" />
+                    <size android:height="104.0dip" android:width="104.0dip" />
                     <solid android:color="@color/dismiss_close" />
                 </shape>
             </item>

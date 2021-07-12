@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.os.Parcel
- *  android.os.Parcelable
- *  android.os.Parcelable$Creator
- *  android.util.Log
- */
 package com.riyuxihe.weixinqingliao.model;
 
 import android.os.Parcel;
@@ -16,17 +7,14 @@ import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 import java.util.List;
 
-public class Contact
-implements Parcelable,
-Comparable<Contact> {
-    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>(){
-
+public class Contact implements Parcelable, Comparable<Contact> {
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
         public Contact createFromParcel(Parcel parcel) {
             return new Contact(parcel);
         }
 
-        public Contact[] newArray(int n2) {
-            return new Contact[n2];
+        public Contact[] newArray(int i) {
+            return new Contact[i];
         }
     };
     public int ContactFlag;
@@ -55,29 +43,6 @@ Comparable<Contact> {
         this.Statues = parcel.readInt();
     }
 
-    @Override
-    public int compareTo(Contact contact) {
-        if (this.ContactFlag != contact.ContactFlag) {
-            return this.ContactFlag - contact.ContactFlag;
-        }
-        String string2 = this.RemarkPYQuanPin.toLowerCase();
-        if (StringUtil.isNullOrEmpty(this.RemarkPYQuanPin)) {
-            string2 = this.PYQuanPin.toLowerCase();
-        }
-        String string3 = contact.RemarkPYQuanPin.toLowerCase();
-        if (StringUtil.isNullOrEmpty(contact.RemarkPYQuanPin)) {
-            string3 = contact.PYQuanPin.toLowerCase();
-        }
-        return string2.compareTo(string3);
-    }
-
-    public int describeContents() {
-        return 0;
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
     public String getShowName() {
         if (StringUtil.notNullOrEmpty(this.DisplayName)) {
             return this.DisplayName;
@@ -88,41 +53,45 @@ Comparable<Contact> {
         if (StringUtil.notNullOrEmpty(this.NickName)) {
             return this.NickName;
         }
-        if (!WxHome.isGroupUserName(this.UserName)) {
+        if (!WxHome.isGroupUserName(this.UserName) || this.MemberList == null) {
             return "";
         }
-        if (this.MemberList == null) {
-            return "";
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i2 = 0; i2 < 3 && i2 < this.MemberList.size(); ++i2) {
-            stringBuilder.append(this.MemberList.get(i2).getShowName());
-            if (i2 >= this.MemberList.size() - 1) continue;
-            if (i2 == 2) {
-                stringBuilder.append("...");
-                continue;
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < 3 && i < this.MemberList.size()) {
+            sb.append(this.MemberList.get(i).getShowName());
+            if (i < this.MemberList.size() - 1) {
+                if (i == 2) {
+                    sb.append("...");
+                } else {
+                    sb.append("、");
+                }
             }
-            stringBuilder.append("\u3001");
+            i++;
         }
-        return stringBuilder.toString();
+        return sb.toString();
     }
 
-    /*
-     * Enabled aggressive block sorting
-     */
-    public boolean isMuted() {
-        Log.d((String)"Contact", (String)("isMuted, NickName=" + this.NickName + " Statues=" + this.Statues + " ContactFlag=" + this.ContactFlag));
-        return WxHome.isGroupUserName(this.UserName) && this.Statues == 0 || (this.ContactFlag & 0x200) == 1;
-    }
-
-    /*
-     * Enabled aggressive block sorting
-     */
     public boolean isPublic() {
-        return !WxHome.isGroupUserName(this.UserName) && (this.VerifyFlag & 8) != 0;
+        if (!WxHome.isGroupUserName(this.UserName) && (this.VerifyFlag & 8) != 0) {
+            return true;
+        }
+        return false;
     }
 
-    public void writeToParcel(Parcel parcel, int n2) {
+    public boolean isMuted() {
+        Log.d("Contact", "isMuted, NickName=" + this.NickName + " Statues=" + this.Statues + " ContactFlag=" + this.ContactFlag);
+        if ((!WxHome.isGroupUserName(this.UserName) || this.Statues != 0) && (this.ContactFlag & 512) != 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(this.UserName);
         parcel.writeString(this.NickName);
         parcel.writeString(this.HeadImgUrl);
@@ -131,5 +100,19 @@ Comparable<Contact> {
         parcel.writeString(this.DisplayName);
         parcel.writeInt(this.Statues);
     }
-}
 
+    public int compareTo(Contact another) {
+        if (this.ContactFlag != another.ContactFlag) {
+            return this.ContactFlag - another.ContactFlag;
+        }
+        String displayPY0 = this.RemarkPYQuanPin.toLowerCase();
+        if (StringUtil.isNullOrEmpty(this.RemarkPYQuanPin)) {
+            displayPY0 = this.PYQuanPin.toLowerCase();
+        }
+        String displayPY1 = another.RemarkPYQuanPin.toLowerCase();
+        if (StringUtil.isNullOrEmpty(another.RemarkPYQuanPin)) {
+            displayPY1 = another.PYQuanPin.toLowerCase();
+        }
+        return displayPY0.compareTo(displayPY1);
+    }
+}

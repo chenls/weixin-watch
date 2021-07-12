@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set android:ordering="sequentially"
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially">
     <set android:ordering="together">
-        <objectAnimator android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="0" android:propertyName="scaleX" />
-        <objectAnimator android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="0" android:propertyName="scaleY" />
+        <objectAnimator
+            android:duration="150"
+            android:propertyName="scaleX"
+            android:valueFrom="0"
+            android:valueTo="0" />
+        <objectAnimator
+            android:duration="150"
+            android:propertyName="scaleY"
+            android:valueFrom="0"
+            android:valueTo="0" />
     </set>
     <set android:ordering="together">
-        <objectAnimator android:interpolator="@android:interpolator/decelerate_cubic" android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="1" android:propertyName="scaleX" />
-        <objectAnimator android:interpolator="@android:interpolator/decelerate_cubic" android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="1" android:propertyName="scaleY" />
+        <objectAnimator
+            android:duration="150"
+            android:interpolator="@android:interpolator/decelerate_cubic"
+            android:propertyName="scaleX"
+            android:valueFrom="0"
+            android:valueTo="1" />
+        <objectAnimator
+            android:duration="150"
+            android:interpolator="@android:interpolator/decelerate_cubic"
+            android:propertyName="scaleY"
+            android:valueFrom="0"
+            android:valueTo="1" />
     </set>
 </set>

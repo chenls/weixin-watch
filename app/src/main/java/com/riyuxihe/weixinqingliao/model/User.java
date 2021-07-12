@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.os.Bundle
- */
 package com.riyuxihe.weixinqingliao.model;
 
 import android.os.Bundle;
@@ -34,4 +28,3 @@ public class User {
         return bundle;
     }
 }
-

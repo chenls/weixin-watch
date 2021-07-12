@@ -1,18 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.media.MediaPlayer
- *  android.media.MediaPlayer$OnCompletionListener
- *  android.os.Environment
- *  android.view.LayoutInflater
- *  android.view.View
- *  android.view.View$OnClickListener
- *  android.view.ViewGroup
- *  android.widget.BaseAdapter
- *  android.widget.TextView
- */
 package com.riyuxihe.weixinqingliao;
 
 import android.content.Context;
@@ -29,12 +14,12 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.riyuxihe.weixinqingliao.model.ChatMsgEntity;
 import com.riyuxihe.weixinqingliao.model.Token;
 import com.riyuxihe.weixinqingliao.net.VolleySingleton;
+import com.riyuxihe.weixinqingliao.util.Constants;
 import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 import java.util.List;
 
-public class ChatMsgViewAdapter
-extends BaseAdapter {
+public class ChatMsgViewAdapter extends BaseAdapter {
     private static final String TAG = ChatMsgViewAdapter.class.getSimpleName();
     private List<ChatMsgEntity> coll;
     private Context ctx;
@@ -44,120 +29,91 @@ extends BaseAdapter {
     private RequestQueue mQueue;
     private Token token;
 
-    public ChatMsgViewAdapter(Context context, List<ChatMsgEntity> list, Token token) {
-        this.token = token;
+    public interface IMsgViewType {
+        public static final int IMVT_COM_MSG = 0;
+        public static final int IMVT_TO_MSG = 1;
+    }
+
+    public ChatMsgViewAdapter(Context context, List<ChatMsgEntity> coll2, Token token2) {
+        this.token = token2;
         this.ctx = context;
-        this.coll = list;
+        this.coll = coll2;
         this.mQueue = VolleySingleton.getInstance().getRequestQueue();
-        this.imageLoader = VolleySingleton.getInstance().getImageLoader(token.cookie);
-        this.mInflater = LayoutInflater.from((Context)context);
-    }
-
-    private void playMusic(String string2) {
-        try {
-            if (this.mMediaPlayer.isPlaying()) {
-                this.mMediaPlayer.stop();
-            }
-            this.mMediaPlayer.reset();
-            this.mMediaPlayer.setDataSource(string2);
-            this.mMediaPlayer.prepare();
-            this.mMediaPlayer.start();
-            this.mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
-
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                }
-            });
-            return;
-        }
-        catch (Exception exception) {
-            exception.printStackTrace();
-            return;
-        }
-    }
-
-    private void stop() {
+        this.imageLoader = VolleySingleton.getInstance().getImageLoader(token2.cookie);
+        this.mInflater = LayoutInflater.from(context);
     }
 
     public int getCount() {
         return this.coll.size();
     }
 
-    public Object getItem(int n2) {
-        return this.coll.get(n2);
+    public Object getItem(int position) {
+        return this.coll.get(position);
     }
 
-    public long getItemId(int n2) {
-        return n2;
+    public long getItemId(int position) {
+        return (long) position;
     }
 
-    public int getItemViewType(int n2) {
-        if (this.coll.get(n2).getMsgType()) {
+    public int getItemViewType(int position) {
+        if (this.coll.get(position).getMsgType()) {
             return 0;
         }
         return 1;
-    }
-
-    /*
-     * WARNING - void declaration
-     * Enabled aggressive block sorting
-     */
-    public View getView(int n2, View view, ViewGroup object) {
-        void var3_5;
-        Object object2 = this.coll.get(n2);
-        boolean bl2 = ((ChatMsgEntity)object2).getMsgType();
-        if (view == null) {
-            view = bl2 ? this.mInflater.inflate(2130968607, null) : this.mInflater.inflate(2130968608, null);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.tvSendTime = (TextView)view.findViewById(2131689626);
-            viewHolder.tvUserName = (TextView)view.findViewById(2131689630);
-            viewHolder.tvContent = (TextView)view.findViewById(2131689628);
-            viewHolder.tvTime = (TextView)view.findViewById(2131689629);
-            viewHolder.ivUserhead = (NetworkImageView)view.findViewById(2131689627);
-            viewHolder.isComMsg = bl2;
-            view.setTag((Object)viewHolder);
-        } else {
-            ViewHolder viewHolder = (ViewHolder)view.getTag();
-        }
-        var3_5.tvSendTime.setText((CharSequence)((ChatMsgEntity)object2).getDate());
-        if (((ChatMsgEntity)object2).getTime() != null && !((ChatMsgEntity)object2).getTime().isEmpty()) {
-            var3_5.tvContent.setText((CharSequence)"");
-            var3_5.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, 2130837610, 0);
-            var3_5.tvTime.setText((CharSequence)((ChatMsgEntity)object2).getTime());
-        } else {
-            var3_5.tvContent.setText((CharSequence)((ChatMsgEntity)object2).getText());
-            var3_5.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            var3_5.tvTime.setText((CharSequence)"");
-        }
-        var3_5.tvContent.setOnClickListener(new View.OnClickListener((ChatMsgEntity)object2){
-            final /* synthetic */ ChatMsgEntity val$entity;
-            {
-                this.val$entity = chatMsgEntity;
-            }
-
-            public void onClick(View view) {
-                if (this.val$entity.getTime() != null && !this.val$entity.getTime().isEmpty()) {
-                    ChatMsgViewAdapter.this.playMusic(Environment.getExternalStorageDirectory() + "/weixinQingliao/" + this.val$entity.getText());
-                }
-            }
-        });
-        if (WxHome.isGroupUserName(((ChatMsgEntity)object2).getUserName())) {
-            var3_5.tvUserName.setText((CharSequence)StringUtil.filterHtml(((ChatMsgEntity)object2).getMemberNickName()));
-            object2 = WxHome.getIconUrlByUsername(this.token, ((ChatMsgEntity)object2).getMemberUserName());
-        } else {
-            var3_5.tvUserName.setText((CharSequence)StringUtil.filterHtml(((ChatMsgEntity)object2).getNickName()));
-            object2 = WxHome.getIconUrlByUsername(this.token, ((ChatMsgEntity)object2).getUserName());
-        }
-        var3_5.ivUserhead.setImageUrl((String)object2, this.imageLoader);
-        return view;
     }
 
     public int getViewTypeCount() {
         return 2;
     }
 
-    public static interface IMsgViewType {
-        public static final int IMVT_COM_MSG = 0;
-        public static final int IMVT_TO_MSG = 1;
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+        String imgUrl;
+        final ChatMsgEntity entity = this.coll.get(position);
+        boolean isComMsg = entity.getMsgType();
+        if (convertView == null) {
+            if (isComMsg) {
+                convertView = this.mInflater.inflate(R.layout.chatting_item_msg_text_left, (ViewGroup) null);
+            } else {
+                convertView = this.mInflater.inflate(R.layout.chatting_item_msg_text_right, (ViewGroup) null);
+            }
+            viewHolder = new ViewHolder();
+            viewHolder.tvSendTime = (TextView) convertView.findViewById(R.id.tv_sendtime);
+            viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tv_username);
+            viewHolder.tvContent = (TextView) convertView.findViewById(R.id.tv_chatcontent);
+            viewHolder.tvTime = (TextView) convertView.findViewById(R.id.tv_time);
+            viewHolder.ivUserhead = (NetworkImageView) convertView.findViewById(R.id.iv_userhead);
+            viewHolder.isComMsg = isComMsg;
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+        viewHolder.tvSendTime.setText(entity.getDate());
+        if (entity.getTime() == null || entity.getTime().isEmpty()) {
+            viewHolder.tvContent.setText(entity.getText());
+            viewHolder.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            viewHolder.tvTime.setText("");
+        } else {
+            viewHolder.tvContent.setText("");
+            viewHolder.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.chatto_voice_playing, 0);
+            viewHolder.tvTime.setText(entity.getTime());
+        }
+        viewHolder.tvContent.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (entity.getTime() != null && !entity.getTime().isEmpty()) {
+                    ChatMsgViewAdapter.this.playMusic(Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY + entity.getText());
+                }
+            }
+        });
+        if (WxHome.isGroupUserName(entity.getUserName())) {
+            viewHolder.tvUserName.setText(StringUtil.filterHtml(entity.getMemberNickName()));
+            imgUrl = WxHome.getIconUrlByUsername(this.token, entity.getMemberUserName());
+        } else {
+            viewHolder.tvUserName.setText(StringUtil.filterHtml(entity.getNickName()));
+            imgUrl = WxHome.getIconUrlByUsername(this.token, entity.getUserName());
+        }
+        viewHolder.ivUserhead.setImageUrl(imgUrl, this.imageLoader);
+        return convertView;
     }
 
     static class ViewHolder {
@@ -171,5 +127,26 @@ extends BaseAdapter {
         ViewHolder() {
         }
     }
-}
 
+    /* access modifiers changed from: private */
+    public void playMusic(String name) {
+        try {
+            if (this.mMediaPlayer.isPlaying()) {
+                this.mMediaPlayer.stop();
+            }
+            this.mMediaPlayer.reset();
+            this.mMediaPlayer.setDataSource(name);
+            this.mMediaPlayer.prepare();
+            this.mMediaPlayer.start();
+            this.mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stop() {
+    }
+}

@@ -1,17 +1,10 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.provider.BaseColumns
- */
 package com.riyuxihe.weixinqingliao.dao;
 
 import android.provider.BaseColumns;
 
 public class MessageContract {
 
-    public static abstract class MessageEntry
-    implements BaseColumns {
+    public static abstract class MessageEntry implements BaseColumns {
         public static final String COLUMN_CLIENT_MSG_ID = "client_msg_id";
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_CREATE_TIME = "create_time";
@@ -27,4 +20,3 @@ public class MessageContract {
         public static final String TABLE_NAME = "message";
     }
 }
-

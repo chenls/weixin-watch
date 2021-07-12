@@ -1,22 +1,5 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.content.Intent
- *  android.os.Bundle
- *  android.util.Log
- *  android.view.LayoutInflater
- *  android.view.View
- *  android.view.ViewGroup
- *  android.widget.AdapterView
- *  android.widget.AdapterView$OnItemClickListener
- *  android.widget.ListAdapter
- *  android.widget.ListView
- */
 package com.riyuxihe.weixinqingliao;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,18 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
-import com.riyuxihe.weixinqingliao.ChatActivity;
-import com.riyuxihe.weixinqingliao.ListViewAdapter;
 import com.riyuxihe.weixinqingliao.dao.MessageManager;
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Msg;
 import com.riyuxihe.weixinqingliao.model.Token;
 import com.riyuxihe.weixinqingliao.model.User;
 import com.riyuxihe.weixinqingliao.net.VolleySingleton;
+import com.riyuxihe.weixinqingliao.util.Prefs;
 import com.riyuxihe.weixinqingliao.util.TimeUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 import java.util.ArrayList;
@@ -46,243 +27,191 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class InitFragment
-extends Fragment {
+public class InitFragment extends Fragment {
     private static final String TAG = "InitFragment";
-    private ListViewAdapter adapter;
+    /* access modifiers changed from: private */
+    public ListViewAdapter adapter;
     private ArrayList<Contact> initList;
     private ListView listView;
-    private List<HashMap<String, Object>> mData;
+    /* access modifiers changed from: private */
+    public List<HashMap<String, Object>> mData;
     private RequestQueue mQueue;
-    private Token token;
-    private User user;
+    /* access modifiers changed from: private */
+    public Token token;
+    /* access modifiers changed from: private */
+    public User user;
 
-    private List<HashMap<String, Object>> getData(List<Contact> object) {
-        ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
-        object = object.iterator();
-        while (object.hasNext()) {
-            Contact contact = (Contact)object.next();
-            if (contact.isPublic()) continue;
-            HashMap<String, String> hashMap = new HashMap<String, String>();
-            hashMap.put("title", contact.getShowName());
-            hashMap.put("time", "");
-            hashMap.put("info", "");
-            hashMap.put("img", WxHome.getHeadImgUrl(contact.HeadImgUrl));
-            hashMap.put("userName", contact.UserName);
-            arrayList.add(hashMap);
+    @Nullable
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_init, container, false);
+        initView(view);
+        return view;
+    }
+
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            this.token = new Token();
+            this.token.fromBundle(getArguments().getBundle(Prefs.Key.TOKEN));
+            this.user = new User();
+            this.user.fromBundle(getArguments().getBundle("user"));
+            this.initList = getArguments().getParcelableArrayList("init");
         }
-        return arrayList;
+        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
+        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
     }
 
-    public static InitFragment newInstance(Token token, User user, ArrayList<Contact> arrayList) {
-        InitFragment initFragment = new InitFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBundle("token", token.toBundle());
-        bundle.putBundle("user", user.toBundle());
-        bundle.putParcelableArrayList("init", arrayList);
-        initFragment.setArguments(bundle);
-        return initFragment;
-    }
-
-    public void addExInitList(List<Contact> collection) {
+    public void addExInitList(List<Contact> exInitList) {
         if (this.initList != null) {
-            Object object = this.getData((List<Contact>)collection);
-            collection = new HashSet();
-            Object object2 = this.mData.iterator();
-            while (object2.hasNext()) {
-                ((HashSet)collection).add((Contact)((Object)object2.next().get("userName").toString()));
+            List<HashMap<String, Object>> exData = getData(exInitList);
+            HashSet<String> existedUsername = new HashSet<>();
+            for (HashMap<String, Object> values : this.mData) {
+                existedUsername.add(values.get("userName").toString());
             }
-            object = object.iterator();
-            while (object.hasNext()) {
-                object2 = (HashMap)object.next();
-                if (((HashSet)collection).contains(((HashMap)object2).get("userName").toString())) continue;
-                this.mData.add((HashMap<String, Object>)object2);
+            for (HashMap<String, Object> values2 : exData) {
+                if (!existedUsername.contains(values2.get("userName").toString())) {
+                    this.mData.add(values2);
+                }
             }
             this.adapter.notifyDataSetChanged();
         }
     }
 
-    /*
-     * Unable to fully structure code
-     */
-    public void comeNewMessage(Msg var1_1) {
-        block21: {
-            block19: {
-                block20: {
-                    block17: {
-                        block18: {
-                            block22: {
-                                if (this.token == null) {
-                                    Log.d((String)"InitFragment", (String)"comeNewMessage:Initfragment not created yet");
-                                    return;
-                                }
-                                var5_2 = "";
-                                if (var1_1.MsgType != 1) break block22;
-                                var5_2 = var1_1.Content;
-lbl9:
-                                // 3 sources
-
-                                while (true) {
-                                    var6_3 = "";
-                                    if (var1_1.MsgType != 51) {
-                                        var6_3 = TimeUtil.getDate();
-                                    }
-                                    var4_4 = false;
-                                    if (!var1_1.FromUserName.equals(this.user.UserName)) break block17;
-                                    var3_5 = 0;
-lbl16:
-                                    // 2 sources
-
-                                    while (true) {
-                                        var2_7 = var4_4;
-                                        if (var3_5 < this.mData.size()) {
-                                            var7_8 = this.mData.get(var3_5);
-                                            if (!var1_1.ToUserName.equals(var7_8.get("userName"))) break block18;
-                                            var7_8.put("info", var5_2);
-                                            var7_8.put("time", var6_3);
-                                            Collections.swap(this.mData, 0, var3_5);
-                                            var2_7 = true;
-                                        }
-lbl27:
-                                        // 5 sources
-
-                                        while (true) {
-                                            if (var2_7) ** GOTO lbl47
-                                            var7_8 = new HashMap<K, V>();
-                                            var7_8.put("time", var6_3);
-                                            var7_8.put("info", var5_2);
-                                            if (!var1_1.ToUserName.equals(this.user.UserName)) break block19;
-                                            var7_8.put("title", var1_1.fromNickName);
-                                            if (!WxHome.isGroupUserName(var1_1.FromUserName)) break block20;
-                                            var7_8.put("img", WxHome.getHeadUrlByUsername(this.token, var1_1.FromUserName));
-lbl40:
-                                            // 2 sources
-
-                                            while (true) {
-                                                var7_8.put("userName", var1_1.FromUserName);
-lbl43:
-                                                // 2 sources
-
-                                                while (true) {
-                                                    if (this.mData != null) {
-                                                        if (var1_1.MsgType == 51) break block21;
-                                                        this.mData.add(0, var7_8);
-                                                    }
-lbl47:
-                                                    // 5 sources
-
-                                                    while (true) {
-                                                        this.adapter.notifyDataSetChanged();
-                                                        if (var1_1.MsgType == 51) ** continue;
-                                                        new MessageManager((Context)this.getActivity()).insertMessage(var1_1);
-                                                        return;
-                                                    }
-                                                    break;
-                                                }
-                                                break;
-                                            }
-                                            break;
-                                        }
-                                        break;
-                                    }
-                                    break;
-                                }
-                            }
-                            if (var1_1.MsgType != 34) ** GOTO lbl9
-                            var5_2 = "[\u8bed\u97f3]";
-                            ** while (true)
-                        }
-                        ++var3_5;
-                        ** while (true)
-                    }
-                    var3_6 = 0;
-                    while (true) {
-                        var2_7 = var4_4;
-                        if (var3_6 >= this.mData.size()) ** GOTO lbl27
-                        var7_8 = this.mData.get(var3_6);
-                        if (var1_1.FromUserName.equals(var7_8.get("userName"))) {
-                            var7_8.put("info", var5_2);
-                            var7_8.put("time", var6_3);
-                            if (var1_1.MsgType != 51) {
-                                Collections.swap(this.mData, 0, var3_6);
-                            }
-                            var2_7 = true;
-                            ** continue;
-                        }
-                        ++var3_6;
-                    }
-                }
-                var7_8.put("img", WxHome.getIconUrlByUsername(this.token, var1_1.FromUserName));
-                ** while (true)
-            }
-            var7_8.put("title", var1_1.toNickName);
-            if (WxHome.isGroupUserName(var1_1.ToUserName)) {
-                var7_8.put("img", WxHome.getHeadUrlByUsername(this.token, var1_1.ToUserName));
-lbl86:
-                // 2 sources
-
-                while (true) {
-                    var7_8.put("userName", var1_1.ToUserName);
-                    ** continue;
+    public void comeNewMessage(Msg msg) {
+        if (this.token == null) {
+            Log.d(TAG, "comeNewMessage:Initfragment not created yet");
+            return;
+        }
+        String info = "";
+        if (msg.MsgType == 1) {
+            info = msg.Content;
+        } else if (msg.MsgType == 34) {
+            info = "[语音]";
+        }
+        String time = "";
+        if (msg.MsgType != 51) {
+            time = TimeUtil.getDate();
+        }
+        boolean exist = false;
+        if (!msg.FromUserName.equals(this.user.UserName)) {
+            int i = 0;
+            while (true) {
+                if (i >= this.mData.size()) {
                     break;
                 }
+                HashMap<String, Object> map = this.mData.get(i);
+                if (msg.FromUserName.equals(map.get("userName"))) {
+                    map.put("info", info);
+                    map.put("time", time);
+                    if (msg.MsgType != 51) {
+                        Collections.swap(this.mData, 0, i);
+                    }
+                    exist = true;
+                } else {
+                    i++;
+                }
             }
-            var7_8.put("img", WxHome.getIconUrlByUsername(this.token, var1_1.ToUserName));
-            ** while (true)
+        } else {
+            int i2 = 0;
+            while (true) {
+                if (i2 >= this.mData.size()) {
+                    break;
+                }
+                HashMap<String, Object> map2 = this.mData.get(i2);
+                if (msg.ToUserName.equals(map2.get("userName"))) {
+                    map2.put("info", info);
+                    map2.put("time", time);
+                    Collections.swap(this.mData, 0, i2);
+                    exist = true;
+                    break;
+                }
+                i2++;
+            }
         }
-        this.mData.add(var7_8);
-        ** while (true)
+        if (!exist) {
+            HashMap<String, Object> map3 = new HashMap<>();
+            map3.put("time", time);
+            map3.put("info", info);
+            if (msg.ToUserName.equals(this.user.UserName)) {
+                map3.put("title", msg.fromNickName);
+                if (WxHome.isGroupUserName(msg.FromUserName)) {
+                    map3.put("img", WxHome.getHeadUrlByUsername(this.token, msg.FromUserName));
+                } else {
+                    map3.put("img", WxHome.getIconUrlByUsername(this.token, msg.FromUserName));
+                }
+                map3.put("userName", msg.FromUserName);
+            } else {
+                map3.put("title", msg.toNickName);
+                if (WxHome.isGroupUserName(msg.ToUserName)) {
+                    map3.put("img", WxHome.getHeadUrlByUsername(this.token, msg.ToUserName));
+                } else {
+                    map3.put("img", WxHome.getIconUrlByUsername(this.token, msg.ToUserName));
+                }
+                map3.put("userName", msg.ToUserName);
+            }
+            if (this.mData != null) {
+                if (msg.MsgType != 51) {
+                    this.mData.add(0, map3);
+                } else {
+                    this.mData.add(map3);
+                }
+            }
+        }
+        this.adapter.notifyDataSetChanged();
+        if (msg.MsgType != 51) {
+            new MessageManager(getActivity()).insertMessage(msg);
+        }
+    }
+
+    public static InitFragment newInstance(Token token2, User user2, ArrayList<Contact> contacts) {
+        InitFragment initFragment = new InitFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBundle(Prefs.Key.TOKEN, token2.toBundle());
+        bundle.putBundle("user", user2.toBundle());
+        bundle.putParcelableArrayList("init", contacts);
+        initFragment.setArguments(bundle);
+        return initFragment;
     }
 
     public void initView(View view) {
-        this.mData = this.getData(this.initList);
-        this.adapter = new ListViewAdapter(this.getActivity(), this.token.cookie, this.mData);
-        this.listView = (ListView)view.findViewById(2131689657);
-        this.listView.setAdapter((ListAdapter)this.adapter);
-        view = this.getActivity().getLayoutInflater().inflate(2130968628, (ViewGroup)this.listView, false);
-        this.listView.addFooterView(view);
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            public void onItemClick(AdapterView<?> intent, View object, int n2, long l2) {
-                if (n2 >= InitFragment.this.mData.size()) {
-                    return;
+        this.mData = getData(this.initList);
+        this.adapter = new ListViewAdapter(getActivity(), this.token.cookie, this.mData);
+        this.listView = (ListView) view.findViewById(R.id.listView1);
+        this.listView.setAdapter(this.adapter);
+        this.listView.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.footer_view, this.listView, false));
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i < InitFragment.this.mData.size()) {
+                    Intent intent = new Intent(InitFragment.this.getActivity(), ChatActivity.class);
+                    intent.putExtra(Prefs.Key.TOKEN, InitFragment.this.token.toBundle());
+                    User toUser = new User();
+                    toUser.UserName = ((HashMap) InitFragment.this.mData.get(i)).get("userName").toString();
+                    toUser.NickName = ((HashMap) InitFragment.this.mData.get(i)).get("title").toString();
+                    toUser.HeadImgUrl = ((HashMap) InitFragment.this.mData.get(i)).get("img").toString();
+                    intent.putExtra("to", toUser.toBundle());
+                    intent.putExtra("from", InitFragment.this.user.toBundle());
+                    ((HashMap) InitFragment.this.mData.get(i)).put("info", "");
+                    ((HashMap) InitFragment.this.mData.get(i)).put("time", "");
+                    InitFragment.this.adapter.notifyDataSetChanged();
+                    InitFragment.this.startActivity(intent);
                 }
-                intent = new Intent((Context)InitFragment.this.getActivity(), ChatActivity.class);
-                intent.putExtra("token", InitFragment.this.token.toBundle());
-                object = new User();
-                ((User)object).UserName = ((HashMap)InitFragment.this.mData.get(n2)).get("userName").toString();
-                ((User)object).NickName = ((HashMap)InitFragment.this.mData.get(n2)).get("title").toString();
-                ((User)object).HeadImgUrl = ((HashMap)InitFragment.this.mData.get(n2)).get("img").toString();
-                intent.putExtra("to", ((User)object).toBundle());
-                intent.putExtra("from", InitFragment.this.user.toBundle());
-                ((HashMap)InitFragment.this.mData.get(n2)).put("info", "");
-                ((HashMap)InitFragment.this.mData.get(n2)).put("time", "");
-                InitFragment.this.adapter.notifyDataSetChanged();
-                InitFragment.this.startActivity(intent);
             }
         });
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle bundle) {
-        super.onCreate(bundle);
-        if (this.getArguments() != null) {
-            this.token = new Token();
-            this.token.fromBundle(this.getArguments().getBundle("token"));
-            this.user = new User();
-            this.user.fromBundle(this.getArguments().getBundle("user"));
-            this.initList = this.getArguments().getParcelableArrayList("init");
+    private List<HashMap<String, Object>> getData(List<Contact> contacts) {
+        ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+        for (Contact contact : contacts) {
+            if (!contact.isPublic()) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("title", contact.getShowName());
+                map.put("time", "");
+                map.put("info", "");
+                map.put("img", WxHome.getHeadImgUrl(contact.HeadImgUrl));
+                map.put("userName", contact.UserName);
+                list.add(map);
+            }
         }
-        Log.d((String)TAG, (String)("onCreate:token=" + JSON.toJSONString(this.token)));
-        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
-    }
-
-    @Override
-    @Nullable
-    public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
-        layoutInflater = layoutInflater.inflate(2130968630, viewGroup, false);
-        this.initView((View)layoutInflater);
-        return layoutInflater;
+        return list;
     }
 }
-

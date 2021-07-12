@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ticwear.design.widget.TicklableFrameLayout android:layout_gravity="center_horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.v4.view.ViewPager android:layout_gravity="center_horizontal" android:id="@id/tic_datetimeContainer" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-    <ticwear.design.widget.CirclePageIndicator android:layout_gravity="center_horizontal" android:id="@id/tic_datetimeIndicator" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" />
-</ticwear.design.widget.TicklableFrameLayout>

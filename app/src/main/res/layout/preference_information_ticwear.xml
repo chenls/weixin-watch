@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:baselineAligned="false" style="@style/Widget.Ticwear.ListItem"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <View android:layout_gravity="center|top" android:background="@drawable/tic_separator_horizontal" android:layout_width="fill_parent" android:layout_height="0.5dip" />
-    <TextView android:textAppearance="?android:textAppearanceListItemSecondary" android:textColor="?android:textColorHint" android:id="@android:id/summary" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/preference_padding_vertical" android:layout_marginBottom="@dimen/preference_padding_vertical" android:maxLines="10" />
-</FrameLayout>

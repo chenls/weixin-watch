@@ -1,12 +1,8 @@
-/*
- * Decompiled with CFR 0.151.
- */
 package com.riyuxihe.weixinqingliao.protocol;
 
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Msg;
 import com.riyuxihe.weixinqingliao.model.SyncKey;
-import com.riyuxihe.weixinqingliao.protocol.BaseResponse;
 import java.util.List;
 
 public class MsgSyncResponse {
@@ -17,4 +13,3 @@ public class MsgSyncResponse {
     public List<Contact> ModContactList;
     public SyncKey SyncKey;
 }
-

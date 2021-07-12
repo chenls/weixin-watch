@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<animated-vector android:drawable="@drawable/tic_ic_switch_full"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <target android:name="container" android:animation="@animator/widget_two_state_scale_press" />
-    <target android:name="bgPath" android:animation="@animator/widget_two_state_color_to_on" />
-    <target android:name="fgOff" android:animation="@animator/widget_two_state_scale_small" />
-    <target android:name="fgOn" android:animation="@animator/widget_two_state_scale_vertical_large" />
-</animated-vector>

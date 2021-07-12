@@ -1,19 +1,10 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.database.sqlite.SQLiteDatabase
- *  android.database.sqlite.SQLiteOpenHelper
- */
 package com.riyuxihe.weixinqingliao.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class WechatDemoDbHelper
-extends SQLiteOpenHelper {
+public class WechatDemoDbHelper extends SQLiteOpenHelper {
     private static final String COMMA = ",";
     public static final String DATABASE_NAME = "WechatDemo.db";
     public static final int DATABASE_VERSION = 1;
@@ -23,20 +14,19 @@ extends SQLiteOpenHelper {
     private static final String TEXT = " TEXT";
 
     public WechatDemoDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, (SQLiteDatabase.CursorFactory) null, 1);
     }
 
-    public void onCreate(SQLiteDatabase sQLiteDatabase) {
-        sQLiteDatabase.execSQL(SQL_CREATE_ENTRIES);
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(SQL_CREATE_ENTRIES);
     }
 
-    public void onDowngrade(SQLiteDatabase sQLiteDatabase, int n2, int n3) {
-        this.onUpgrade(sQLiteDatabase, n2, n3);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
     }
 
-    public void onUpgrade(SQLiteDatabase sQLiteDatabase, int n2, int n3) {
-        sQLiteDatabase.execSQL(SQL_DELETE_ENTRIES);
-        this.onCreate(sQLiteDatabase);
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
     }
 }
-

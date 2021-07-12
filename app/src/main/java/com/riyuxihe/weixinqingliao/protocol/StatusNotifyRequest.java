@@ -1,9 +1,4 @@
-/*
- * Decompiled with CFR 0.151.
- */
 package com.riyuxihe.weixinqingliao.protocol;
-
-import com.riyuxihe.weixinqingliao.protocol.BaseRequest;
 
 public class StatusNotifyRequest {
     public BaseRequest BaseRequest;
@@ -12,4 +7,3 @@ public class StatusNotifyRequest {
     public String FromUserName;
     public String ToUserName;
 }
-

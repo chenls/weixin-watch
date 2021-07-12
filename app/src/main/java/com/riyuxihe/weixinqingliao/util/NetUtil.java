@@ -1,12 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.Context
- *  android.net.ConnectivityManager
- *  android.net.NetworkInfo$DetailedState
- *  android.util.Pair
- */
 package com.riyuxihe.weixinqingliao.util;
 
 import android.content.Context;
@@ -14,49 +5,47 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.util.Pair;
-import com.riyuxihe.weixinqingliao.util.StreamUtil;
+import com.riyuxihe.weixinqingliao.model.Token;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import javax.net.ssl.HttpsURLConnection;
 
 public class NetUtil {
     public static Pair<Boolean, Boolean> checkNet(@NonNull Context context) {
-        boolean bl2 = false;
-        if ((context = ((ConnectivityManager)context.getSystemService("connectivity")).getActiveNetworkInfo()) != null) {
-            boolean bl3 = context.isConnected();
-            if (context.getDetailedState() == NetworkInfo.DetailedState.BLOCKED) {
-                bl2 = true;
-            }
-            return Pair.create((Object)bl3, (Object)bl2);
+        boolean isBlocked = false;
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService("connectivity")).getActiveNetworkInfo();
+        if (activeNetworkInfo == null) {
+            return Pair.create(false, false);
         }
-        return Pair.create((Object)false, (Object)false);
+        boolean isConnected = activeNetworkInfo.isConnected();
+        if (activeNetworkInfo.getDetailedState() == NetworkInfo.DetailedState.BLOCKED) {
+            isBlocked = true;
+        }
+        return Pair.create(Boolean.valueOf(isConnected), Boolean.valueOf(isBlocked));
     }
 
-    public static HttpsURLConnection getHttpsConnection(String object, int n2) throws IOException {
-        object = (HttpsURLConnection)new URL((String)object).openConnection();
-        ((URLConnection)object).setRequestProperty("Referer", "https://wx.qq.com/");
-        ((URLConnection)object).setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/51.0.2704.79 Chrome/51.0.2704.79 Safari/537.36");
-        if (n2 > 0) {
-            ((URLConnection)object).setConnectTimeout(n2);
-        }
-        return object;
+    public static String getHttpsResponse(String url, int timeout) throws IOException {
+        return getHttpsResponse(url, timeout, (String) null);
     }
 
-    public static String getHttpsResponse(String string2, int n2) throws IOException {
-        return NetUtil.getHttpsResponse(string2, n2, null);
+    public static String getHttpsResponse(String url, int timeout, String cookie) throws IOException {
+        HttpsURLConnection conn = getHttpsConnection(url, timeout);
+        if (cookie != null) {
+            conn.setRequestProperty(Token.COOKIE, cookie);
+        }
+        conn.connect();
+        String text = StreamUtil.readFromStream(conn.getInputStream(), "utf-8");
+        conn.disconnect();
+        return text;
     }
 
-    public static String getHttpsResponse(String object, int n2, String string2) throws IOException {
-        object = NetUtil.getHttpsConnection((String)object, n2);
-        if (string2 != null) {
-            ((URLConnection)object).setRequestProperty("Cookie", string2);
+    public static HttpsURLConnection getHttpsConnection(String url, int timeout) throws IOException {
+        HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+        conn.setRequestProperty("Referer", "https://wx.qq.com/");
+        conn.setRequestProperty("User-Agent", Constants.USER_AGENT);
+        if (timeout > 0) {
+            conn.setConnectTimeout(timeout);
         }
-        ((URLConnection)object).connect();
-        string2 = StreamUtil.readFromStream(((URLConnection)object).getInputStream(), "utf-8");
-        ((HttpURLConnection)object).disconnect();
-        return string2;
+        return conn;
     }
 }
-

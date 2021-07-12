@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.os.Bundle
- */
 package com.riyuxihe.weixinqingliao.model;
 
 import android.os.Bundle;
@@ -26,56 +20,44 @@ public class Token {
     private String wxsid;
     private String wxuin;
 
-    public void fromBundle(Bundle bundle) {
-        if (bundle == null) {
-            return;
-        }
-        this.skey = bundle.getString(SKEY);
-        this.wxsid = bundle.getString(WXSID);
-        this.wxuin = bundle.getString(WXUIN);
-        this.passTicket = bundle.getString(PASS_TICKET);
-        this.isGrayScale = bundle.getString(IS_GRAY_SCALE);
-        this.cookie = bundle.getString(COOKIE);
-    }
-
-    public String getIsGrayScale() {
-        return this.isGrayScale;
-    }
-
-    public String getPassTicket() {
-        return this.passTicket;
-    }
-
     public String getSkey() {
         return this.skey;
+    }
+
+    public void setSkey(String skey2) {
+        this.skey = skey2;
     }
 
     public String getWxsid() {
         return this.wxsid;
     }
 
+    public void setWxsid(String wxsid2) {
+        this.wxsid = wxsid2;
+    }
+
     public String getWxuin() {
         return this.wxuin;
     }
 
-    public void setIsGrayScale(String string2) {
-        this.isGrayScale = string2;
+    public void setWxuin(String wxuin2) {
+        this.wxuin = wxuin2;
     }
 
-    public void setPassTicket(String string2) {
-        this.passTicket = string2;
+    public String getPassTicket() {
+        return this.passTicket;
     }
 
-    public void setSkey(String string2) {
-        this.skey = string2;
+    public void setPassTicket(String passTicket2) {
+        this.passTicket = passTicket2;
     }
 
-    public void setWxsid(String string2) {
-        this.wxsid = string2;
+    public String getIsGrayScale() {
+        return this.isGrayScale;
     }
 
-    public void setWxuin(String string2) {
-        this.wxuin = string2;
+    public void setIsGrayScale(String isGrayScale2) {
+        this.isGrayScale = isGrayScale2;
     }
 
     public Bundle toBundle() {
@@ -88,5 +70,15 @@ public class Token {
         bundle.putString(COOKIE, this.cookie);
         return bundle;
     }
-}
 
+    public void fromBundle(Bundle bundle) {
+        if (bundle != null) {
+            this.skey = bundle.getString(SKEY);
+            this.wxsid = bundle.getString(WXSID);
+            this.wxuin = bundle.getString(WXUIN);
+            this.passTicket = bundle.getString(PASS_TICKET);
+            this.isGrayScale = bundle.getString(IS_GRAY_SCALE);
+            this.cookie = bundle.getString(COOKIE);
+        }
+    }
+}

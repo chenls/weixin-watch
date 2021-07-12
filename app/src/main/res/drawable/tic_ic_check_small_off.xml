@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<vector android:height="@dimen/tic_compound_button_drawable_size_small" android:width="@dimen/tic_compound_button_drawable_size_small" android:viewportWidth="104.0" android:viewportHeight="104.0"
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="?android:colorControlNormal" android:pathData="@string/tic.svg.btn.two_state.bg" />
-</vector>

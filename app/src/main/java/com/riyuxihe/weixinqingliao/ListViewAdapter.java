@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.app.Activity
- *  android.view.View
- *  android.view.ViewGroup
- *  android.widget.BaseAdapter
- *  android.widget.TextView
- */
 package com.riyuxihe.weixinqingliao;
 
 import android.app.Activity;
@@ -23,63 +13,13 @@ import com.riyuxihe.weixinqingliao.util.StringUtil;
 import java.util.HashMap;
 import java.util.List;
 
-public class ListViewAdapter
-extends BaseAdapter {
+public class ListViewAdapter extends BaseAdapter {
     private static final String TAG = "ListViewAdapter";
     private String cookie;
     private ImageLoader imageLoader;
     private Activity mContext;
     private List<HashMap<String, Object>> mData;
-    private RequestQueue mQueue;
-
-    public ListViewAdapter(Activity activity, String string2, List<HashMap<String, Object>> list) {
-        this.mContext = activity;
-        this.cookie = string2;
-        this.mData = list;
-        this.mQueue = VolleySingleton.getInstance().getRequestQueue();
-        this.imageLoader = VolleySingleton.getInstance().getImageLoader(string2);
-    }
-
-    public int getCount() {
-        return this.mData.size();
-    }
-
-    public Object getItem(int n2) {
-        return null;
-    }
-
-    public long getItemId(int n2) {
-        return 0L;
-    }
-
-    /*
-     * WARNING - void declaration
-     * Enabled aggressive block sorting
-     */
-    public View getView(int n2, View object, ViewGroup viewGroup) {
-        void var2_4;
-        Object object2 = object;
-        if (object2 == null) {
-            object2 = this.mContext.getLayoutInflater().inflate(2130968631, null);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.title = (TextView)object2.findViewById(2131689560);
-            viewHolder.time = (TextView)object2.findViewById(2131689659);
-            viewHolder.info = (TextView)object2.findViewById(2131689660);
-            viewHolder.imageView = (NetworkImageView)object2.findViewById(2131689658);
-            object2.setTag((Object)viewHolder);
-        } else {
-            ViewHolder viewHolder = (ViewHolder)object2.getTag();
-        }
-        var2_4.title.setText((CharSequence)StringUtil.filterHtml(this.mData.get(n2).get("title").toString()));
-        var2_4.time.setText((CharSequence)this.mData.get(n2).get("time").toString());
-        var2_4.info.setText((CharSequence)this.mData.get(n2).get("info").toString());
-        String string2 = this.mData.get(n2).get("img").toString();
-        var2_4.imageView.setImageUrl(string2, this.imageLoader);
-        return object2;
-    }
-
-    public void showInfo(int n2) {
-    }
+    private RequestQueue mQueue = VolleySingleton.getInstance().getRequestQueue();
 
     static class ViewHolder {
         public NetworkImageView imageView;
@@ -90,5 +30,47 @@ extends BaseAdapter {
         ViewHolder() {
         }
     }
-}
 
+    public ListViewAdapter(Activity context, String cookie2, List<HashMap<String, Object>> data) {
+        this.mContext = context;
+        this.cookie = cookie2;
+        this.mData = data;
+        this.imageLoader = VolleySingleton.getInstance().getImageLoader(cookie2);
+    }
+
+    public int getCount() {
+        return this.mData.size();
+    }
+
+    public Object getItem(int arg0) {
+        return null;
+    }
+
+    public long getItemId(int arg0) {
+        return 0;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        View rowView = convertView;
+        if (rowView == null) {
+            rowView = this.mContext.getLayoutInflater().inflate(R.layout.friend_list_item, (ViewGroup) null);
+            holder = new ViewHolder();
+            holder.title = (TextView) rowView.findViewById(R.id.title);
+            holder.time = (TextView) rowView.findViewById(R.id.time);
+            holder.info = (TextView) rowView.findViewById(R.id.info);
+            holder.imageView = (NetworkImageView) rowView.findViewById(R.id.img);
+            rowView.setTag(holder);
+        } else {
+            holder = (ViewHolder) rowView.getTag();
+        }
+        holder.title.setText(StringUtil.filterHtml(this.mData.get(position).get("title").toString()));
+        holder.time.setText(this.mData.get(position).get("time").toString());
+        holder.info.setText(this.mData.get(position).get("info").toString());
+        holder.imageView.setImageUrl(this.mData.get(position).get("img").toString(), this.imageLoader);
+        return rowView;
+    }
+
+    public void showInfo(int position) {
+    }
+}

@@ -1,9 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.util.Log
- */
 package com.riyuxihe.weixinqingliao.net;
 
 import android.util.Log;
@@ -12,7 +6,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.riyuxihe.weixinqingliao.BitmapCache;
 import com.riyuxihe.weixinqingliao.MyApplication;
-import com.riyuxihe.weixinqingliao.net.CookieImageLoader;
 
 public class VolleySingleton {
     private static VolleySingleton mInstance = null;
@@ -30,19 +23,18 @@ public class VolleySingleton {
         return mInstance;
     }
 
-    public ImageLoader getImageLoader(String string2) {
-        if (string2 == null) {
-            Log.e((String)"VolleySingleton", (String)"getImageLoader:cookie should not be null");
-        }
-        if (this.imageLoader == null || !string2.equals(this.cookie)) {
-            this.cookie = string2;
-            this.imageLoader = new CookieImageLoader(this.mRequestQueue, new BitmapCache(), string2);
-        }
-        return this.imageLoader;
-    }
-
     public RequestQueue getRequestQueue() {
         return this.mRequestQueue;
     }
-}
 
+    public ImageLoader getImageLoader(String cookie2) {
+        if (cookie2 == null) {
+            Log.e("VolleySingleton", "getImageLoader:cookie should not be null");
+        }
+        if (this.imageLoader == null || !cookie2.equals(this.cookie)) {
+            this.cookie = cookie2;
+            this.imageLoader = new CookieImageLoader(this.mRequestQueue, new BitmapCache(), cookie2);
+        }
+        return this.imageLoader;
+    }
+}

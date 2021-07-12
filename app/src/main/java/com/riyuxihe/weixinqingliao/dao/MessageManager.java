@@ -1,17 +1,10 @@
-/*
- * Decompiled with CFR 0.151.
- * 
- * Could not load the following classes:
- *  android.content.ContentValues
- *  android.content.Context
- *  android.database.sqlite.SQLiteDatabase
- */
 package com.riyuxihe.weixinqingliao.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.riyuxihe.weixinqingliao.dao.WechatDemoDbHelper;
+
 import com.riyuxihe.weixinqingliao.model.Msg;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,71 +16,65 @@ public class MessageManager {
         this.mDbHelper = new WechatDemoDbHelper(context);
     }
 
-    public List<Msg> getMsg(String string2) {
-        SQLiteDatabase sQLiteDatabase = this.mDbHelper.getReadableDatabase();
-        ArrayList<Msg> arrayList = new ArrayList<Msg>();
+    public void reCreateTable() {
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
         try {
-            string2 = sQLiteDatabase.query("message", null, "from_username = ? or to_username = ?", new String[]{string2, string2}, null, null, "create_time ASC");
-            while (string2.moveToNext()) {
-                Msg msg = new Msg();
-                msg.MsgId = string2.getString(string2.getColumnIndexOrThrow("msg_id"));
-                msg.ClientMsgId = string2.getLong(string2.getColumnIndexOrThrow("client_msg_id"));
-                msg.MsgType = string2.getInt(string2.getColumnIndexOrThrow("msg_type"));
-                msg.Content = string2.getString(string2.getColumnIndexOrThrow("content"));
-                msg.FromUserName = string2.getString(string2.getColumnIndexOrThrow("from_username"));
-                msg.ToUserName = string2.getString(string2.getColumnIndexOrThrow("to_username"));
-                msg.fromNickName = string2.getString(string2.getColumnIndexOrThrow("from_nickname"));
-                msg.toNickName = string2.getString(string2.getColumnIndexOrThrow("to_nickname"));
-                msg.fromMemberUserName = string2.getString(string2.getColumnIndexOrThrow("from_member_username"));
-                msg.fromMemberNickName = string2.getString(string2.getColumnIndexOrThrow("from_member_nickname"));
-                msg.VoiceLength = string2.getLong(string2.getColumnIndexOrThrow("voice_length"));
-                msg.CreateTime = string2.getLong(string2.getColumnIndexOrThrow("create_time"));
-                arrayList.add(msg);
-            }
+            db.execSQL("DROP TABLE IF EXISTS message");
+            db.execSQL("CREATE TABLE message (_id INTEGER PRIMARY KEY,client_msg_id TEXT,msg_id TEXT,msg_type INTEGER,content TEXT,from_username TEXT,to_username TEXT,from_nickname TEXT,to_nickname TEXT,from_member_username TEXT,from_member_nickname TEXT,voice_length INTEGER,create_time INTEGER ) ");
+        } finally {
+            db.close();
         }
-        finally {
-            sQLiteDatabase.close();
-        }
-        return arrayList;
     }
 
     public void insertMessage(Msg msg) {
-        SQLiteDatabase sQLiteDatabase = this.mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
         try {
-            ContentValues contentValues = new ContentValues();
-            if (msg.CreateTime == 0L) {
+            ContentValues values = new ContentValues();
+            if (msg.CreateTime == 0) {
                 msg.CreateTime = System.currentTimeMillis();
             }
-            contentValues.put("client_msg_id", Long.valueOf(msg.ClientMsgId));
-            contentValues.put("msg_id", msg.MsgId);
-            contentValues.put("msg_type", Integer.valueOf(msg.MsgType));
-            contentValues.put("content", msg.Content);
-            contentValues.put("from_username", msg.FromUserName);
-            contentValues.put("to_username", msg.ToUserName);
-            contentValues.put("from_nickname", msg.fromNickName);
-            contentValues.put("to_nickname", msg.toNickName);
-            contentValues.put("from_member_username", msg.fromMemberUserName);
-            contentValues.put("from_member_nickname", msg.fromMemberNickName);
-            contentValues.put("voice_length", Long.valueOf(msg.VoiceLength));
-            contentValues.put("create_time", Long.valueOf(msg.CreateTime));
-            sQLiteDatabase.insert("message", null, contentValues);
-            return;
-        }
-        finally {
-            sQLiteDatabase.close();
+            values.put(MessageContract.MessageEntry.COLUMN_CLIENT_MSG_ID, Long.valueOf(msg.ClientMsgId));
+            values.put(MessageContract.MessageEntry.COLUMN_MSG_ID, msg.MsgId);
+            values.put(MessageContract.MessageEntry.COLUMN_MSG_TYPE, Integer.valueOf(msg.MsgType));
+            values.put(MessageContract.MessageEntry.COLUMN_CONTENT, msg.Content);
+            values.put(MessageContract.MessageEntry.COLUMN_FROM_USER_NAME, msg.FromUserName);
+            values.put(MessageContract.MessageEntry.COLUMN_TO_USER_NAME, msg.ToUserName);
+            values.put(MessageContract.MessageEntry.COLUMN_FROM_NICK_NAME, msg.fromNickName);
+            values.put(MessageContract.MessageEntry.COLUMN_TO_NICK_NAME, msg.toNickName);
+            values.put(MessageContract.MessageEntry.COLUMN_FROM_MEMBER_USER_NAME, msg.fromMemberUserName);
+            values.put(MessageContract.MessageEntry.COLUMN_FROM_MEMBER_NICK_NAME, msg.fromMemberNickName);
+            values.put(MessageContract.MessageEntry.COLUMN_VOICE_LENGTH, Long.valueOf(msg.VoiceLength));
+            values.put(MessageContract.MessageEntry.COLUMN_CREATE_TIME, Long.valueOf(msg.CreateTime));
+            db.insert("message", (String) null, values);
+        } finally {
+            db.close();
         }
     }
 
-    public void reCreateTable() {
-        SQLiteDatabase sQLiteDatabase = this.mDbHelper.getWritableDatabase();
+    public List<Msg> getMsg(String userName) {
+        SQLiteDatabase db = this.mDbHelper.getReadableDatabase();
+        List<Msg> msgList = new ArrayList<>();
         try {
-            sQLiteDatabase.execSQL("DROP TABLE IF EXISTS message");
-            sQLiteDatabase.execSQL("CREATE TABLE message (_id INTEGER PRIMARY KEY,client_msg_id TEXT,msg_id TEXT,msg_type INTEGER,content TEXT,from_username TEXT,to_username TEXT,from_nickname TEXT,to_nickname TEXT,from_member_username TEXT,from_member_nickname TEXT,voice_length INTEGER,create_time INTEGER ) ");
-            return;
-        }
-        finally {
-            sQLiteDatabase.close();
+            Cursor cursor = db.query("message", (String[]) null, "from_username = ? or to_username = ?", new String[]{userName, userName}, (String) null, (String) null, "create_time ASC");
+            while (cursor.moveToNext()) {
+                Msg msg = new Msg();
+                msg.MsgId = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_MSG_ID));
+                msg.ClientMsgId = cursor.getLong(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_CLIENT_MSG_ID));
+                msg.MsgType = cursor.getInt(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_MSG_TYPE));
+                msg.Content = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_CONTENT));
+                msg.FromUserName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_FROM_USER_NAME));
+                msg.ToUserName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_TO_USER_NAME));
+                msg.fromNickName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_FROM_NICK_NAME));
+                msg.toNickName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_TO_NICK_NAME));
+                msg.fromMemberUserName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_FROM_MEMBER_USER_NAME));
+                msg.fromMemberNickName = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_FROM_MEMBER_NICK_NAME));
+                msg.VoiceLength = cursor.getLong(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_VOICE_LENGTH));
+                msg.CreateTime = cursor.getLong(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_CREATE_TIME));
+                msgList.add(msg);
+            }
+            return msgList;
+        } finally {
+            db.close();
         }
     }
 }
-

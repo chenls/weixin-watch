@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.151.
- */
 package com.riyuxihe.weixinqingliao.util;
 
 public class Constants {
@@ -33,8 +30,8 @@ public class Constants {
     }
 
     public static final class Period {
-        public static final long HOME_STANDARD = 60000L;
-        public static final long LOGIN = 7000L;
+        public static final long HOME_STANDARD = 60000;
+        public static final long LOGIN = 7000;
     }
 
     public static final class SyncCheckCode {
@@ -43,4 +40,3 @@ public class Constants {
         public static final String SUCCESS = "0";
     }
 }
-

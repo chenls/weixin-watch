@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ticwear.design.widget.CoordinatorLayout android:scrollbars="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
-  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ticwear.design.widget.TicklableRecyclerView android:id="@android:id/list" android:layout_width="fill_parent" android:layout_height="fill_parent" style="?attr/tic_preferenceListStyle" />
-    <ticwear.design.widget.AppBarLayout android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/WindowAppBar.Ticwear">
-        <ticwear.design.widget.ScalableTextView android:gravity="center" android:id="@android:id/title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@null" app:tic_layout_scrollFlags="overScrollBounce|scroll" style="?android:windowTitleStyle" />
-    </ticwear.design.widget.AppBarLayout>
-</ticwear.design.widget.CoordinatorLayout>
