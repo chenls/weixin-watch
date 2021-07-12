@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/chat_bg_default" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:gravity="center_vertical" android:id="@id/rl_layout" android:background="@drawable/title_bar" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="40.0dip" android:layout_marginTop="-1.0dip">
+        <Button android:textSize="14.0sp" android:textColor="#ffffffff" android:id="@id/btn_back" android:background="@drawable/title_btn_back" android:visibility="gone" android:layout_width="70.0dip" android:layout_height="wrap_content" android:text="返回" android:layout_centerVertical="true" android:onClick="chat_back" />
+        <TextView android:textSize="13.0sp" android:textColor="#ffffffff" android:ellipsize="end" android:id="@id/head_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLength="7" android:layout_centerInParent="true" />
+        <ImageButton android:id="@id/right_btn" android:background="@drawable/title_btn_right" android:visibility="gone" android:layout_width="67.0dip" android:layout_height="wrap_content" android:layout_marginRight="5.0dip" android:src="@drawable/mm_title_btn_contact_normal" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout android:id="@id/rl_bottom" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_marginBottom="-5.0dip" android:layout_alignParentBottom="true">
+        <ImageView android:id="@id/ivPopUp" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:src="@drawable/chatting_setmode_msg_btn" android:layout_alignParentLeft="true" android:layout_centerVertical="true" />
+        <RelativeLayout android:id="@id/btn_bottom" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_toRightOf="@id/ivPopUp" android:layout_alignParentRight="true" android:layout_centerVertical="true">
+            <Button android:id="@id/btn_send" android:background="@drawable/chat_send_btn" android:layout_width="60.0dip" android:layout_height="40.0dip" android:layout_marginRight="10.0dip" android:text="发送" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+            <EditText android:textSize="18.0sp" android:id="@id/et_sendmessage" android:background="@drawable/login_edit_normal" android:layout_width="fill_parent" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:singleLine="true" android:layout_toLeftOf="@id/btn_send" android:layout_centerVertical="true" />
+        </RelativeLayout>
+        <TextView android:textColor="@color/tic_basic_deep_blue_darken" android:gravity="center" android:id="@id/btn_rcd" android:background="@drawable/chat_send_btn" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="45.0dip" android:text="点击说话" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <ListView android:scrollbarStyle="outsideOverlay" android:id="@id/listview" android:layout_width="fill_parent" android:layout_height="fill_parent" android:stackFromBottom="true" android:cacheColorHint="#00000000" android:divider="@null" android:dividerHeight="5.0dip" android:layout_above="@id/rl_bottom" android:layout_below="@id/rl_layout" />
+    <LinearLayout android:gravity="center" android:id="@id/rcChat_popup" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <include android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/voice_rcd_hint_window" />
+    </LinearLayout>
+</RelativeLayout>

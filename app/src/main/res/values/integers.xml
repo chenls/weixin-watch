@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="abc_max_action_buttons">2</integer>
+    <integer name="design_snackbar_text_max_lines">2</integer>
+    <integer name="abc_config_activityDefaultDur">220</integer>
+    <integer name="abc_config_activityShortDur">150</integer>
+    <integer name="action_choose_expand_full_duration">1000</integer>
+    <integer name="action_chooser_anim_duration">250</integer>
+    <integer name="action_chooser_bounce_delay">500</integer>
+    <integer name="action_chooser_confirmation_duration">500</integer>
+    <integer name="bottom_sheet_slide_duration">150</integer>
+    <integer name="cancel_button_image_alpha">127</integer>
+    <integer name="design.anim.button_state">300</integer>
+    <integer name="design.anim.button_state_half">150</integer>
+    <integer name="design.anim.list_item_state_change">200</integer>
+    <item type="integer" name="design.anim.scale.button_press">0.95</item>
+    <item type="integer" name="design.factor.over_scroll_bounce">0.5</item>
+    <item type="integer" name="design.factor.title_scale">0.1</item>
+    <integer name="design.time.action_idle_timeout">1500</integer>
+    <integer name="design.time.action_idle_timeout_short">1000</integer>
+    <integer name="google_play_services_version">8487000</integer>
+    <integer name="preference_fragment_scrollbarStyle_ticwear">0x02000000</integer>
+    <integer name="preference_screen_header_scrollbarStyle_ticwear">0x02000000</integer>
+    <integer name="preferences_left_pane_weight_ticwear">4</integer>
+    <integer name="preferences_right_pane_weight_ticwear">6</integer>
+    <integer name="status_bar_notification_info_maxnum">999</integer>
+    <item type="integer" name="tic.svg.btn.radius">52.0</item>
+</resources>

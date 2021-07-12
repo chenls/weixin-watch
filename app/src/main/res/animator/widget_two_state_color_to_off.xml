@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator android:interpolator="@android:interpolator/accelerate_cubic" android:duration="@integer/design.anim.button_state" android:valueFrom="?android:colorControlActivated" android:valueTo="?android:colorControlNormal" android:propertyName="fillColor"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

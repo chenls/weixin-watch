@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set android:ordering="sequentially"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <set android:ordering="together">
+        <objectAnimator android:interpolator="@android:interpolator/accelerate_cubic" android:duration="@integer/design.anim.button_state_half" android:valueFrom="1" android:valueTo="0.35" android:propertyName="trimPathEnd" />
+        <objectAnimator android:interpolator="@android:interpolator/accelerate_cubic" android:duration="@integer/design.anim.button_state_half" android:valueFrom="0" android:valueTo="0.35" android:propertyName="trimPathStart" />
+    </set>
+</set>

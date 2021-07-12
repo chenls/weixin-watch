@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ticwear.design.widget.CoordinatorLayout android:id="@id/parentPanel" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ticwear.design.widget.AppBarLayout android:orientation="vertical" android:id="@id/topPanel" android:layout_width="fill_parent" android:layout_height="wrap_content" style="?tic_windowAppBarStyle">
+        <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/title_template" android:layout_width="fill_parent" android:layout_height="wrap_content" app:tic_layout_scrollFlags="overScrollBounce|scroll" app:tic_layout_scrollResistanceFactor="0.5">
+            <ImageView android:id="@android:id/icon" android:src="@null" android:contentDescription="@null" style="?tic_windowIconStyle" />
+            <TextView android:ellipsize="end" android:gravity="center" android:id="@android:id/title" android:paddingTop="4.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" android:textAlignment="center" style="?android:windowTitleStyle" />
+        </LinearLayout>
+    </ticwear.design.widget.AppBarLayout>
+    <LinearLayout android:layout_gravity="top" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="true" app:tic_layout_behavior="@string/tic_appbar_scrolling_view_behavior">
+        <FrameLayout android:id="@id/contentPanel" android:clipToPadding="false" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="48.0dip" android:layout_weight="1.0" android:nestedScrollingEnabled="true">
+            <View android:layout_gravity="top" android:id="@id/scrollIndicatorUp" android:background="@null" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <ticwear.design.widget.SubscribedScrollView android:id="@id/scrollView" android:layout_width="fill_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="true" style="?tic_dialogContentStyle">
+                <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                    <TextView android:id="@id/message" android:paddingTop="0.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" style="@style/TextAppearance.Ticwear.DialogContent" />
+                    <Space android:id="@id/textSpacerNoButtons" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="8.0dip" />
+                </LinearLayout>
+            </ticwear.design.widget.SubscribedScrollView>
+            <View android:layout_gravity="bottom" android:id="@id/scrollIndicatorDown" android:background="@null" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+        </FrameLayout>
+        <FrameLayout android:id="@id/customPanel" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="48.0dip" android:layout_weight="1.0">
+            <FrameLayout android:id="@id/custom" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+        </FrameLayout>
+        <LinearLayout android:gravity="bottom|center" android:layout_gravity="bottom" android:orientation="horizontal" android:id="@id/textButtonPanel" android:paddingTop="16.0dip" android:paddingBottom="12.0dip" android:clipToPadding="false" android:layout_width="fill_parent" android:layout_height="wrap_content" android:baselineAligned="false" android:alpha="0.8" android:layoutDirection="locale" android:paddingStart="?android:listPreferredItemPaddingStart" android:paddingEnd="?android:listPreferredItemPaddingEnd" style="?android:buttonBarStyle">
+            <Space android:layout_width="0.0dip" android:layout_height="0.0dip" android:layout_weight="1.0" />
+            <Button android:id="@id/textButton2" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?android:buttonBarNegativeButtonStyle" />
+            <Space android:id="@id/textSpace2" android:layout_width="0.0dip" android:layout_height="0.0dip" android:layout_weight="1.0" />
+            <Button android:id="@id/textButton3" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?android:buttonBarNeutralButtonStyle" />
+            <Space android:id="@id/textSpace3" android:layout_width="0.0dip" android:layout_height="0.0dip" android:layout_weight="1.0" />
+            <Button android:id="@id/textButton1" android:layout_width="wrap_content" android:layout_height="wrap_content" style="?android:buttonBarPositiveButtonStyle" />
+            <Space android:id="@id/textSpace1" android:layout_width="0.0dip" android:layout_height="0.0dip" android:layout_weight="1.0" />
+        </LinearLayout>
+    </LinearLayout>
+    <ticwear.design.widget.FloatingActionButton android:layout_gravity="start|bottom|center" android:id="@id/iconButton2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dip" android:layout_marginBottom="@dimen/alert_dialog_round_padding_bottom" android:layout_marginStart="?android:listPreferredItemPaddingStart" android:layout_marginEnd="?android:listPreferredItemPaddingEnd" android:elevation="0.0dip" style="?tic_iconButtonBarNegativeButtonStyle" />
+    <ticwear.design.widget.FloatingActionButton android:layout_gravity="bottom|center" android:id="@id/iconButton3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dip" android:layout_marginBottom="@dimen/alert_dialog_round_padding_bottom" android:layout_marginStart="?android:listPreferredItemPaddingStart" android:layout_marginEnd="?android:listPreferredItemPaddingEnd" android:elevation="0.0dip" style="?tic_iconButtonBarNeutralButtonStyle" />
+    <ticwear.design.widget.FloatingActionButton android:layout_gravity="end|bottom|center" android:id="@id/iconButton1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8.0dip" android:layout_marginBottom="@dimen/alert_dialog_round_padding_bottom" android:layout_marginStart="?android:listPreferredItemPaddingStart" android:layout_marginEnd="?android:listPreferredItemPaddingEnd" android:elevation="0.0dip" style="?tic_iconButtonBarPositiveButtonStyle" />
+</ticwear.design.widget.CoordinatorLayout>

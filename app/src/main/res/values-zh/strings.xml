@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alarm_sound_default">默认闹钟提示音</string>
+    <string name="back_button_label">上一步</string>
+    <string name="capital_off">关</string>
+    <string name="capital_on">开</string>
+    <string name="date_picker_dialog_title">日期</string>
+    <string name="next_button_label">下一步</string>
+    <string name="notification_sound_default">默认通知提示音</string>
+    <string name="ringtone_default">默认铃声</string>
+    <string name="ringtone_picker_title">铃声</string>
+    <string name="ringtone_silent">无</string>
+    <string name="ringtone_unknown">未知铃声</string>
+    <string name="skip_button_label">跳过</string>
+    <string name="time_picker_dialog_title">时间</string>
+</resources>

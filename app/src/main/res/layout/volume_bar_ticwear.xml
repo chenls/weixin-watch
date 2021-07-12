@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <SeekBar android:id="@id/seekbar" android:layout_width="fill_parent" android:layout_height="fill_parent" android:progressDrawable="@android:color/transparent" android:thumb="@android:color/transparent" />
+    <ticwear.design.widget.ProgressBarButton android:layout_gravity="start|center" android:id="@id/min" android:background="?android:selectableItemBackgroundBorderless" android:clickable="true" android:layout_width="wrap_content" android:layout_height="fill_parent" />
+    <ticwear.design.widget.ProgressBarButton android:layout_gravity="end|center" android:id="@id/max" android:background="?android:selectableItemBackgroundBorderless" android:clickable="true" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@drawable/tic_ic_plus_32px" />
+</FrameLayout>
