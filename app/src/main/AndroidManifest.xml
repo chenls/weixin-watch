@@ -14,7 +14,7 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
-    <!--    <uses-feature android:name="android.hardware.type.watch" />-->
+    <uses-feature android:name="android.hardware.type.watch" />
     <application
         android:name="com.riyuxihe.weixinqingliao.MyApplication"
         android:allowBackup="true"

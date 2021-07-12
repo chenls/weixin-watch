@@ -18,31 +18,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="25.0dip"
         android:gravity="center"
         android:paddingLeft="10.0dip"
         android:paddingRight="10.0dip"
         android:text="@string/waiting_notice"
         android:textColor="@color/circular_button_disabled" />
 
-    <ImageView
-        android:id="@+id/img_wx_login_qr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop" />
-
     <Button
         android:id="@+id/btn_change_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="20.0dip"
+        android:layout_marginBottom="40.0dip"
         android:background="@drawable/round_btn"
         android:gravity="center"
         android:paddingLeft="10.0dip"
         android:paddingRight="10.0dip"
         android:text="@string/change_account"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/img_wx_login_qr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="40dp"
+        android:scaleType="centerCrop" />
 </FrameLayout>
