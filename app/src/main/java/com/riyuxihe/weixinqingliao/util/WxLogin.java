@@ -137,7 +137,7 @@ public class WxLogin {
             String url = String.format(LOGIN_CHECK_URL, new Object[]{uuid}) + System.currentTimeMillis();
             Log.d(TAG, "checkLoginStatus:url=" + url);
             String text = NetUtil.getHttpsResponse(url, 30000);
-            Log.d(TAG, "checkLoginStatus:result=" + text);
+//            Log.d(TAG, "checkLoginStatus:result=" + text);
             return parseText(text);
         } catch (IOException e) {
             Log.w(TAG, "checkLoginStatus:exception", e);
@@ -158,7 +158,7 @@ public class WxLogin {
             }
             Token token = new Token();
             token.cookie = cookiesToStr((List) conn.getHeaderFields().get("Set-Cookie"));
-            Log.d(TAG, "getToken:cookie=" + token.cookie);
+//            Log.d(TAG, "getToken:cookie=" + token.cookie);
             NodeList elements = error.item(0).getChildNodes();
             for (int i = 0; i < elements.getLength(); i++) {
                 Node e = elements.item(i);
@@ -234,7 +234,7 @@ public class WxLogin {
                 }
             }
             conn.disconnect();
-            Log.i(TAG, "getToken:token=" + JSON.toJSONString(token));
+//            Log.i(TAG, "getToken:token=" + JSON.toJSONString(token));
             return token;
         } catch (Exception e2) {
             Log.w(TAG, "getToken:exception", e2);

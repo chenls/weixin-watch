@@ -141,7 +141,8 @@ public class HomeActivity extends SwipeActivity {
         Intent intent = getIntent();
         this.token = new Token();
         this.token.fromBundle(intent.getExtras());
-        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
+        Log.d(TAG, "onCreate: ");
+//        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
         this.mQueue = VolleySingleton.getInstance().getRequestQueue();
         initViews();
         initWx();
@@ -179,12 +180,14 @@ public class HomeActivity extends SwipeActivity {
     }
 
     private void initWx() {
+        Log.d(TAG, "initWx: ");
         String url = WxHome.getInitUrl(this.token);
         InitRequest initRequest = WxHome.formInitRequest(this.token);
-        Log.d(TAG, "initWx:" + JSON.toJSONString(initRequest));
+//        Log.d(TAG, "initWx:" + JSON.toJSONString(initRequest));
         CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(initRequest), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
-                Log.d(HomeActivity.TAG, "initWx:" + response.toString());
+                Log.d(TAG, "onResponse: ");
+//                Log.d(HomeActivity.TAG, "initWx:" + response.toString());
                 InitResponse initResponse = (InitResponse) JSON.parseObject(response.toString(), InitResponse.class);
                 User unused = HomeActivity.this.user = initResponse.User;
                 ArrayList unused2 = HomeActivity.this.initList = initResponse.ContactList;
@@ -203,7 +206,7 @@ public class HomeActivity extends SwipeActivity {
             }
         }, (Response.ErrorListener) new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
-                Log.e(HomeActivity.TAG, "initWx:error " + error.getMessage(), error);
+//                Log.e(HomeActivity.TAG, "initWx:error " + error.getMessage(), error);
             }
         });
         cookieRequest.setCookie(this.token.cookie);
@@ -231,7 +234,7 @@ public class HomeActivity extends SwipeActivity {
     public void initContact(int seq) {
         CookieRequest contactRequest = new CookieRequest(1, WxHome.getContactUrl(this.token, seq), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
-                Log.d(HomeActivity.TAG, "initContact:" + response.toString());
+//                Log.d(HomeActivity.TAG, "initContact:" + response.toString());
                 ContactResponse contactResponse = (ContactResponse) JSON.parseObject(response.toString(), ContactResponse.class);
                 HomeActivity.this.contactList.addAll(contactResponse.MemberList);
                 if (contactResponse.Seq == 0) {
@@ -260,6 +263,7 @@ public class HomeActivity extends SwipeActivity {
 
     /* access modifiers changed from: private */
     public void scheduleJob(long period) {
+        Log.d(TAG, "scheduleJob: ");
         JobInfo.Builder builder = new JobInfo.Builder(kJobId, new ComponentName(this, HomeJobService.class));
         builder.setPeriodic(period);
         ((JobScheduler) getSystemService("jobscheduler")).schedule(builder.build());
@@ -279,7 +283,8 @@ public class HomeActivity extends SwipeActivity {
             this.exContactLoaded = true;
             return;
         }
-        Log.d(TAG, "initBatchContact:" + JSON.toJSONString(request));
+        Log.d(TAG, "initBatchContact: ");
+//        Log.d(TAG, "initBatchContact:" + JSON.toJSONString(request));
         CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
                 Log.d(HomeActivity.TAG, "initBatchContact:" + response.toString());
@@ -299,16 +304,17 @@ public class HomeActivity extends SwipeActivity {
 
     /* access modifiers changed from: private */
     public void notifyStatus() {
+        Log.d(TAG, "notifyStatus: ");
         String url = WxHome.getWxStatusNotifyUrl(this.token);
         StatusNotifyRequest request = WxHome.formStatusNotifyRequest(this.token, this.user.UserName);
-        Log.d(TAG, "notifyStatus:" + JSON.toJSONString(request));
+//        Log.d(TAG, "notifyStatus:" + JSON.toJSONString(request));
         CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
-                Log.d(HomeActivity.TAG, "notifyStatus:" + response.toString());
+//                Log.d(HomeActivity.TAG, "notifyStatus:" + response.toString());
             }
         }, (Response.ErrorListener) new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
-                Log.e(HomeActivity.TAG, "notifyStatus:error " + error.getMessage(), error);
+//                Log.e(HomeActivity.TAG, "notifyStatus:error " + error.getMessage(), error);
             }
         });
         cookieRequest.setCookie(this.token.cookie);
@@ -508,13 +514,14 @@ public class HomeActivity extends SwipeActivity {
 
     /* access modifiers changed from: private */
     public void syncMsg() {
+        Log.d(TAG, "syncMsg: ");
         if (this.mIsLoaded && this.exContactLoaded) {
             String url = WxHome.getMsgSyncUrl(this.token);
             MsgSyncRequest msgSyncRequest = WxHome.formMsgSyncRequest(this.token, this.syncKey);
-            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
+//            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
             CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(msgSyncRequest), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject response) {
-                    Log.d(HomeActivity.TAG, "syncMsg:" + response.toString());
+//                    Log.d(HomeActivity.TAG, "syncMsg:" + response.toString());
                     MsgSyncResponse msgSyncResponse = (MsgSyncResponse) JSON.parseObject(response.toString(), MsgSyncResponse.class);
                     if (msgSyncResponse.BaseResponse.Ret == 0 && !msgSyncResponse.SyncKey.toString().equals(HomeActivity.this.syncKey.toString())) {
                         Log.d(HomeActivity.TAG, "syncMsg:receive " + msgSyncResponse.AddMsgList.size() + " messages");
@@ -549,7 +556,8 @@ public class HomeActivity extends SwipeActivity {
 
     /* access modifiers changed from: private */
     public void handleInitNotifyMsg(Msg initMsg) {
-        Log.d(TAG, "handleInitNotifyMsg:" + JSON.toJSONString(initMsg));
+        Log.d(TAG, "handleInitNotifyMsg: ");
+//        Log.d(TAG, "handleInitNotifyMsg:" + JSON.toJSONString(initMsg));
         if (!TextUtils.isEmpty(initMsg.StatusNotifyUserName)) {
             for (String name : initMsg.StatusNotifyUserName.split(",")) {
                 if (name.startsWith("@")) {
@@ -565,6 +573,7 @@ public class HomeActivity extends SwipeActivity {
                 }
             }
         }
+        Log.d(TAG, "handleInitNotifyMsg: end");
     }
 
     /* access modifiers changed from: private */
@@ -619,7 +628,8 @@ public class HomeActivity extends SwipeActivity {
         String url = WxHome.getBatchContactUrl(this.token);
         BatchContactRequest request = WxHome.formBatchContactRequest(this.token, newChatSet);
         if (request != null && !request.List.isEmpty()) {
-            Log.d(TAG, "addNewGroupThenProcessMsg:" + JSON.toJSONString(request));
+            Log.d(TAG, "addNewGroupThenProcessMsg: ");
+//            Log.d(TAG, "addNewGroupThenProcessMsg:" + JSON.toJSONString(request));
             CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject response) {
                     Log.d(HomeActivity.TAG, "addNewGroupThenProcessMsg:" + response.toString());
