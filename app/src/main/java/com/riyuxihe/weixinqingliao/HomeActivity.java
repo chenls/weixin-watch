@@ -1,5 +1,6 @@
 package com.riyuxihe.weixinqingliao;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -96,14 +97,21 @@ public class HomeActivity extends SwipeActivity {
     private FragmentPagerAdapter mAdapter;
     /* access modifiers changed from: private */
     public List<Fragment> mFragments = new ArrayList();
+
+    @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 20:
                     HomeActivity.this.mHomeJobService = (HomeJobService) msg.obj;
                     HomeActivity.this.mHomeJobService.setUiCallback(HomeActivity.this);
-                    HomeActivity.this.scheduleJob(HomeActivity.this.getPreferences(0).getLong(SettingActivity.PERIOD_KEY, Constants.Period.HOME_STANDARD));
+                    HomeActivity.this.scheduleJob(HomeActivity.this.getPreferences(0).
+                            getLong(SettingActivity.PERIOD_KEY, Constants.Period.HOME_STANDARD));
+                    mHandler.sendEmptyMessage(21);
                     return;
+                case 21:
+                    mHomeJobService.onStartJob(null);
+                    mHandler.sendEmptyMessageDelayed(21, 5000);
                 default:
                     return;
             }
@@ -155,7 +163,6 @@ public class HomeActivity extends SwipeActivity {
         IntentFilter intentFilter2 = new IntentFilter();
         intentFilter2.addAction(Constants.Action.RESCHEDULE);
         registerReceiver(this.rescheduleReceiver, intentFilter2);
-        Log.d(TAG, "onCreate: ");
     }
 
     public void onResume() {
