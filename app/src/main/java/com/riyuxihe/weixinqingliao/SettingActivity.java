@@ -10,7 +10,7 @@ import android.support.v7.app.AlertDialog;
 import com.riyuxihe.weixinqingliao.util.Constants;
 //import ticwear.design.app.AlertDialog;
 
-public class SettingActivity extends Activity {
+public class SettingActivity extends BaseActivity {
     public static final String PERIOD_KEY = "sync_period";
 
     /* access modifiers changed from: protected */

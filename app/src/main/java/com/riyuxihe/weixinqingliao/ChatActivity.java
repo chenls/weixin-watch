@@ -53,7 +53,7 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-public class ChatActivity extends Activity implements View.OnClickListener {
+public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private static final int POLL_INTERVAL = 300;
     /* access modifiers changed from: private */
     public static final String TAG = ChatActivity.class.getSimpleName();

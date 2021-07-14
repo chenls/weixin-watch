@@ -27,7 +27,7 @@ import com.riyuxihe.weixinqingliao.util.WxLogin;
 
 import java.util.Properties;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private static final int BG_MSG_CHECK_LOGIN_STATUS = 1;
     private static final int MSG_LOGIN = 4;
     private static final int MSG_QRCODE = 2;

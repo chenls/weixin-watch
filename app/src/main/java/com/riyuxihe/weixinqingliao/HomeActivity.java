@@ -26,6 +26,7 @@ import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.DefaultRetryPolicy;
@@ -120,6 +121,7 @@ public class HomeActivity extends SwipeActivity {
     HomeJobService mHomeJobService;
     private boolean mIsLoaded = false;
     private ProgressBar mProgressBar;
+    private TextView mNotice;
     private RequestQueue mQueue;
     private TabLayout mTabLayout;
     /* access modifiers changed from: private */
@@ -415,6 +417,7 @@ public class HomeActivity extends SwipeActivity {
                 Collections.sort(this.contactList);
             }
             this.mProgressBar.setVisibility(8);
+            this.mNotice.setVisibility(8);
             this.mTitles.add("消息");
             this.mTitles.add("联系人");
             this.initFragment = InitFragment.newInstance(this.token, this.user, this.initList);
@@ -460,6 +463,8 @@ public class HomeActivity extends SwipeActivity {
         this.mViewPager = (ViewPager) findViewById(R.id.view_pager);
         this.mTabLayout = (TabLayout) findViewById(R.id.tablayout);
         this.mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        this.mNotice = (TextView) findViewById(R.id.notice);
+
     }
 
     public void onSyncChecked(Properties prop) {
