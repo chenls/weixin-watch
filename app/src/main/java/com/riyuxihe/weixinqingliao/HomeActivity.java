@@ -561,15 +561,15 @@ public class HomeActivity extends SwipeActivity {
         if (!TextUtils.isEmpty(initMsg.StatusNotifyUserName)) {
             for (String name : initMsg.StatusNotifyUserName.split(",")) {
                 if (name.startsWith("@")) {
-//                    Msg msg = new Msg();
-//                    msg.MsgType = 51;
-//                    msg.FromUserName = name;
-//                    msg.ToUserName = this.user.UserName;
-//                    if (!WxHome.isGroupUserName(msg.FromUserName) || this.chatSet.contains(msg.FromUserName)) {
-//                        processMsg(msg);
-//                    } else {
-//                        addNewGroupThenProcessMsg(msg.FromUserName, msg);
-//                    }
+                    Msg msg = new Msg();
+                    msg.MsgType = 51;
+                    msg.FromUserName = name;
+                    msg.ToUserName = this.user.UserName;
+                    if (!WxHome.isGroupUserName(msg.FromUserName) || this.chatSet.contains(msg.FromUserName)) {
+                        processMsg(msg);
+                    } else {
+                        addNewGroupThenProcessMsg(msg.FromUserName, msg);
+                    }
                 }
             }
         }

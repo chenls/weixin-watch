@@ -107,6 +107,7 @@ public class InitFragment extends Fragment {
                         Collections.swap(this.mData, 0, i);
                     }
                     exist = true;
+                    break;
                 } else {
                     i++;
                 }
