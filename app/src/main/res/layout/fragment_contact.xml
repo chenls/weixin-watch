@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffffff"
+    android:background="@color/black"
     android:orientation="vertical">
 
     <LinearLayout
@@ -24,13 +24,13 @@
             android:id="@+id/editText2"
             android:layout_width="fill_parent"
             android:layout_height="35.0dip"
-            android:background="@null" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/listView2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:cacheColorHint="#00000000"
+        android:cacheColorHint="@color/white"
         android:footerDividersEnabled="false" />
 </LinearLayout>
