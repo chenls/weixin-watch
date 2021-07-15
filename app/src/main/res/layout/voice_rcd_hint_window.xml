@@ -20,7 +20,6 @@
             android:padding="10.0dip">
 
             <ImageView
-                android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="60.0dip"
                 android:layout_marginRight="4.0dip"
@@ -81,7 +80,6 @@
         android:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

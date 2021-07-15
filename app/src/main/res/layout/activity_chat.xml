@@ -35,7 +35,6 @@
             android:textSize="16.0sp" />
 
         <ImageButton
-            android:id="@+id/right_btn"
             android:layout_width="67.0dip"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
