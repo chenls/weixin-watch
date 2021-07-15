@@ -11,7 +11,7 @@ public class VolleySingleton {
     private static VolleySingleton mInstance = null;
     private String cookie;
     private ImageLoader imageLoader;
-    private RequestQueue mRequestQueue = Volley.newRequestQueue(MyApplication.getAppContext());
+    private final RequestQueue mRequestQueue = Volley.newRequestQueue(MyApplication.getAppContext());
 
     private VolleySingleton() {
     }

@@ -48,7 +48,7 @@ public class HomeJobService extends JobService {
         this.token.fromBundle(intent.getBundleExtra(Prefs.Key.TOKEN));
         this.syncKey = intent.getStringExtra("syncKey");
         startForeground();
-        Messenger callback = (Messenger) intent.getParcelableExtra("messenger");
+        Messenger callback = intent.getParcelableExtra("messenger");
         Message m = Message.obtain();
         m.what = 20;
         m.obj = this;
@@ -91,7 +91,7 @@ public class HomeJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "onStartJob: ");
-        new SyncCheckTask(this).execute(new JobParameters[]{params});
+        new SyncCheckTask(this).execute(params);
         return true;
     }
 
@@ -143,10 +143,7 @@ public class HomeJobService extends JobService {
         Log.d(TAG, "unSync:times=" + this.unSyncTimes);
         int i = this.unSyncTimes + 1;
         this.unSyncTimes = i;
-        if (i >= 2) {
-            return true;
-        }
-        return false;
+        return i >= 2;
     }
 
     @Override

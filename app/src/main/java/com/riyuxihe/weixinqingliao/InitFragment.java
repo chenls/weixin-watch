@@ -177,7 +177,7 @@ public class InitFragment extends Fragment {
     public void initView(View view) {
         this.mData = getData(this.initList);
         this.adapter = new ListViewAdapter(getActivity(), this.token.cookie, this.mData);
-        this.listView = (ListView) view.findViewById(R.id.listView1);
+        this.listView = view.findViewById(R.id.listView1);
         this.listView.setAdapter(this.adapter);
         this.listView.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.footer_view, this.listView, false));
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -186,13 +186,13 @@ public class InitFragment extends Fragment {
                     Intent intent = new Intent(InitFragment.this.getActivity(), ChatActivity.class);
                     intent.putExtra(Prefs.Key.TOKEN, InitFragment.this.token.toBundle());
                     User toUser = new User();
-                    toUser.UserName = ((HashMap) InitFragment.this.mData.get(i)).get("userName").toString();
-                    toUser.NickName = ((HashMap) InitFragment.this.mData.get(i)).get("title").toString();
-                    toUser.HeadImgUrl = ((HashMap) InitFragment.this.mData.get(i)).get("img").toString();
+                    toUser.UserName = InitFragment.this.mData.get(i).get("userName").toString();
+                    toUser.NickName = InitFragment.this.mData.get(i).get("title").toString();
+                    toUser.HeadImgUrl = InitFragment.this.mData.get(i).get("img").toString();
                     intent.putExtra("to", toUser.toBundle());
                     intent.putExtra("from", InitFragment.this.user.toBundle());
-                    ((HashMap) InitFragment.this.mData.get(i)).put("info", "");
-                    ((HashMap) InitFragment.this.mData.get(i)).put("time", "");
+                    InitFragment.this.mData.get(i).put("info", "");
+                    InitFragment.this.mData.get(i).put("time", "");
                     InitFragment.this.adapter.notifyDataSetChanged();
                     InitFragment.this.startActivity(intent);
                 }

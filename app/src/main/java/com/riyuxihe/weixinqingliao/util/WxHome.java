@@ -39,7 +39,7 @@ public class WxHome {
     private static final String WX_STATUS_NOTIFY = "/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=%s";
     private static final String WX_SYNC_URL_FORMAT = "%s://webpush.%s/cgi-bin/mmwebwx-bin/synccheck";
     private static String deviceId;
-    private static SecureRandom secureRandom = new SecureRandom();
+    private static final SecureRandom secureRandom = new SecureRandom();
     private static String wxBaseUri = "https://wx2.qq.com";
     private static String wxHost = "wx2.qq.com";
     private static String wxSchema = "https";
@@ -64,46 +64,43 @@ public class WxHome {
     }
 
     public static String getInitUrl(Token token) {
-        return String.format(wxBaseUri + INIT_URI, new Object[]{Long.valueOf(System.currentTimeMillis()), token.getPassTicket()});
+        return String.format(wxBaseUri + INIT_URI, Long.valueOf(System.currentTimeMillis()), token.getPassTicket());
     }
 
     public static String getSendUrl(Token token) {
-        return String.format(wxBaseUri + WX_SEND_URI, new Object[]{token.getPassTicket()});
+        return String.format(wxBaseUri + WX_SEND_URI, token.getPassTicket());
     }
 
     public static String getContactUrl(Token token, int seq) {
-        return String.format(wxBaseUri + WX_CONTACT_URI, new Object[]{Integer.valueOf(seq), token.getPassTicket()});
+        return String.format(wxBaseUri + WX_CONTACT_URI, Integer.valueOf(seq), token.getPassTicket());
     }
 
     public static String getBatchContactUrl(Token token) {
-        return String.format(wxBaseUri + WX_CONTACT_EX, new Object[]{token.getPassTicket()});
+        return String.format(wxBaseUri + WX_CONTACT_EX, token.getPassTicket());
     }
 
     public static String getWxStatusNotifyUrl(Token token) {
-        return String.format(wxBaseUri + WX_STATUS_NOTIFY, new Object[]{token.getPassTicket()});
+        return String.format(wxBaseUri + WX_STATUS_NOTIFY, token.getPassTicket());
     }
 
     public static String getMsgSyncUrl(Token token) {
-        return String.format(wxBaseUri + WX_MSG_SYNC, new Object[]{token.getWxsid(), token.getSkey()});
+        return String.format(wxBaseUri + WX_MSG_SYNC, token.getWxsid(), token.getSkey());
     }
 
     public static String getVoiceUrl(Token token, String msgId) {
-        return String.format(wxBaseUri + WX_GET_VOICE, new Object[]{token.getSkey(), msgId});
+        return String.format(wxBaseUri + WX_GET_VOICE, token.getSkey(), msgId);
     }
 
     public static String getIconUrlByUsername(Token token, String username) {
-        return String.format(wxBaseUri + WX_GET_ICON, new Object[]{username, token.getSkey()});
+        return String.format(wxBaseUri + WX_GET_ICON, username, token.getSkey());
     }
 
     public static String getHeadUrlByUsername(Token token, String username) {
-        return String.format(wxBaseUri + WX_GET_HEAD, new Object[]{username, token.getSkey()});
+        return String.format(wxBaseUri + WX_GET_HEAD, username, token.getSkey());
     }
 
     public static boolean isGroupUserName(String userName) {
-        if (userName == null || !userName.startsWith("@@")) {
-            return false;
-        }
-        return true;
+        return userName != null && userName.startsWith("@@");
     }
 
     public static String getHeadImgUrl(String headImgUrl) {
@@ -187,7 +184,7 @@ public class WxHome {
     public static Properties syncCheck(Token token, String deviceId2, String syncKey) {
         Map<String, String> params = formSyncParams(token, deviceId2, syncKey);
         try {
-            Uri.Builder builtUri = Uri.parse(String.format(WX_SYNC_URL_FORMAT, new Object[]{wxSchema, wxHost})).buildUpon();
+            Uri.Builder builtUri = Uri.parse(String.format(WX_SYNC_URL_FORMAT, wxSchema, wxHost)).buildUpon();
             for (String key : params.keySet()) {
                 builtUri.appendQueryParameter(key, params.get(key));
             }

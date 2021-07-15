@@ -25,7 +25,7 @@ public class NetUtil {
     }
 
     public static String getHttpsResponse(String url, int timeout) throws IOException {
-        return getHttpsResponse(url, timeout, (String) null);
+        return getHttpsResponse(url, timeout, null);
     }
 
     public static String getHttpsResponse(String url, int timeout, String cookie) throws IOException {

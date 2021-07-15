@@ -73,18 +73,12 @@ public class Contact implements Parcelable, Comparable<Contact> {
     }
 
     public boolean isPublic() {
-        if (!WxHome.isGroupUserName(this.UserName) && (this.VerifyFlag & 8) != 0) {
-            return true;
-        }
-        return false;
+        return !WxHome.isGroupUserName(this.UserName) && (this.VerifyFlag & 8) != 0;
     }
 
     public boolean isMuted() {
         Log.d("Contact", "isMuted, NickName=" + this.NickName + " Statues=" + this.Statues + " ContactFlag=" + this.ContactFlag);
-        if ((!WxHome.isGroupUserName(this.UserName) || this.Statues != 0) && (this.ContactFlag & 512) != 1) {
-            return false;
-        }
-        return true;
+        return (WxHome.isGroupUserName(this.UserName) && this.Statues == 0) || (this.ContactFlag & 512) == 1;
     }
 
     public int describeContents() {

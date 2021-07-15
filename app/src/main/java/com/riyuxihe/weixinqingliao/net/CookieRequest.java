@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CookieRequest extends JsonRequest<JSONObject> {
-    private Map<String, String> mHeaders = new HashMap();
+    private final Map<String, String> mHeaders = new HashMap();
 
     public CookieRequest(int method, String url, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         super(method, url, null, listener, errorListener);

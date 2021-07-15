@@ -56,18 +56,18 @@ public class LoginActivity extends BaseActivity {
 
     public void onLoginViewInflated() {
         Log.d(TAG, "onLoginViewInflated");
-        this.mNotice = (TextView) findViewById(R.id.notice);
-        this.mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        this.mImageView = (ImageView) findViewById(R.id.img_wx_login_qr);
-        this.mChangeBtn = (Button) findViewById(R.id.btn_change_account);
+        this.mNotice = findViewById(R.id.notice);
+        this.mProgressBar = findViewById(R.id.progressBar);
+        this.mImageView = findViewById(R.id.img_wx_login_qr);
+        this.mChangeBtn = findViewById(R.id.btn_change_account);
         this.mFgHandler = new FgHandler(Looper.getMainLooper());
         this.mhandlerThread = new HandlerThread("login");
         this.mhandlerThread.start();
         this.mBgHandler = new BgHandler(this.mhandlerThread.getLooper());
         Pair<Boolean, Boolean> connectedBlocked = NetUtil.checkNet(this);
-        if (((Boolean) connectedBlocked.first).booleanValue()) {
+        if (connectedBlocked.first.booleanValue()) {
             init();
-        } else if (((Boolean) connectedBlocked.second).booleanValue()) {
+        } else if (connectedBlocked.second.booleanValue()) {
             requestInternetPermission(this);
         } else {
             showNotice(getString(R.string.bad_net_notice));
@@ -78,23 +78,23 @@ public class LoginActivity extends BaseActivity {
         Log.d(TAG, "init");
         String avatarUrl = Prefs.getInstance(getApplicationContext()).getAvatar();
         if (TextUtils.isEmpty(avatarUrl)) {
-            new QRCodeTask().execute(new String[0]);
+            new QRCodeTask().execute();
             return;
         }
         long expireAt = Prefs.getInstance(getApplicationContext()).getExpireAt().longValue();
         Token prefToken = Prefs.getInstance(getApplicationContext()).getToken();
         if (System.currentTimeMillis() >= expireAt || prefToken == null || TextUtils.isEmpty(prefToken.getWxuin())) {
-            new QRCodeTask().execute(new String[0]);
+            new QRCodeTask().execute();
             return;
         }
         setAvatar(WxLogin.getBase64Image(avatarUrl));
-        new FastLoginTask().execute(new String[]{prefToken.getWxuin(), prefToken.cookie});
+        new FastLoginTask().execute(prefToken.getWxuin(), prefToken.cookie);
     }
 
     private void showLoading() {
         Log.d(TAG, "showLoading");
         this.mChangeBtn.setVisibility(8);
-        this.mImageView.setImageBitmap((Bitmap) null);
+        this.mImageView.setImageBitmap(null);
         this.mProgressBar.setVisibility(0);
         this.mNotice.setText(getString(R.string.waiting_notice));
     }
@@ -132,8 +132,8 @@ public class LoginActivity extends BaseActivity {
     public void changeAccount() {
         Prefs.getInstance(getApplicationContext()).clear();
         showLoading();
-        this.mBgHandler.removeCallbacksAndMessages((Object) null);
-        new QRCodeTask().execute(new String[0]);
+        this.mBgHandler.removeCallbacksAndMessages(null);
+        new QRCodeTask().execute();
     }
 
     /* access modifiers changed from: private */
@@ -316,10 +316,10 @@ public class LoginActivity extends BaseActivity {
     public void onDestroy() {
         if (this.mBgHandler != null) {
             this.mBgHandler.stop();
-            this.mBgHandler.removeCallbacksAndMessages((Object) null);
+            this.mBgHandler.removeCallbacksAndMessages(null);
         }
         if (this.mFgHandler != null) {
-            this.mFgHandler.removeCallbacksAndMessages((Object) null);
+            this.mFgHandler.removeCallbacksAndMessages(null);
         }
         if (this.mhandlerThread != null) {
             this.mhandlerThread.quitSafely();

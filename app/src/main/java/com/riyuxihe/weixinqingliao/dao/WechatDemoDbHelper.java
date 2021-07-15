@@ -14,7 +14,7 @@ public class WechatDemoDbHelper extends SQLiteOpenHelper {
     private static final String TEXT = " TEXT";
 
     public WechatDemoDbHelper(Context context) {
-        super(context, DATABASE_NAME, (SQLiteDatabase.CursorFactory) null, 1);
+        super(context, DATABASE_NAME, null, 1);
     }
 
     public void onCreate(SQLiteDatabase db) {

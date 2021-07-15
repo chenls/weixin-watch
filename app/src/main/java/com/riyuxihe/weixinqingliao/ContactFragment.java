@@ -67,7 +67,7 @@ public class ContactFragment extends Fragment {
     private void initView(View view) {
         this.mData = getData(this.contactList);
         ListViewAdapter adapter = new ListViewAdapter(getActivity(), this.token.cookie, this.mData);
-        this.listView = (ListView) view.findViewById(R.id.listView2);
+        this.listView = view.findViewById(R.id.listView2);
         this.listView.addFooterView(getActivity().getLayoutInflater().inflate(R.layout.footer_view, this.listView, false));
         this.listView.setAdapter(adapter);
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,9 +76,9 @@ public class ContactFragment extends Fragment {
                     Intent intent = new Intent(ContactFragment.this.getActivity(), ChatActivity.class);
                     intent.putExtra(Prefs.Key.TOKEN, ContactFragment.this.token.toBundle());
                     User toUser = new User();
-                    toUser.UserName = ((HashMap) ContactFragment.this.mData.get(i)).get("userName").toString();
-                    toUser.NickName = ((HashMap) ContactFragment.this.mData.get(i)).get("title").toString();
-                    toUser.HeadImgUrl = ((HashMap) ContactFragment.this.mData.get(i)).get("img").toString();
+                    toUser.UserName = ContactFragment.this.mData.get(i).get("userName").toString();
+                    toUser.NickName = ContactFragment.this.mData.get(i).get("title").toString();
+                    toUser.HeadImgUrl = ContactFragment.this.mData.get(i).get("img").toString();
                     intent.putExtra("to", toUser.toBundle());
                     intent.putExtra("from", ContactFragment.this.user.toBundle());
                     ContactFragment.this.startActivity(intent);

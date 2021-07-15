@@ -15,11 +15,11 @@ import java.util.List;
 
 public class ListViewAdapter extends BaseAdapter {
     private static final String TAG = "ListViewAdapter";
-    private String cookie;
-    private ImageLoader imageLoader;
-    private Activity mContext;
-    private List<HashMap<String, Object>> mData;
-    private RequestQueue mQueue = VolleySingleton.getInstance().getRequestQueue();
+    private final String cookie;
+    private final ImageLoader imageLoader;
+    private final Activity mContext;
+    private final List<HashMap<String, Object>> mData;
+    private final RequestQueue mQueue = VolleySingleton.getInstance().getRequestQueue();
 
     static class ViewHolder {
         public NetworkImageView imageView;
@@ -54,12 +54,12 @@ public class ListViewAdapter extends BaseAdapter {
         ViewHolder holder;
         View rowView = convertView;
         if (rowView == null) {
-            rowView = this.mContext.getLayoutInflater().inflate(R.layout.friend_list_item, (ViewGroup) null);
+            rowView = this.mContext.getLayoutInflater().inflate(R.layout.friend_list_item, null);
             holder = new ViewHolder();
-            holder.title = (TextView) rowView.findViewById(R.id.title);
-            holder.time = (TextView) rowView.findViewById(R.id.time);
-            holder.info = (TextView) rowView.findViewById(R.id.info);
-            holder.imageView = (NetworkImageView) rowView.findViewById(R.id.img);
+            holder.title = rowView.findViewById(R.id.title);
+            holder.time = rowView.findViewById(R.id.time);
+            holder.info = rowView.findViewById(R.id.info);
+            holder.imageView = rowView.findViewById(R.id.img);
             rowView.setTag(holder);
         } else {
             holder = (ViewHolder) rowView.getTag();

@@ -58,7 +58,7 @@ public class WxLogin {
 
     public static String pushLogin(String wxuin, String cookie) {
         try {
-            String text = NetUtil.getHttpsResponse(String.format(PUSH_LOGIN, new Object[]{wxuin}), 0, cookie);
+            String text = NetUtil.getHttpsResponse(String.format(PUSH_LOGIN, wxuin), 0, cookie);
             Log.i(TAG, "pushLogin:httpRes=" + text);
             JSONObject res = JSON.parseObject(text);
             if (Constants.SyncCheckCode.SUCCESS.equals(res.getString(Token.RET))) {
@@ -157,7 +157,7 @@ public class WxLogin {
                 return null;
             }
             Token token = new Token();
-            token.cookie = cookiesToStr((List) conn.getHeaderFields().get("Set-Cookie"));
+            token.cookie = cookiesToStr(conn.getHeaderFields().get("Set-Cookie"));
 //            Log.d(TAG, "getToken:cookie=" + token.cookie);
             NodeList elements = error.item(0).getChildNodes();
             for (int i = 0; i < elements.getLength(); i++) {

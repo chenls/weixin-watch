@@ -31,7 +31,7 @@ public class SettingActivity extends BaseActivity {
         } else if (pref == listItemsValue[3]) {
             checkedItem = 3;
         }
-        new AlertDialog.Builder(this).setTitle((CharSequence) "同步周期").setSingleChoiceItems((CharSequence[]) listItems, checkedItem, (DialogInterface.OnClickListener) new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle("同步周期").setSingleChoiceItems(listItems, checkedItem, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 SettingActivity.this.sendRescheduleBroadCast(listItemsValue[which]);
             }

@@ -94,7 +94,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private RequestQueue mQueue;
     /* access modifiers changed from: private */
     public SoundMeter mSensor;
-    private Runnable mSleepTask = new Runnable() {
+    private final Runnable mSleepTask = new Runnable() {
         public void run() {
             ChatActivity.this.stop();
         }
@@ -151,24 +151,24 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void initView() {
-        this.mListView = (ListView) findViewById(R.id.listview);
-        this.mBtnSend = (Button) findViewById(R.id.btn_send);
-        this.mBtnRcd = (TextView) findViewById(R.id.btn_rcd);
+        this.mListView = findViewById(R.id.listview);
+        this.mBtnSend = findViewById(R.id.btn_send);
+        this.mBtnRcd = findViewById(R.id.btn_rcd);
         this.mBtnSend.setOnClickListener(this);
-        this.mBtnBack = (Button) findViewById(R.id.btn_back);
-        this.mBottom = (RelativeLayout) findViewById(R.id.btn_bottom);
+        this.mBtnBack = findViewById(R.id.btn_back);
+        this.mBottom = findViewById(R.id.btn_bottom);
         this.mBtnBack.setOnClickListener(this);
-        this.chatting_mode_btn = (ImageView) findViewById(R.id.ivPopUp);
-        this.volume = (ImageView) findViewById(R.id.volume);
+        this.chatting_mode_btn = findViewById(R.id.ivPopUp);
+        this.volume = findViewById(R.id.volume);
         this.rcChat_popup = findViewById(R.id.rcChat_popup);
-        this.img1 = (ImageView) findViewById(R.id.img1);
-        this.sc_img1 = (ImageView) findViewById(R.id.sc_img1);
-        this.del_re = (LinearLayout) findViewById(R.id.del_re);
-        this.voice_rcd_hint_rcding = (LinearLayout) findViewById(R.id.voice_rcd_hint_rcding);
-        this.voice_rcd_hint_loading = (LinearLayout) findViewById(R.id.voice_rcd_hint_loading);
-        this.voice_rcd_hint_tooshort = (LinearLayout) findViewById(R.id.voice_rcd_hint_tooshort);
+        this.img1 = findViewById(R.id.img1);
+        this.sc_img1 = findViewById(R.id.sc_img1);
+        this.del_re = findViewById(R.id.del_re);
+        this.voice_rcd_hint_rcding = findViewById(R.id.voice_rcd_hint_rcding);
+        this.voice_rcd_hint_loading = findViewById(R.id.voice_rcd_hint_loading);
+        this.voice_rcd_hint_tooshort = findViewById(R.id.voice_rcd_hint_tooshort);
         this.mSensor = new SoundMeter();
-        this.mEditTextContent = (EditText) findViewById(R.id.et_sendmessage);
+        this.mEditTextContent = findViewById(R.id.et_sendmessage);
         this.chatting_mode_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (ChatActivity.this.btn_vocie) {
@@ -282,11 +282,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void sendMsg(Msg msg) {
-        CookieRequest cookieRequest = new CookieRequest(1, WxHome.getSendUrl(this.token), JSON.toJSONString(WxHome.formMsgRequest(this.token, msg)), (Response.Listener<JSONObject>) new Response.Listener<JSONObject>() {
+        CookieRequest cookieRequest = new CookieRequest(1, WxHome.getSendUrl(this.token), JSON.toJSONString(WxHome.formMsgRequest(this.token, msg)), new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
                 Log.d(ChatActivity.TAG, "sendMsg:" + response.toString());
             }
-        }, (Response.ErrorListener) new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
             public void onErrorResponse(VolleyError error) {
                 Log.e(ChatActivity.TAG, "sendMsg:error " + error.getMessage(), error);
             }
@@ -361,7 +361,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     entity.setMsgType(false);
                     entity.setTime(TimeUtil.toCeilSecondsFromMillis(voiceLength) + "\"");
                     entity.setText(this.voiceName);
-                    new VoiceTask().execute(new String[]{this.voiceName, String.valueOf(voiceLength)});
+                    new VoiceTask().execute(this.voiceName, String.valueOf(voiceLength));
                     this.mDataArrays.add(entity);
                     this.mAdapter.notifyDataSetChanged();
                     this.mListView.setSelection(this.mListView.getCount() - 1);

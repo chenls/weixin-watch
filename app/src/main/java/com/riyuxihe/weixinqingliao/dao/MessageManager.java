@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageManager {
-    private WechatDemoDbHelper mDbHelper;
+    private final WechatDemoDbHelper mDbHelper;
 
     public MessageManager(Context context) {
         this.mDbHelper = new WechatDemoDbHelper(context);
@@ -45,7 +45,7 @@ public class MessageManager {
             values.put(MessageContract.MessageEntry.COLUMN_FROM_MEMBER_NICK_NAME, msg.fromMemberNickName);
             values.put(MessageContract.MessageEntry.COLUMN_VOICE_LENGTH, Long.valueOf(msg.VoiceLength));
             values.put(MessageContract.MessageEntry.COLUMN_CREATE_TIME, Long.valueOf(msg.CreateTime));
-            db.insert("message", (String) null, values);
+            db.insert("message", null, values);
         } finally {
             db.close();
         }
@@ -55,7 +55,7 @@ public class MessageManager {
         SQLiteDatabase db = this.mDbHelper.getReadableDatabase();
         List<Msg> msgList = new ArrayList<>();
         try {
-            Cursor cursor = db.query("message", (String[]) null, "from_username = ? or to_username = ?", new String[]{userName, userName}, (String) null, (String) null, "create_time ASC");
+            Cursor cursor = db.query("message", null, "from_username = ? or to_username = ?", new String[]{userName, userName}, null, null, "create_time ASC");
             while (cursor.moveToNext()) {
                 Msg msg = new Msg();
                 msg.MsgId = cursor.getString(cursor.getColumnIndexOrThrow(MessageContract.MessageEntry.COLUMN_MSG_ID));

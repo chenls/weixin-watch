@@ -215,12 +215,12 @@ public class VerticalViewPager extends ViewGroup {
     public void setAdapter(PagerAdapter adapter) {
         if (this.mAdapter != null) {
             this.mAdapter.unregisterDataSetObserver(this.mObserver);
-            this.mAdapter.startUpdate((ViewGroup) this);
+            this.mAdapter.startUpdate(this);
             for (int i = 0; i < this.mItems.size(); i++) {
                 ItemInfo ii = this.mItems.get(i);
-                this.mAdapter.destroyItem((ViewGroup) this, ii.position, ii.object);
+                this.mAdapter.destroyItem(this, ii.position, ii.object);
             }
-            this.mAdapter.finishUpdate((ViewGroup) this);
+            this.mAdapter.finishUpdate(this);
             this.mItems.clear();
             removeNonDecorViews();
             this.mCurItem = 0;
@@ -282,11 +282,7 @@ public class VerticalViewPager extends ViewGroup {
     public void setCurrentItem(int item) {
         boolean z;
         this.mPopulatePending = false;
-        if (!this.mFirstLayout) {
-            z = true;
-        } else {
-            z = false;
-        }
+        z = !this.mFirstLayout;
         setCurrentItemInternal(item, z, false);
     }
 
@@ -379,11 +375,7 @@ public class VerticalViewPager extends ViewGroup {
         int i = 1;
         if (Build.VERSION.SDK_INT >= 11) {
             boolean hasTransformer = transformer != null;
-            if (this.mPageTransformer != null) {
-                z = true;
-            } else {
-                z = false;
-            }
+            z = this.mPageTransformer != null;
             boolean needsPopulate = hasTransformer != z;
             this.mPageTransformer = transformer;
             setChildrenDrawingOrderEnabledCompat(hasTransformer);
@@ -407,13 +399,13 @@ public class VerticalViewPager extends ViewGroup {
             if (this.mSetChildrenDrawingOrderEnabled == null) {
                 Class<ViewGroup> cls = ViewGroup.class;
                 try {
-                    this.mSetChildrenDrawingOrderEnabled = cls.getDeclaredMethod("setChildrenDrawingOrderEnabled", new Class[]{Boolean.TYPE});
+                    this.mSetChildrenDrawingOrderEnabled = cls.getDeclaredMethod("setChildrenDrawingOrderEnabled", Boolean.TYPE);
                 } catch (NoSuchMethodException e) {
                     Log.e(TAG, "Can't find setChildrenDrawingOrderEnabled", e);
                 }
             }
             try {
-                this.mSetChildrenDrawingOrderEnabled.invoke(this, new Object[]{Boolean.valueOf(enable)});
+                this.mSetChildrenDrawingOrderEnabled.invoke(this, Boolean.valueOf(enable));
             } catch (Exception e2) {
                 Log.e(TAG, "Error changing children drawing order", e2);
             }
@@ -494,7 +486,7 @@ public class VerticalViewPager extends ViewGroup {
 
     /* access modifiers changed from: package-private */
     public float distanceInfluenceForSnapDuration(float f) {
-        return (float) Math.sin((double) ((float) (((double) (f - 0.5f)) * 0.4712389167638204d)));
+        return (float) Math.sin((float) (((double) (f - 0.5f)) * 0.4712389167638204d));
     }
 
     /* access modifiers changed from: package-private */
@@ -538,7 +530,7 @@ public class VerticalViewPager extends ViewGroup {
     public ItemInfo addNewItem(int position, int index) {
         ItemInfo ii = new ItemInfo();
         ii.position = position;
-        ii.object = this.mAdapter.instantiateItem((ViewGroup) this, position);
+        ii.object = this.mAdapter.instantiateItem(this, position);
         ii.heightFactor = this.mAdapter.getPageWidth(position);
         if (index < 0 || index >= this.mItems.size()) {
             this.mItems.add(ii);
@@ -553,11 +545,7 @@ public class VerticalViewPager extends ViewGroup {
         boolean needPopulate;
         int adapterCount = this.mAdapter.getCount();
         this.mExpectedAdapterCount = adapterCount;
-        if (this.mItems.size() >= (this.mOffscreenPageLimit * 2) + 1 || this.mItems.size() >= adapterCount) {
-            needPopulate = false;
-        } else {
-            needPopulate = true;
-        }
+        needPopulate = this.mItems.size() < (this.mOffscreenPageLimit * 2) + 1 && this.mItems.size() < adapterCount;
         int newCurrItem = this.mCurItem;
         boolean isUpdating = false;
         int i = 0;
@@ -569,10 +557,10 @@ public class VerticalViewPager extends ViewGroup {
                     this.mItems.remove(i);
                     i--;
                     if (!isUpdating) {
-                        this.mAdapter.startUpdate((ViewGroup) this);
+                        this.mAdapter.startUpdate(this);
                         isUpdating = true;
                     }
-                    this.mAdapter.destroyItem((ViewGroup) this, ii.position, ii.object);
+                    this.mAdapter.destroyItem(this, ii.position, ii.object);
                     needPopulate = true;
                     if (this.mCurItem == ii.position) {
                         newCurrItem = Math.max(0, Math.min(this.mCurItem, adapterCount - 1));
@@ -589,7 +577,7 @@ public class VerticalViewPager extends ViewGroup {
             i++;
         }
         if (isUpdating) {
-            this.mAdapter.finishUpdate((ViewGroup) this);
+            this.mAdapter.finishUpdate(this);
         }
         Collections.sort(this.mItems, COMPARATOR);
         if (needPopulate) {
@@ -628,7 +616,7 @@ public class VerticalViewPager extends ViewGroup {
         } else if (this.mPopulatePending) {
             sortChildDrawingOrder();
         } else if (getWindowToken() != null) {
-            this.mAdapter.startUpdate((ViewGroup) this);
+            this.mAdapter.startUpdate(this);
             int pageLimit = this.mOffscreenPageLimit;
             int startPos = Math.max(0, this.mCurItem - pageLimit);
             int N = this.mAdapter.getCount();
@@ -685,7 +673,7 @@ public class VerticalViewPager extends ViewGroup {
                     } else {
                         if (pos == ii3.position && !ii3.scrolling) {
                             this.mItems.remove(itemIndex);
-                            this.mAdapter.destroyItem((ViewGroup) this, pos, ii3.object);
+                            this.mAdapter.destroyItem(this, pos, ii3.object);
                             itemIndex--;
                             curIndex--;
                             if (itemIndex >= 0) {
@@ -721,7 +709,7 @@ public class VerticalViewPager extends ViewGroup {
                         } else {
                             if (pos2 == ii4.position && !ii4.scrolling) {
                                 this.mItems.remove(itemIndex2);
-                                this.mAdapter.destroyItem((ViewGroup) this, pos2, ii4.object);
+                                this.mAdapter.destroyItem(this, pos2, ii4.object);
                                 if (itemIndex2 < this.mItems.size()) {
                                     ii4 = this.mItems.get(itemIndex2);
                                 } else {
@@ -733,8 +721,8 @@ public class VerticalViewPager extends ViewGroup {
                 }
                 calculatePageOffsets(curItem, curIndex, oldCurInfo);
             }
-            this.mAdapter.setPrimaryItem((ViewGroup) this, this.mCurItem, curItem != null ? curItem.object : null);
-            this.mAdapter.finishUpdate((ViewGroup) this);
+            this.mAdapter.setPrimaryItem(this, this.mCurItem, curItem != null ? curItem.object : null);
+            this.mAdapter.finishUpdate(this);
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View child = getChildAt(i);
@@ -1292,11 +1280,7 @@ public class VerticalViewPager extends ViewGroup {
 
     private void completeScroll(boolean postEvents) {
         boolean needPopulate;
-        if (this.mScrollState == 2) {
-            needPopulate = true;
-        } else {
-            needPopulate = false;
-        }
+        needPopulate = this.mScrollState == 2;
         if (needPopulate) {
             setScrollingCacheEnabled(false);
             this.mScroller.abortAnimation();
@@ -1333,7 +1317,7 @@ public class VerticalViewPager extends ViewGroup {
     private void enableLayers(boolean enable) {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            ViewCompat.setLayerType(getChildAt(i), enable ? 2 : 0, (Paint) null);
+            ViewCompat.setLayerType(getChildAt(i), enable ? 2 : 0, null);
         }
     }
 

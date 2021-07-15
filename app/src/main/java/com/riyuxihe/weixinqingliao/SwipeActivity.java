@@ -24,7 +24,7 @@ import android.widget.FrameLayout;
 public class SwipeActivity extends AppCompatActivity {
     protected boolean swipeAnyWhere = false;
     protected boolean swipeEnabled = true;
-    private boolean swipeFinished = false;
+    private final boolean swipeFinished = false;
     private SwipeLayout swipeLayout;
 
     /* access modifiers changed from: protected */
@@ -248,24 +248,24 @@ public class SwipeActivity extends AppCompatActivity {
         /* access modifiers changed from: private */
         public void animateBack(boolean withVel) {
             cancelPotentialAnimation();
-            this.animator = ObjectAnimator.ofFloat(this, "contentX", new float[]{getContentX(), 0.0f});
+            this.animator = ObjectAnimator.ofFloat(this, "contentX", getContentX(), 0.0f);
             int tmpDuration = withVel ? (int) ((200.0f * getContentX()) / ((float) this.screenWidth)) : ItemTouchHelper.Callback.DEFAULT_DRAG_ANIMATION_DURATION;
             if (tmpDuration < 100) {
                 tmpDuration = 100;
             }
-            this.animator.setDuration((long) tmpDuration);
+            this.animator.setDuration(tmpDuration);
             this.animator.setInterpolator(new DecelerateInterpolator());
             this.animator.start();
         }
 
         private void animateFinish(boolean withVel) {
             cancelPotentialAnimation();
-            this.animator = ObjectAnimator.ofFloat(this, "contentX", new float[]{getContentX(), (float) this.screenWidth});
+            this.animator = ObjectAnimator.ofFloat(this, "contentX", getContentX(), (float) this.screenWidth);
             int tmpDuration = withVel ? (int) ((200.0f * (((float) this.screenWidth) - getContentX())) / ((float) this.screenWidth)) : ItemTouchHelper.Callback.DEFAULT_DRAG_ANIMATION_DURATION;
             if (tmpDuration < 100) {
                 tmpDuration = 100;
             }
-            this.animator.setDuration((long) tmpDuration);
+            this.animator.setDuration(tmpDuration);
             this.animator.setInterpolator(new DecelerateInterpolator());
             this.animator.addListener(new Animator.AnimatorListener() {
                 public void onAnimationStart(Animator animation) {

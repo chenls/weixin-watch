@@ -15,9 +15,9 @@ public class Prefs {
     SharedPreferences.OnSharedPreferenceChangeListener mListener = null;
 
     public interface Key {
-        public static final String AVATAR = "avatar";
-        public static final String EXPIRE_AT = "expire";
-        public static final String TOKEN = "token";
+        String AVATAR = "avatar";
+        String EXPIRE_AT = "expire";
+        String TOKEN = "token";
     }
 
     private Prefs(Context ctx) {
@@ -43,7 +43,7 @@ public class Prefs {
         String encodedToken = getPrefs(this.mCtx).getString(Key.TOKEN, "");
         Token token = new Token();
         if (!TextUtils.isEmpty(encodedToken)) {
-            return (Token) JSON.parseObject(encodedToken, Token.class);
+            return JSON.parseObject(encodedToken, Token.class);
         }
         return token;
     }
