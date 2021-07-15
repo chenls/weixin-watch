@@ -75,7 +75,8 @@
     <string name="content_2">退出请在通知中点击[退出登录]</string>
     <string name="content_3">* 长时间未连网会自动登出</string>
     <string name="content_4">* 消息会有一定的延迟</string>
-    <string name="content_plus_1">请使用微信扫描下方二维码，若已显示头像，请直接手机微信上确认</string>
+    <string name="content_plus_1">请使用微信扫描二维码</string>
+    <string name="content_plus_2">请手机微信上确认登录</string>
     <string name="content_title">－须知－</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_world">Hello world!</string>

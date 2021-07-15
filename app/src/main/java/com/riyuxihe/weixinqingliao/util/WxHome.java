@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class WxHome {
-    public static final String DEFAULT_HEAD_IMG = "https://res.wx.qq.com/a/wx_fed/webwx/res/static/img/2KriyDK.png";
+    public static final String DEFAULT_HEAD_IMG = "https://res.wx2.qq.com/a/wx_fed/webwx/res/static/img/2KriyDK.png";
     private static final String DIGITS = "0123456789";
     private static final String INIT_URI = "/cgi-bin/mmwebwx-bin/webwxinit?r=%d&&lang=zh_CN&pass_ticket=%s";
     public static final String RETCODE = "retcode";
@@ -40,8 +40,8 @@ public class WxHome {
     private static final String WX_SYNC_URL_FORMAT = "%s://webpush.%s/cgi-bin/mmwebwx-bin/synccheck";
     private static String deviceId;
     private static SecureRandom secureRandom = new SecureRandom();
-    private static String wxBaseUri = "https://wx.qq.com";
-    private static String wxHost = "wx.qq.com";
+    private static String wxBaseUri = "https://wx2.qq.com";
+    private static String wxHost = "wx2.qq.com";
     private static String wxSchema = "https";
 
     public static void setWxBaseUri(String schema, String host) {

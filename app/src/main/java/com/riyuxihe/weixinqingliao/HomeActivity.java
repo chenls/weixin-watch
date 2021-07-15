@@ -25,8 +25,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.DefaultRetryPolicy;
@@ -136,6 +138,7 @@ public class HomeActivity extends SwipeActivity {
     public Token token;
     /* access modifiers changed from: private */
     public User user;
+    private long mExitTime = 0;
 
     static /* synthetic */ int access$3208() {
         int i = kJobId;
@@ -802,5 +805,19 @@ public class HomeActivity extends SwipeActivity {
             default:
                 return;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(HomeActivity.this, "再按一次返回键退出微信!", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                mHandler.removeMessages(21);
+                finish();
+            }
+        }
+        return true;
     }
 }

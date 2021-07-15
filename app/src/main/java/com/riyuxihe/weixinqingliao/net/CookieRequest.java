@@ -50,7 +50,7 @@ public class CookieRequest extends JsonRequest<JSONObject> {
 
     public Map<String, String> getHeaders() throws AuthFailureError {
         this.mHeaders.put("User-Agent", Constants.USER_AGENT);
-        this.mHeaders.put("Referer", "https://wx.qq.com/");
+        this.mHeaders.put("Referer", "https://wx2.qq.com/");
         return this.mHeaders;
     }
 }

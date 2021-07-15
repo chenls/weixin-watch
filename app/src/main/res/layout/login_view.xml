@@ -26,22 +26,23 @@
 
     <Button
         android:id="@+id/btn_change_account"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
+        android:layout_marginStart="30.0dip"
+        android:layout_marginEnd="30.0dip"
         android:layout_marginBottom="40.0dip"
         android:background="@drawable/round_btn"
         android:gravity="center"
-        android:paddingLeft="10.0dip"
-        android:paddingRight="10.0dip"
-        android:text="@string/change_account"
-        android:visibility="gone" />
+        android:text="@string/change_account" />
 
     <ImageView
         android:id="@+id/img_wx_login_qr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:minWidth="50dp"
+        android:minHeight="50dp"
         android:padding="40dp"
         android:scaleType="centerCrop" />
 </FrameLayout>

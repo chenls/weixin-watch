@@ -118,6 +118,7 @@ public class LoginActivity extends BaseActivity {
     public void setAvatar(Bitmap bitmap) {
         this.mProgressBar.setVisibility(0);
         this.mImageView.setImageBitmap(bitmap);
+        showNotice(getString(R.string.content_plus_2));
         this.mChangeBtn.setVisibility(0);
         this.mChangeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -138,6 +139,7 @@ public class LoginActivity extends BaseActivity {
     /* access modifiers changed from: private */
     public void jumpToMain(Token token) {
         Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtras(token.toBundle());
         startActivity(intent);
         finish();

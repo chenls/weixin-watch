@@ -24,11 +24,11 @@ public class WxLogin {
     public static final String AVATAR_KEY = "window.userAvatar";
     private static final String CODE_KEY = "window.QRLogin.code";
     public static final String DEFAULT_AVATAR = "data:img/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/wAALCACEAIQBAREA/8QAGQABAQEBAQEAAAAAAAAAAAAAAAMCAQQG/8QAIhABAAIBBAEFAQAAAAAAAAAAAAECEQMEITEFEhMyUWFB/9oACAEBAAA/APpa1rSsVpEVrEYiI6h0AAAAHk3Pi9lu9X3dxt6al8Y9UvWAAAAAAAAAAAAA7ETPTXtz9k6csdAAAAC0RiMOjF4zGUwAAAdr8oWByekQAAAdrxaFgcniEQAAAFazmGhjUn+JgAAAO0nFlnJ4hHsAAAAiM9KVpjmWxO1PpgAAAbrT7biIjp0ByaxPadqTH7DIAApSvGWwABPUjE5hgABWkx6YaAAE9SeoYAAAAAAAAAAAAAAAAAAT22pOrttLUtiJvSLTj9hQAAAAHzXnvObzYeQnQ0JpFIpE81zL/9k=";
-    private static final String JS_LOGIN_WX_URL = "https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_=";
-    private static final String LOGIN_CHECK_URL = "https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=%s&tip=0&_=";
+    private static final String JS_LOGIN_WX_URL = "https://login.wx2.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=https%3A%2F%2Fwx2.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_=";
+    private static final String LOGIN_CHECK_URL = "https://login.wx2.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=%s&tip=0&_=";
     public static final String LOGIN_CODE_KEY = "window.code";
     private static final String LOGIN_URL = "https://login.weixin.qq.com/l/";
-    private static final String PUSH_LOGIN = "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxpushloginurl?uin=%s";
+    private static final String PUSH_LOGIN = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxpushloginurl?uin=%s";
     private static final String QR_URL = "https://login.weixin.qq.com/qrcode/";
     public static final String REDIRECT_KEY = "window.redirect_uri";
     private static final String REDIRECT_SUFFIX = "&fun=new&version=v2";

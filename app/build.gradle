@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/home/chenliusheng/android_key.jks')
+            storePassword 'qw12340'
+            keyPassword 'qw12340'
+            keyAlias 'chenls'
+        }
+    }
     compileSdkVersion 30
 
     defaultConfig {
@@ -11,7 +19,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
     }
 
     buildTypes {

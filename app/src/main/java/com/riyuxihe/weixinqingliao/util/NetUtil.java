@@ -41,7 +41,7 @@ public class NetUtil {
 
     public static HttpsURLConnection getHttpsConnection(String url, int timeout) throws IOException {
         HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-        conn.setRequestProperty("Referer", "https://wx.qq.com/");
+        conn.setRequestProperty("Referer", "https://wx2.qq.com/");
         conn.setRequestProperty("User-Agent", Constants.USER_AGENT);
         if (timeout > 0) {
             conn.setConnectTimeout(timeout);
