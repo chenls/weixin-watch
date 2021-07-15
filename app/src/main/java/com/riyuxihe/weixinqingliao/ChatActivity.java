@@ -1,6 +1,5 @@
 package com.riyuxihe.weixinqingliao;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +41,8 @@ import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.TimeUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -50,8 +51,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONObject;
 
 public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private static final int POLL_INTERVAL = 300;

@@ -1,12 +1,11 @@
 package com.riyuxihe.weixinqingliao;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-//import com.mobvoi.android.semantic.DatetimeTagValue;
+
 import com.riyuxihe.weixinqingliao.util.Constants;
 //import ticwear.design.app.AlertDialog;
 

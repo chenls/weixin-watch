@@ -3,6 +3,7 @@ package com.riyuxihe.weixinqingliao.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.riyuxihe.weixinqingliao.model.Token;
 

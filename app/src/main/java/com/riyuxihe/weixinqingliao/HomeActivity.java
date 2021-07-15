@@ -61,6 +61,8 @@ import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.TimeUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -71,8 +73,6 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import org.json.JSONObject;
 
 public class HomeActivity extends SwipeActivity {
     public static final int HOME_SERVICE_OBJ = 20;

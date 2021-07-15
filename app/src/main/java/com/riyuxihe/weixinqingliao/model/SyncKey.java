@@ -1,6 +1,7 @@
 package com.riyuxihe.weixinqingliao.model;
 
 import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 

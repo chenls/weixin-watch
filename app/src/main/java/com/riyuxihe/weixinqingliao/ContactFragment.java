@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.riyuxihe.weixinqingliao.model.Contact;
@@ -18,6 +19,7 @@ import com.riyuxihe.weixinqingliao.model.User;
 import com.riyuxihe.weixinqingliao.net.VolleySingleton;
 import com.riyuxihe.weixinqingliao.util.Prefs;
 import com.riyuxihe.weixinqingliao.util.WxHome;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

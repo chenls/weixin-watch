@@ -5,11 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.riyuxihe.weixinqingliao.net.VolleySingleton;
 import com.riyuxihe.weixinqingliao.util.StringUtil;
+
 import java.util.HashMap;
 import java.util.List;
 

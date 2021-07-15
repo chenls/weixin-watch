@@ -3,6 +3,7 @@ package com.riyuxihe.weixinqingliao.util;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Msg;
 import com.riyuxihe.weixinqingliao.model.SyncKey;
@@ -13,6 +14,7 @@ import com.riyuxihe.weixinqingliao.protocol.InitRequest;
 import com.riyuxihe.weixinqingliao.protocol.MsgRequest;
 import com.riyuxihe.weixinqingliao.protocol.MsgSyncRequest;
 import com.riyuxihe.weixinqingliao.protocol.StatusNotifyRequest;
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;

@@ -5,9 +5,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.util.Pair;
+
 import com.riyuxihe.weixinqingliao.model.Token;
+
 import java.io.IOException;
 import java.net.URL;
+
 import javax.net.ssl.HttpsURLConnection;
 
 public class NetUtil {

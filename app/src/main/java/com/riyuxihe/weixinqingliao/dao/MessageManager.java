@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.riyuxihe.weixinqingliao.model.Msg;
+
 import java.util.ArrayList;
 import java.util.List;
 

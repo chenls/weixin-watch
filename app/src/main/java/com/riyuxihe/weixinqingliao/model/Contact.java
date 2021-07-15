@@ -3,8 +3,10 @@ package com.riyuxihe.weixinqingliao.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
 import com.riyuxihe.weixinqingliao.util.StringUtil;
 import com.riyuxihe.weixinqingliao.util.WxHome;
+
 import java.util.List;
 
 public class Contact implements Parcelable, Comparable<Contact> {

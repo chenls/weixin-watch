@@ -5,17 +5,16 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.riyuxihe.weixinqingliao.model.Token;
 import com.riyuxihe.weixinqingliao.util.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CookieRequest extends JsonRequest<JSONObject> {
     private final Map<String, String> mHeaders = new HashMap();

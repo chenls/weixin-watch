@@ -2,6 +2,7 @@ package com.riyuxihe.weixinqingliao.net;
 
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -10,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.riyuxihe.weixinqingliao.model.Token;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -3,6 +3,7 @@ package com.riyuxihe.weixinqingliao.protocol;
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.SyncKey;
 import com.riyuxihe.weixinqingliao.model.User;
+
 import java.util.ArrayList;
 
 public class InitResponse {
