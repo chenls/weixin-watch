@@ -46,6 +46,11 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class VerticalViewPager extends ViewGroup {
+    /* access modifiers changed from: private */
+    public static final int[] LAYOUT_ATTRS = {16842931};
+    public static final int SCROLL_STATE_DRAGGING = 1;
+    public static final int SCROLL_STATE_IDLE = 0;
+    public static final int SCROLL_STATE_SETTLING = 2;
     private static final int CLOSE_ENOUGH = 2;
     private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>() {
         public int compare(ItemInfo lhs, ItemInfo rhs) {
@@ -59,14 +64,9 @@ public class VerticalViewPager extends ViewGroup {
     private static final int DRAW_ORDER_FORWARD = 1;
     private static final int DRAW_ORDER_REVERSE = 2;
     private static final int INVALID_POINTER = -1;
-    /* access modifiers changed from: private */
-    public static final int[] LAYOUT_ATTRS = {16842931};
     private static final int MAX_SETTLE_DURATION = 600;
     private static final int MIN_DISTANCE_FOR_FLING = 25;
     private static final int MIN_FLING_VELOCITY = 400;
-    public static final int SCROLL_STATE_DRAGGING = 1;
-    public static final int SCROLL_STATE_IDLE = 0;
-    public static final int SCROLL_STATE_SETTLING = 2;
     private static final String TAG = "ViewPager";
     private static final boolean USE_CACHE = false;
     private static final Interpolator sInterpolator = new Interpolator() {
@@ -76,27 +76,24 @@ public class VerticalViewPager extends ViewGroup {
         }
     };
     private static final ViewPositionComparator sPositionComparator = new ViewPositionComparator();
-    private int mActivePointerId = -1;
+    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
+    private final ItemInfo mTempItem = new ItemInfo();
+    private final Rect mTempRect = new Rect();
     /* access modifiers changed from: private */
     public PagerAdapter mAdapter;
+    /* access modifiers changed from: private */
+    public int mCurItem;
+    private int mActivePointerId = -1;
     private OnAdapterChangeListener mAdapterChangeListener;
     private EdgeEffectCompat mBottomEdge;
     private boolean mCalledSuper;
     private int mChildHeightMeasureSpec;
     private int mChildWidthMeasureSpec;
     private int mCloseEnough;
-    /* access modifiers changed from: private */
-    public int mCurItem;
     private int mDecorChildCount;
     private int mDefaultGutterSize;
     private int mDrawingOrder;
     private ArrayList<View> mDrawingOrderedChildren;
-    private final Runnable mEndScrollRunnable = new Runnable() {
-        public void run() {
-            VerticalViewPager.this.setScrollState(0);
-            VerticalViewPager.this.populate();
-        }
-    };
     private int mExpectedAdapterCount;
     private long mFakeDragBeginTime;
     private boolean mFakeDragging;
@@ -111,7 +108,6 @@ public class VerticalViewPager extends ViewGroup {
     private ViewPager.OnPageChangeListener mInternalPageChangeListener;
     private boolean mIsBeingDragged;
     private boolean mIsUnableToDrag;
-    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
     private float mLastMotionX;
     private float mLastMotionY;
     private float mLastOffset = Float.MAX_VALUE;
@@ -131,32 +127,18 @@ public class VerticalViewPager extends ViewGroup {
     private int mRestoredCurItem = -1;
     private int mRightPageBounds;
     private int mScrollState = 0;
+    private final Runnable mEndScrollRunnable = new Runnable() {
+        public void run() {
+            VerticalViewPager.this.setScrollState(0);
+            VerticalViewPager.this.populate();
+        }
+    };
     private Scroller mScroller;
     private boolean mScrollingCacheEnabled;
     private Method mSetChildrenDrawingOrderEnabled;
-    private final ItemInfo mTempItem = new ItemInfo();
-    private final Rect mTempRect = new Rect();
     private EdgeEffectCompat mTopEdge;
     private int mTouchSlop;
     private VelocityTracker mVelocityTracker;
-
-    interface Decor {
-    }
-
-    interface OnAdapterChangeListener {
-        void onAdapterChanged(PagerAdapter pagerAdapter, PagerAdapter pagerAdapter2);
-    }
-
-    static class ItemInfo {
-        float heightFactor;
-        Object object;
-        float offset;
-        int position;
-        boolean scrolling;
-
-        ItemInfo() {
-        }
-    }
 
     public VerticalViewPager(Context context) {
         super(context);
@@ -210,6 +192,21 @@ public class VerticalViewPager extends ViewGroup {
         }
     }
 
+    private void removeNonDecorViews() {
+        int i = 0;
+        while (i < getChildCount()) {
+            if (!((LayoutParams) getChildAt(i).getLayoutParams()).isDecor) {
+                removeViewAt(i);
+                i--;
+            }
+            i++;
+        }
+    }
+
+    public PagerAdapter getAdapter() {
+        return this.mAdapter;
+    }
+
     public void setAdapter(PagerAdapter adapter) {
         if (this.mAdapter != null) {
             this.mAdapter.unregisterDataSetObserver(this.mObserver);
@@ -253,21 +250,6 @@ public class VerticalViewPager extends ViewGroup {
         }
     }
 
-    private void removeNonDecorViews() {
-        int i = 0;
-        while (i < getChildCount()) {
-            if (!((LayoutParams) getChildAt(i).getLayoutParams()).isDecor) {
-                removeViewAt(i);
-                i--;
-            }
-            i++;
-        }
-    }
-
-    public PagerAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
     /* access modifiers changed from: package-private */
     public void setOnAdapterChangeListener(OnAdapterChangeListener listener) {
         this.mAdapterChangeListener = listener;
@@ -277,13 +259,6 @@ public class VerticalViewPager extends ViewGroup {
         return (getMeasuredHeight() - getPaddingTop()) - getPaddingBottom();
     }
 
-    public void setCurrentItem(int item) {
-        boolean z;
-        this.mPopulatePending = false;
-        z = !this.mFirstLayout;
-        setCurrentItemInternal(item, z, false);
-    }
-
     public void setCurrentItem(int item, boolean smoothScroll) {
         this.mPopulatePending = false;
         setCurrentItemInternal(item, smoothScroll, false);
@@ -291,6 +266,13 @@ public class VerticalViewPager extends ViewGroup {
 
     public int getCurrentItem() {
         return this.mCurItem;
+    }
+
+    public void setCurrentItem(int item) {
+        boolean z;
+        this.mPopulatePending = false;
+        z = !this.mFirstLayout;
+        setCurrentItemInternal(item, z, false);
     }
 
     /* access modifiers changed from: package-private */
@@ -443,16 +425,16 @@ public class VerticalViewPager extends ViewGroup {
         }
     }
 
+    public int getPageMargin() {
+        return this.mPageMargin;
+    }
+
     public void setPageMargin(int marginPixels) {
         int oldMargin = this.mPageMargin;
         this.mPageMargin = marginPixels;
         int height = getHeight();
         recomputeScrollPosition(height, height, marginPixels, oldMargin);
         requestLayout();
-    }
-
-    public int getPageMargin() {
-        return this.mPageMargin;
     }
 
     public void setPageMarginDrawable(Drawable d) {
@@ -882,43 +864,6 @@ public class VerticalViewPager extends ViewGroup {
         }
     }
 
-    public static class SavedState extends View.BaseSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<SavedState>() {
-            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
-                return new SavedState(in, loader);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        });
-        Parcelable adapterState;
-        ClassLoader loader;
-        int position;
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(this.position);
-            out.writeParcelable(this.adapterState, flags);
-        }
-
-        public String toString() {
-            return "FragmentPager.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " position=" + this.position + "}";
-        }
-
-        SavedState(Parcel in, ClassLoader loader2) {
-            super(in);
-            loader2 = loader2 == null ? getClass().getClassLoader() : loader2;
-            this.position = in.readInt();
-            this.adapterState = in.readParcelable(loader2);
-            this.loader = loader2;
-        }
-    }
-
     public Parcelable onSaveInstanceState() {
         SavedState ss = new SavedState(super.onSaveInstanceState());
         ss.position = this.mCurItem;
@@ -986,11 +931,10 @@ public class VerticalViewPager extends ViewGroup {
             if (viewParent == null || !(viewParent instanceof View)) {
                 return null;
             }
-            view = (View)viewParent;
+            view = (View) viewParent;
         }
         return this.infoForChild(view);
     }
-
 
     /* access modifiers changed from: package-private */
     public ItemInfo infoForPosition(int position) {
@@ -2025,6 +1969,95 @@ public class VerticalViewPager extends ViewGroup {
         return new LayoutParams(getContext(), attrs);
     }
 
+    interface Decor {
+    }
+
+    interface OnAdapterChangeListener {
+        void onAdapterChanged(PagerAdapter pagerAdapter, PagerAdapter pagerAdapter2);
+    }
+
+    static class ItemInfo {
+        float heightFactor;
+        Object object;
+        float offset;
+        int position;
+        boolean scrolling;
+
+        ItemInfo() {
+        }
+    }
+
+    public static class SavedState extends View.BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<SavedState>() {
+            public SavedState createFromParcel(Parcel in, ClassLoader loader) {
+                return new SavedState(in, loader);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        });
+        Parcelable adapterState;
+        ClassLoader loader;
+        int position;
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in, ClassLoader loader2) {
+            super(in);
+            loader2 = loader2 == null ? getClass().getClassLoader() : loader2;
+            this.position = in.readInt();
+            this.adapterState = in.readParcelable(loader2);
+            this.loader = loader2;
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(this.position);
+            out.writeParcelable(this.adapterState, flags);
+        }
+
+        public String toString() {
+            return "FragmentPager.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " position=" + this.position + "}";
+        }
+    }
+
+    public static class LayoutParams extends ViewGroup.LayoutParams {
+        public int gravity;
+        public boolean isDecor;
+        int childIndex;
+        float heightFactor = 0.0f;
+        boolean needsMeasure;
+        int position;
+
+        public LayoutParams() {
+            super(-1, -1);
+        }
+
+        public LayoutParams(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            TypedArray a = context.obtainStyledAttributes(attrs, VerticalViewPager.LAYOUT_ATTRS);
+            this.gravity = a.getInteger(0, 48);
+            a.recycle();
+        }
+    }
+
+    static class ViewPositionComparator implements Comparator<View> {
+        ViewPositionComparator() {
+        }
+
+        public int compare(View lhs, View rhs) {
+            LayoutParams llp = (LayoutParams) lhs.getLayoutParams();
+            LayoutParams rlp = (LayoutParams) rhs.getLayoutParams();
+            if (llp.isDecor != rlp.isDecor) {
+                return llp.isDecor ? 1 : -1;
+            }
+            return llp.position - rlp.position;
+        }
+    }
+
     class MyAccessibilityDelegate extends AccessibilityDelegateCompat {
         MyAccessibilityDelegate() {
         }
@@ -2090,40 +2123,6 @@ public class VerticalViewPager extends ViewGroup {
 
         public void onInvalidated() {
             VerticalViewPager.this.dataSetChanged();
-        }
-    }
-
-    public static class LayoutParams extends ViewGroup.LayoutParams {
-        int childIndex;
-        public int gravity;
-        float heightFactor = 0.0f;
-        public boolean isDecor;
-        boolean needsMeasure;
-        int position;
-
-        public LayoutParams() {
-            super(-1, -1);
-        }
-
-        public LayoutParams(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            TypedArray a = context.obtainStyledAttributes(attrs, VerticalViewPager.LAYOUT_ATTRS);
-            this.gravity = a.getInteger(0, 48);
-            a.recycle();
-        }
-    }
-
-    static class ViewPositionComparator implements Comparator<View> {
-        ViewPositionComparator() {
-        }
-
-        public int compare(View lhs, View rhs) {
-            LayoutParams llp = (LayoutParams) lhs.getLayoutParams();
-            LayoutParams rlp = (LayoutParams) rhs.getLayoutParams();
-            if (llp.isDecor != rlp.isDecor) {
-                return llp.isDecor ? 1 : -1;
-            }
-            return llp.position - rlp.position;
         }
     }
 }

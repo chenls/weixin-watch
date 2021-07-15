@@ -33,15 +33,25 @@ public class InitFragment extends Fragment {
     private static final String TAG = "InitFragment";
     /* access modifiers changed from: private */
     public ListViewAdapter adapter;
-    private ArrayList<Contact> initList;
-    private ListView listView;
     /* access modifiers changed from: private */
     public List<HashMap<String, Object>> mData;
-    private RequestQueue mQueue;
     /* access modifiers changed from: private */
     public Token token;
     /* access modifiers changed from: private */
     public User user;
+    private ArrayList<Contact> initList;
+    private ListView listView;
+    private RequestQueue mQueue;
+
+    public static InitFragment newInstance(Token token2, User user2, ArrayList<Contact> contacts) {
+        InitFragment initFragment = new InitFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBundle(Prefs.Key.TOKEN, token2.toBundle());
+        bundle.putBundle("user", user2.toBundle());
+        bundle.putParcelableArrayList("init", contacts);
+        initFragment.setArguments(bundle);
+        return initFragment;
+    }
 
     @Nullable
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -164,16 +174,6 @@ public class InitFragment extends Fragment {
         if (msg.MsgType != 51) {
             new MessageManager(getActivity()).insertMessage(msg);
         }
-    }
-
-    public static InitFragment newInstance(Token token2, User user2, ArrayList<Contact> contacts) {
-        InitFragment initFragment = new InitFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBundle(Prefs.Key.TOKEN, token2.toBundle());
-        bundle.putBundle("user", user2.toBundle());
-        bundle.putParcelableArrayList("init", contacts);
-        initFragment.setArguments(bundle);
-        return initFragment;
     }
 
     public void initView(View view) {

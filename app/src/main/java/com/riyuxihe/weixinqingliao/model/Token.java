@@ -12,10 +12,10 @@ public class Token {
     public static final String WXSID = "wxsid";
     public static final String WXUIN = "wxuin";
     public String cookie;
-    private String isGrayScale;
     public String message;
-    private String passTicket;
     public int ret;
+    private String isGrayScale;
+    private String passTicket;
     private String skey;
     private String wxsid;
     private String wxuin;

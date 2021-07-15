@@ -31,11 +31,6 @@ public class ChatMsgViewAdapter extends BaseAdapter {
     private final RequestQueue mQueue;
     private final Token token;
 
-    public interface IMsgViewType {
-        int IMVT_COM_MSG = 0;
-        int IMVT_TO_MSG = 1;
-    }
-
     public ChatMsgViewAdapter(Context context, List<ChatMsgEntity> coll2, Token token2) {
         this.token = token2;
         this.ctx = context;
@@ -118,18 +113,6 @@ public class ChatMsgViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    static class ViewHolder {
-        public boolean isComMsg = true;
-        public NetworkImageView ivUserhead;
-        public TextView tvContent;
-        public TextView tvSendTime;
-        public TextView tvTime;
-        public TextView tvUserName;
-
-        ViewHolder() {
-        }
-    }
-
     /* access modifiers changed from: private */
     public void playMusic(String name) {
         try {
@@ -150,5 +133,22 @@ public class ChatMsgViewAdapter extends BaseAdapter {
     }
 
     private void stop() {
+    }
+
+    public interface IMsgViewType {
+        int IMVT_COM_MSG = 0;
+        int IMVT_TO_MSG = 1;
+    }
+
+    static class ViewHolder {
+        public boolean isComMsg = true;
+        public NetworkImageView ivUserhead;
+        public TextView tvContent;
+        public TextView tvSendTime;
+        public TextView tvTime;
+        public TextView tvUserName;
+
+        ViewHolder() {
+        }
     }
 }

@@ -9,6 +9,14 @@ public class SyncKey {
     public int Count;
     public List<KeyVal> List;
 
+    public String toString() {
+        List<String> list = new ArrayList<>();
+        for (KeyVal keyVal : this.List) {
+            list.add(keyVal.toString());
+        }
+        return TextUtils.join("|", list);
+    }
+
     public static class KeyVal {
         public int Key;
         public long Val;
@@ -16,13 +24,5 @@ public class SyncKey {
         public String toString() {
             return this.Key + "_" + this.Val;
         }
-    }
-
-    public String toString() {
-        List<String> list = new ArrayList<>();
-        for (KeyVal keyVal : this.List) {
-            list.add(keyVal.toString());
-        }
-        return TextUtils.join("|", list);
     }
 }

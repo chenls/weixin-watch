@@ -7,12 +7,6 @@ public class MyApplication extends Application {
     private static Context mAppContext;
     private static MyApplication mInstance;
 
-    public void onCreate() {
-        super.onCreate();
-        mInstance = this;
-        setAppContext(getApplicationContext());
-    }
-
     public static MyApplication getInstance() {
         return mInstance;
     }
@@ -23,5 +17,11 @@ public class MyApplication extends Application {
 
     public void setAppContext(Context mAppContext2) {
         mAppContext = mAppContext2;
+    }
+
+    public void onCreate() {
+        super.onCreate();
+        mInstance = this;
+        setAppContext(getApplicationContext());
     }
 }

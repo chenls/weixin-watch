@@ -15,12 +15,6 @@ public class Prefs {
     private final Context mCtx;
     SharedPreferences.OnSharedPreferenceChangeListener mListener = null;
 
-    public interface Key {
-        String AVATAR = "avatar";
-        String EXPIRE_AT = "expire";
-        String TOKEN = "token";
-    }
-
     private Prefs(Context ctx) {
         this.mCtx = ctx.getApplicationContext();
     }
@@ -49,16 +43,16 @@ public class Prefs {
         return token;
     }
 
-    public void clear() {
-        SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
-        editor.clear();
-        editor.apply();
-    }
-
     public void setToken(Token token) {
         SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
         editor.putString(Key.TOKEN, JSON.toJSONString(token));
         editor.putLong(Key.EXPIRE_AT, System.currentTimeMillis() + EXPIRE);
+        editor.apply();
+    }
+
+    public void clear() {
+        SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
+        editor.clear();
         editor.apply();
     }
 
@@ -74,5 +68,11 @@ public class Prefs {
         SharedPreferences.Editor editor = getPrefs(this.mCtx).edit();
         editor.putString(Key.AVATAR, avatar);
         editor.apply();
+    }
+
+    public interface Key {
+        String AVATAR = "avatar";
+        String EXPIRE_AT = "expire";
+        String TOKEN = "token";
     }
 }

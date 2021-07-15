@@ -22,10 +22,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 public class SwipeActivity extends AppCompatActivity {
+    private final boolean swipeFinished = false;
     protected boolean swipeAnyWhere = false;
     protected boolean swipeEnabled = true;
-    private final boolean swipeFinished = false;
     private SwipeLayout swipeLayout;
+
+    public static int getScreenWidth(Context context) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        ((WindowManager) context.getSystemService("window")).getDefaultDisplay().getMetrics(metrics);
+        return metrics.widthPixels;
+    }
 
     /* access modifiers changed from: protected */
     public void onCreate(Bundle savedInstanceState) {
@@ -33,20 +39,20 @@ public class SwipeActivity extends AppCompatActivity {
         this.swipeLayout = new SwipeLayout(this);
     }
 
-    public void setSwipeAnyWhere(boolean swipeAnyWhere2) {
-        this.swipeAnyWhere = swipeAnyWhere2;
-    }
-
     public boolean isSwipeAnyWhere() {
         return this.swipeAnyWhere;
     }
 
-    public void setSwipeEnabled(boolean swipeEnabled2) {
-        this.swipeEnabled = swipeEnabled2;
+    public void setSwipeAnyWhere(boolean swipeAnyWhere2) {
+        this.swipeAnyWhere = swipeAnyWhere2;
     }
 
     public boolean isSwipeEnabled() {
         return this.swipeEnabled;
+    }
+
+    public void setSwipeEnabled(boolean swipeEnabled2) {
+        this.swipeEnabled = swipeEnabled2;
     }
 
     /* access modifiers changed from: protected */
@@ -60,12 +66,6 @@ public class SwipeActivity extends AppCompatActivity {
         this.swipeLayout.replaceLayer(this);
     }
 
-    public static int getScreenWidth(Context context) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((WindowManager) context.getSystemService("window")).getDefaultDisplay().getMetrics(metrics);
-        return metrics.widthPixels;
-    }
-
     public void finish() {
         if (this.swipeFinished) {
             super.finish();
@@ -77,7 +77,16 @@ public class SwipeActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.slide_out_right);
     }
 
+    /* access modifiers changed from: protected */
+    public void onSwipeBack() {
+        Intent startMain = new Intent("android.intent.action.MAIN");
+        startMain.addCategory("android.intent.category.HOME");
+        startMain.setFlags(268435456);
+        startActivity(startMain);
+    }
+
     class SwipeLayout extends FrameLayout {
+        private final int duration = ItemTouchHelper.Callback.DEFAULT_DRAG_ANIMATION_DURATION;
         ObjectAnimator animator;
         boolean canSwipe = false;
         View content;
@@ -85,11 +94,9 @@ public class SwipeActivity extends AppCompatActivity {
         float currentY;
         float downX;
         float downY;
-        private final int duration = ItemTouchHelper.Callback.DEFAULT_DRAG_ANIMATION_DURATION;
         boolean hasIgnoreFirstMove;
         boolean ignoreSwipe = false;
         float lastX;
-        private Drawable leftShadow;
         Activity mActivity;
         int screenWidth = 1080;
         int sideWidth = 72;
@@ -97,6 +104,7 @@ public class SwipeActivity extends AppCompatActivity {
         int touchSlop = 60;
         int touchSlopDP = 20;
         VelocityTracker tracker;
+        private Drawable leftShadow;
 
         public SwipeLayout(Context context) {
             super(context);
@@ -236,13 +244,13 @@ public class SwipeActivity extends AppCompatActivity {
             }
         }
 
+        public float getContentX() {
+            return this.content.getX();
+        }
+
         public void setContentX(float x) {
             this.content.setX((float) ((int) x));
             invalidate();
-        }
-
-        public float getContentX() {
-            return this.content.getX();
         }
 
         /* access modifiers changed from: private */
@@ -298,13 +306,5 @@ public class SwipeActivity extends AppCompatActivity {
                 animateFinish(false);
             }
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onSwipeBack() {
-        Intent startMain = new Intent("android.intent.action.MAIN");
-        startMain.addCategory("android.intent.category.HOME");
-        startMain.setFlags(268435456);
-        startActivity(startMain);
     }
 }

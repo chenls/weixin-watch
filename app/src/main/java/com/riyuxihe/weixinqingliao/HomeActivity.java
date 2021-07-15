@@ -78,12 +78,11 @@ public class HomeActivity extends SwipeActivity {
     public static final int HOME_SERVICE_OBJ = 20;
     private static final int PERMISSIONS_REQUEST_INTERNET = 1;
     private static final String TAG = "HomeActivity";
+    public static final String PERIOD_KEY = "sync_period";
     private static final int VIEW_COUNT = 2;
     private static int kJobId = 2;
     /* access modifiers changed from: private */
     public List<String> chatSet = new ArrayList();
-    private CloseReceiver closeReceiver;
-    private ContactFragment contactFragment;
     /* access modifiers changed from: private */
     public ArrayList<Contact> contactList = new ArrayList<>();
     /* access modifiers changed from: private */
@@ -92,15 +91,21 @@ public class HomeActivity extends SwipeActivity {
     public ArrayList<Contact> exContactList = new ArrayList<>();
     /* access modifiers changed from: private */
     public boolean exContactLoaded = false;
-    private InitFragment initFragment;
     /* access modifiers changed from: private */
     public ArrayList<Contact> initList;
     /* access modifiers changed from: private */
     public boolean initLoaded = false;
-    private FragmentPagerAdapter mAdapter;
     /* access modifiers changed from: private */
     public List<Fragment> mFragments = new ArrayList();
-
+    /* access modifiers changed from: private */
+    public List<String> mTitles = new ArrayList();
+    /* access modifiers changed from: private */
+    public SyncKey syncKey;
+    /* access modifiers changed from: private */
+    public Token token;
+    /* access modifiers changed from: private */
+    public User user;
+    HomeJobService mHomeJobService;
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -109,7 +114,7 @@ public class HomeActivity extends SwipeActivity {
                     HomeActivity.this.mHomeJobService = (HomeJobService) msg.obj;
                     HomeActivity.this.mHomeJobService.setUiCallback(HomeActivity.this);
                     HomeActivity.this.scheduleJob(HomeActivity.this.getPreferences(0).
-                            getLong(SettingActivity.PERIOD_KEY, Constants.Period.HOME_STANDARD));
+                            getLong(PERIOD_KEY, Constants.Period.HOME_STANDARD));
                     mHandler.sendEmptyMessage(21);
                     return;
                 case 21:
@@ -120,24 +125,19 @@ public class HomeActivity extends SwipeActivity {
             }
         }
     };
-    HomeJobService mHomeJobService;
+    private CloseReceiver closeReceiver;
+    private ContactFragment contactFragment;
+    private InitFragment initFragment;
+    private FragmentPagerAdapter mAdapter;
     private boolean mIsLoaded = false;
     private ProgressBar mProgressBar;
     private TextView mNotice;
     private RequestQueue mQueue;
     private TabLayout mTabLayout;
-    /* access modifiers changed from: private */
-    public List<String> mTitles = new ArrayList();
     private ViewPager mViewPager;
     /* access modifiers changed from: private */
     private NetworkStateReceiver networkStateReceiver;
     private RescheduleReceiver rescheduleReceiver;
-    /* access modifiers changed from: private */
-    public SyncKey syncKey;
-    /* access modifiers changed from: private */
-    public Token token;
-    /* access modifiers changed from: private */
-    public User user;
     private long mExitTime = 0;
 
     static /* synthetic */ int access$3208() {
@@ -696,6 +696,59 @@ public class HomeActivity extends SwipeActivity {
         finish();
     }
 
+    public boolean checkMobileDataConnection(Context context) {
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService("connectivity")).getActiveNetworkInfo();
+        if (activeNetworkInfo != null) {
+            if (!activeNetworkInfo.isConnectedOrConnecting()) {
+                if (activeNetworkInfo.getDetailedState() == NetworkInfo.DetailedState.BLOCKED) {
+                    Log.d(TAG, "Internet permission is blocked, request for permission.");
+                } else {
+                    updateForgroundNotification(getString(R.string.notification_bad_net_notice), HomeJobService.NotificationStatus.badNetwork);
+                }
+            } else if (activeNetworkInfo.getType() == 0) {
+                updateForgroundNotification(getString(R.string.notification_using_mobile_data), HomeJobService.NotificationStatus.mobileData);
+                return true;
+            } else {
+                updateForgroundNotification(getString(R.string.notification_normal), HomeJobService.NotificationStatus.normal);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateForgroundNotification(String content, HomeJobService.NotificationStatus notificationStatus) {
+        if (this.mHomeJobService != null) {
+            this.mHomeJobService.updateNotification(content, notificationStatus);
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length <= 0 || grantResults[0] != 0) {
+                    updateForgroundNotification(getString(R.string.notification_internet_permission_denied), HomeJobService.NotificationStatus.permissionDenied);
+                    return;
+                }
+                return;
+            default:
+                return;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(HomeActivity.this, "再按一次返回键退出微信!", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                mHandler.removeMessages(21);
+                finish();
+            }
+        }
+        return true;
+    }
+
     private class VoiceTask extends AsyncTask<String, Void, String> {
         private VoiceTask() {
         }
@@ -766,58 +819,5 @@ public class HomeActivity extends SwipeActivity {
                 HomeActivity.this.checkMobileDataConnection(context);
             }
         }
-    }
-
-    public boolean checkMobileDataConnection(Context context) {
-        NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getSystemService("connectivity")).getActiveNetworkInfo();
-        if (activeNetworkInfo != null) {
-            if (!activeNetworkInfo.isConnectedOrConnecting()) {
-                if (activeNetworkInfo.getDetailedState() == NetworkInfo.DetailedState.BLOCKED) {
-                    Log.d(TAG, "Internet permission is blocked, request for permission.");
-                } else {
-                    updateForgroundNotification(getString(R.string.notification_bad_net_notice), HomeJobService.NotificationStatus.badNetwork);
-                }
-            } else if (activeNetworkInfo.getType() == 0) {
-                updateForgroundNotification(getString(R.string.notification_using_mobile_data), HomeJobService.NotificationStatus.mobileData);
-                return true;
-            } else {
-                updateForgroundNotification(getString(R.string.notification_normal), HomeJobService.NotificationStatus.normal);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void updateForgroundNotification(String content, HomeJobService.NotificationStatus notificationStatus) {
-        if (this.mHomeJobService != null) {
-            this.mHomeJobService.updateNotification(content, notificationStatus);
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length <= 0 || grantResults[0] != 0) {
-                    updateForgroundNotification(getString(R.string.notification_internet_permission_denied), HomeJobService.NotificationStatus.permissionDenied);
-                    return;
-                }
-                return;
-            default:
-                return;
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                Toast.makeText(HomeActivity.this, "再按一次返回键退出微信!", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();
-            } else {
-                mHandler.removeMessages(21);
-                finish();
-            }
-        }
-        return true;
     }
 }

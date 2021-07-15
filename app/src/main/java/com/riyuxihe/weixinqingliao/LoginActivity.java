@@ -35,12 +35,12 @@ public class LoginActivity extends BaseActivity {
     private static final int MSG_TIPS = 1;
     private static final int PERMISSIONS_REQUEST_INTERNET = 0;
     private static final String TAG = "LoginActivity";
-    private PagerAdapter mAdapter;
     /* access modifiers changed from: private */
     public BgHandler mBgHandler;
-    private Button mChangeBtn;
     /* access modifiers changed from: private */
     public FgHandler mFgHandler;
+    private PagerAdapter mAdapter;
+    private Button mChangeBtn;
     private ImageView mImageView;
     private TextView mNotice;
     private ProgressBar mProgressBar;
@@ -143,6 +143,48 @@ public class LoginActivity extends BaseActivity {
         intent.putExtras(token.toBundle());
         startActivity(intent);
         finish();
+    }
+
+    /* access modifiers changed from: protected */
+    public void onDestroy() {
+        if (this.mBgHandler != null) {
+            this.mBgHandler.stop();
+            this.mBgHandler.removeCallbacksAndMessages(null);
+        }
+        if (this.mFgHandler != null) {
+            this.mFgHandler.removeCallbacksAndMessages(null);
+        }
+        if (this.mhandlerThread != null) {
+            this.mhandlerThread.quitSafely();
+        }
+        super.onDestroy();
+    }
+
+    private void requestInternetPermission(Activity activity) {
+//        if (PermissionCompat.checkSelfPermission(activity, "android.permission.INTERNET") == 0) {
+//            return;
+//        }
+//        if (PermissionCompat.shouldShowRequestPermissionRationale(activity, "android.permission.INTERNET")) {
+//            this.mProgressBar.setVisibility(8);
+//            this.mNotice.setText(R.string.internet_permission_rationale);
+//            return;
+//        }
+//        PermissionCompat.requestPermissions(activity, new String[]{"android.permission.INTERNET"}, 0);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 0:
+                if (grantResults.length <= 0 || grantResults[0] != 0) {
+                    this.mProgressBar.setVisibility(8);
+                    this.mNotice.setText(R.string.internet_permission_denied);
+                    return;
+                }
+                init();
+                return;
+            default:
+                return;
+        }
     }
 
     private class FastLoginTask extends AsyncTask<String, Void, String> {
@@ -309,48 +351,6 @@ public class LoginActivity extends BaseActivity {
                 return true;
             }
             return TextUtils.equals(this.uuid, uuid2);
-        }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onDestroy() {
-        if (this.mBgHandler != null) {
-            this.mBgHandler.stop();
-            this.mBgHandler.removeCallbacksAndMessages(null);
-        }
-        if (this.mFgHandler != null) {
-            this.mFgHandler.removeCallbacksAndMessages(null);
-        }
-        if (this.mhandlerThread != null) {
-            this.mhandlerThread.quitSafely();
-        }
-        super.onDestroy();
-    }
-
-    private void requestInternetPermission(Activity activity) {
-//        if (PermissionCompat.checkSelfPermission(activity, "android.permission.INTERNET") == 0) {
-//            return;
-//        }
-//        if (PermissionCompat.shouldShowRequestPermissionRationale(activity, "android.permission.INTERNET")) {
-//            this.mProgressBar.setVisibility(8);
-//            this.mNotice.setText(R.string.internet_permission_rationale);
-//            return;
-//        }
-//        PermissionCompat.requestPermissions(activity, new String[]{"android.permission.INTERNET"}, 0);
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 0:
-                if (grantResults.length <= 0 || grantResults[0] != 0) {
-                    this.mProgressBar.setVisibility(8);
-                    this.mNotice.setText(R.string.internet_permission_denied);
-                    return;
-                }
-                init();
-                return;
-            default:
-                return;
         }
     }
 }

@@ -3,7 +3,6 @@ package com.riyuxihe.weixinqingliao;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
@@ -11,11 +10,10 @@ import android.os.AsyncTask;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.riyuxihe.weixinqingliao.model.Token;
-import com.riyuxihe.weixinqingliao.util.Constants;
 import com.riyuxihe.weixinqingliao.util.Prefs;
 import com.riyuxihe.weixinqingliao.util.WxHome;
 
@@ -24,21 +22,13 @@ public class HomeJobService extends JobService {
     private static final int notificationId = 10086;
     /* access modifiers changed from: private */
     public String deviceId = "";
-    HomeActivity mHomeActivity;
-    private NotificationStatus notificationStatus = NotificationStatus.normal;
     /* access modifiers changed from: private */
     public String syncKey = "";
     /* access modifiers changed from: private */
     public Token token;
+    HomeActivity mHomeActivity;
+    private NotificationStatus notificationStatus = NotificationStatus.normal;
     private int unSyncTimes = 0;
-
-    public enum NotificationStatus {
-        normal,
-        mobileData,
-        badNetwork,
-        permissionRational,
-        permissionDenied
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -63,7 +53,7 @@ public class HomeJobService extends JobService {
 
     private void startForeground() {
         Log.d(TAG, "startForeground: ");
-        startForeground(notificationId, generateNotification(getString(R.string.notification_normal)));
+//        startForeground(notificationId, generateNotification(getString(R.string.notification_normal)));
     }
 
     public void updateNotification(String content, NotificationStatus notificationStatus2) {
@@ -74,18 +64,11 @@ public class HomeJobService extends JobService {
     }
 
     private Notification generateNotification(String content) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0);
-        Intent closeIntent = new Intent();
-        closeIntent.setAction(Constants.Action.CLOSE_APP);
-        return new NotificationCompat.Builder(this).
-                setSmallIcon(R.mipmap.chat).setContentTitle(getString(R.string.app_name)).
-                setContentText(content).addAction(R.drawable.ic_open_star, "打开应用",
-                pendingIntent).addAction(R.drawable.ic_setting_normal, "设置",
-                PendingIntent.getActivity(this, 0,
-                        new Intent(this, SettingActivity.class), 0)).
-                addAction(R.drawable.ic_full_cancel, "退出登录",
-                        PendingIntent.getBroadcast(this,
-                                0, closeIntent, 0)).build();
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.chat)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(content);
+        return mBuilder.build();
     }
 
     @Override
@@ -99,6 +82,39 @@ public class HomeJobService extends JobService {
     public boolean onStopJob(JobParameters params) {
         Log.d(TAG, "onStopJob: ");
         return false;
+    }
+
+    public void setUiCallback(HomeActivity activity) {
+        this.mHomeActivity = activity;
+    }
+
+    public String getSyncKey() {
+        return this.syncKey;
+    }
+
+    public void setSyncKey(String syncKey2) {
+        this.syncKey = syncKey2;
+    }
+
+    public boolean unSync() {
+        Log.d(TAG, "unSync:times=" + this.unSyncTimes);
+        int i = this.unSyncTimes + 1;
+        this.unSyncTimes = i;
+        return i >= 2;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopForeground(true);
+    }
+
+    public enum NotificationStatus {
+        normal,
+        mobileData,
+        badNetwork,
+        permissionRational,
+        permissionDenied
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -125,30 +141,5 @@ public class HomeJobService extends JobService {
             if (jobParameters != null)
                 this.homeJobService.jobFinished(jobParameters, false);
         }
-    }
-
-    public void setUiCallback(HomeActivity activity) {
-        this.mHomeActivity = activity;
-    }
-
-    public void setSyncKey(String syncKey2) {
-        this.syncKey = syncKey2;
-    }
-
-    public String getSyncKey() {
-        return this.syncKey;
-    }
-
-    public boolean unSync() {
-        Log.d(TAG, "unSync:times=" + this.unSyncTimes);
-        int i = this.unSyncTimes + 1;
-        this.unSyncTimes = i;
-        return i >= 2;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopForeground(true);
     }
 }

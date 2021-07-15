@@ -25,11 +25,11 @@ import java.util.Properties;
 
 public class WxHome {
     public static final String DEFAULT_HEAD_IMG = "https://res.wx2.qq.com/a/wx_fed/webwx/res/static/img/2KriyDK.png";
-    private static final String DIGITS = "0123456789";
-    private static final String INIT_URI = "/cgi-bin/mmwebwx-bin/webwxinit?r=%d&&lang=zh_CN&pass_ticket=%s";
     public static final String RETCODE = "retcode";
     public static final String SELECTOR = "selector";
     public static final String SYNC_CHECK_KEY = "window.synccheck";
+    private static final String DIGITS = "0123456789";
+    private static final String INIT_URI = "/cgi-bin/mmwebwx-bin/webwxinit?r=%d&&lang=zh_CN&pass_ticket=%s";
     private static final String TAG = "WxHome";
     private static final String WX_CONTACT_EX = "/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&lang=zh_CN&pass_ticket=%s";
     private static final String WX_CONTACT_URI = "/cgi-bin/mmwebwx-bin/webwxgetcontact?seq=%d&pass_ticket=%s";
@@ -40,8 +40,8 @@ public class WxHome {
     private static final String WX_SEND_URI = "/cgi-bin/mmwebwx-bin/webwxsendmsg?pass_ticket=%s";
     private static final String WX_STATUS_NOTIFY = "/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=%s";
     private static final String WX_SYNC_URL_FORMAT = "%s://webpush.%s/cgi-bin/mmwebwx-bin/synccheck";
-    private static String deviceId;
     private static final SecureRandom secureRandom = new SecureRandom();
+    private static String deviceId;
     private static String wxBaseUri = "https://wx2.qq.com";
     private static String wxHost = "wx2.qq.com";
     private static String wxSchema = "https";

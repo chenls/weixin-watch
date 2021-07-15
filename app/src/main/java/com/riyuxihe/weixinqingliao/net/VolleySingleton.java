@@ -10,9 +10,9 @@ import com.riyuxihe.weixinqingliao.MyApplication;
 
 public class VolleySingleton {
     private static VolleySingleton mInstance = null;
+    private final RequestQueue mRequestQueue = Volley.newRequestQueue(MyApplication.getAppContext());
     private String cookie;
     private ImageLoader imageLoader;
-    private final RequestQueue mRequestQueue = Volley.newRequestQueue(MyApplication.getAppContext());
 
     private VolleySingleton() {
     }

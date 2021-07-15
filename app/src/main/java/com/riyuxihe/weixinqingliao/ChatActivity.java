@@ -53,36 +53,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends BaseActivity implements View.OnClickListener {
-    private static final int POLL_INTERVAL = 300;
     /* access modifiers changed from: private */
     public static final String TAG = ChatActivity.class.getSimpleName();
+    private static final int POLL_INTERVAL = 300;
     /* access modifiers changed from: private */
     public boolean btn_vocie = true;
     /* access modifiers changed from: private */
     public ImageView chatting_mode_btn;
-    private LinearLayout del_re;
-    private long endVoiceT;
-    private int flag = 1;
     /* access modifiers changed from: private */
     public User fromUser = new User();
-    private ImageView img1;
     /* access modifiers changed from: private */
     public boolean isShosrt = false;
     /* access modifiers changed from: private */
     public ChatMsgViewAdapter mAdapter;
     /* access modifiers changed from: private */
     public RelativeLayout mBottom;
-    private Button mBtnBack;
     /* access modifiers changed from: private */
     public TextView mBtnRcd;
-    private Button mBtnSend;
     /* access modifiers changed from: private */
     public List<ChatMsgEntity> mDataArrays = new ArrayList();
-    private EditText mEditTextContent;
     /* access modifiers changed from: private */
     public Handler mHandler = new Handler();
     /* access modifiers changed from: private */
     public ListView mListView;
+    /* access modifiers changed from: private */
+    public SoundMeter mSensor;
+    /* access modifiers changed from: private */
+    public View rcChat_popup;
+    /* access modifiers changed from: private */
+    public User toUser = new User();
+    /* access modifiers changed from: private */
+    public LinearLayout voice_rcd_hint_loading;
+    /* access modifiers changed from: private */
+    public LinearLayout voice_rcd_hint_rcding;
+    /* access modifiers changed from: private */
+    public LinearLayout voice_rcd_hint_tooshort;
+    private LinearLayout del_re;
+    private long endVoiceT;
+    private int flag = 1;
+    private ImageView img1;
+    private Button mBtnBack;
+    private Button mBtnSend;
+    private EditText mEditTextContent;
+    private RequestQueue mQueue;
+    private MsgReceiver msgReceiver;
+    private ImageView sc_img1;
+    private long startVoiceT;
+    private Token token;
+    private String voiceName;
+    private ImageView volume;
     /* access modifiers changed from: private */
     public Runnable mPollTask = new Runnable() {
         public void run() {
@@ -90,30 +109,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             ChatActivity.this.mHandler.postDelayed(ChatActivity.this.mPollTask, 300);
         }
     };
-    private RequestQueue mQueue;
-    /* access modifiers changed from: private */
-    public SoundMeter mSensor;
     private final Runnable mSleepTask = new Runnable() {
         public void run() {
             ChatActivity.this.stop();
         }
     };
-    private MsgReceiver msgReceiver;
-    /* access modifiers changed from: private */
-    public View rcChat_popup;
-    private ImageView sc_img1;
-    private long startVoiceT;
-    /* access modifiers changed from: private */
-    public User toUser = new User();
-    private Token token;
-    private String voiceName;
-    /* access modifiers changed from: private */
-    public LinearLayout voice_rcd_hint_loading;
-    /* access modifiers changed from: private */
-    public LinearLayout voice_rcd_hint_rcding;
-    /* access modifiers changed from: private */
-    public LinearLayout voice_rcd_hint_tooshort;
-    private ImageView volume;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -475,6 +475,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         this.mListView.setSelection(this.mListView.getCount() - 1);
     }
 
+    /* access modifiers changed from: protected */
+    public void onDestroy() {
+        unregisterReceiver(this.msgReceiver);
+        super.onDestroy();
+    }
+
     private class VoiceTask extends AsyncTask<String, Void, VoiceInfo> {
         private VoiceTask() {
         }
@@ -527,12 +533,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 ChatActivity.this.sendVoiceMsg(info.getContent(), info.getName(), info.getVoiceLength());
             }
         }
-    }
-
-    /* access modifiers changed from: protected */
-    public void onDestroy() {
-        unregisterReceiver(this.msgReceiver);
-        super.onDestroy();
     }
 
     public class MsgReceiver extends BroadcastReceiver {

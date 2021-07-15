@@ -23,16 +23,6 @@ public class ListViewAdapter extends BaseAdapter {
     private final List<HashMap<String, Object>> mData;
     private final RequestQueue mQueue = VolleySingleton.getInstance().getRequestQueue();
 
-    static class ViewHolder {
-        public NetworkImageView imageView;
-        public TextView info;
-        public TextView time;
-        public TextView title;
-
-        ViewHolder() {
-        }
-    }
-
     public ListViewAdapter(Activity context, String cookie2, List<HashMap<String, Object>> data) {
         this.mContext = context;
         this.cookie = cookie2;
@@ -74,5 +64,15 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public void showInfo(int position) {
+    }
+
+    static class ViewHolder {
+        public NetworkImageView imageView;
+        public TextView info;
+        public TextView time;
+        public TextView title;
+
+        ViewHolder() {
+        }
     }
 }
