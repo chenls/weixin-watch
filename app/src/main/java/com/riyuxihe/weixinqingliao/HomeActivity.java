@@ -76,9 +76,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HomeActivity extends SwipeActivity {
     public static final int HOME_SERVICE_OBJ = 20;
+    public static final String PERIOD_KEY = "sync_period";
     private static final int PERMISSIONS_REQUEST_INTERNET = 1;
     private static final String TAG = "HomeActivity";
-    public static final String PERIOD_KEY = "sync_period";
     private static final int VIEW_COUNT = 2;
     private static int kJobId = 2;
     /* access modifiers changed from: private */

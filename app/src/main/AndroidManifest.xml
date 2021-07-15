@@ -32,7 +32,6 @@
             android:name="com.riyuxihe.weixinqingliao.HomeActivity"
             android:launchMode="singleTask" />
         <activity android:name="com.riyuxihe.weixinqingliao.ChatActivity" />
-        <activity android:name="com.riyuxihe.weixinqingliao.SettingActivity" />
 
         <service
             android:name="com.riyuxihe.weixinqingliao.HomeJobService"
