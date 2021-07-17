@@ -4,7 +4,7 @@
     <string name="bad_net_notice">网络连接不可用</string>
     <string name="change_account">切换账户</string>
     <string name="content_plus_1">请使用微信扫描二维码</string>
-    <string name="content_plus_2">请手机微信上确认登录</string>
+    <string name="content_plus_2">在手机微信上确认登录</string>
     <string name="internet_permission_denied">移动网络不可用，请检查相关权限</string>
     <string name="net_error_notice">未知网络错误，请退出重试</string>
     <string name="notification_bad_net_notice">消息同步进程（网络连接不可用）</string>
