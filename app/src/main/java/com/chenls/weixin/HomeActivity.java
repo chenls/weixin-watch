@@ -39,7 +39,6 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.android.material.tabs.TabLayout;
 import com.chenls.weixin.dao.MessageManager;
 import com.chenls.weixin.model.Contact;
 import com.chenls.weixin.model.Msg;
@@ -64,6 +63,7 @@ import com.chenls.weixin.util.StreamUtil;
 import com.chenls.weixin.util.StringUtil;
 import com.chenls.weixin.util.TimeUtil;
 import com.chenls.weixin.util.WxHome;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
@@ -662,9 +662,9 @@ public class HomeActivity extends SwipeActivity {
         this.initFragment.comeNewMessage(msg);
         Log.d(TAG, "processMsg:send broadcast, msgType=" + msg.MsgType);
         broadcastMsg(msg);
-//        if (!msg.FromUserName.equals(this.user.UserName) && !isMutedByUserName(msg.FromUserName)) {
+        if (!msg.FromUserName.equals(this.user.UserName) && !isMutedByUserName(msg.FromUserName)) {
             sendNotification(msg);
-//        }
+        }
     }
 
     /* access modifiers changed from: private */
