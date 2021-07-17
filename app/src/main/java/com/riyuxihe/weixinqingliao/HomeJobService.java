@@ -2,15 +2,17 @@ package com.riyuxihe.weixinqingliao;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.os.AsyncTask;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.riyuxihe.weixinqingliao.model.Token;
@@ -51,25 +53,39 @@ public class HomeJobService extends JobService {
         }
     }
 
+    String id = "clock_alarm_service_channel_id";
+
     private void startForeground() {
         Log.d(TAG, "startForeground: ");
-//        startForeground(notificationId, generateNotification(getString(R.string.notification_normal)));
+        startForeground(notificationId, generateNotification(getString(R.string.notification_normal)));
+    }
+
+    private Notification generateNotification(String content) {
+        Intent notificationIntent = new Intent(this, HomeActivity.class);
+        PendingIntent pintent = PendingIntent.getActivity(this, 0
+                , notificationIntent, 0);
+        Notification notification = new Notification.Builder(this, id)
+                .setSmallIcon(R.mipmap.chat)
+                .setLargeIcon(Icon.createWithResource(this, R.mipmap.chat))
+                .setContentText(content)
+                .setContentIntent(pintent)
+                .setAutoCancel(false)
+                .build();
+        return notification;
     }
 
     public void updateNotification(String content, NotificationStatus notificationStatus2) {
         if (notificationStatus2 != this.notificationStatus) {
-            ((NotificationManager) getSystemService("notification")).notify(notificationId, generateNotification(content));
+            NotificationManager mNotificationManager = ((NotificationManager) getSystemService("notification"));
+            NotificationChannel mChannel = new NotificationChannel(id, "AlarmService",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            mChannel.setDescription("service");
+            mNotificationManager.createNotificationChannel(mChannel);
+            mNotificationManager.notify(notificationId, generateNotification(content));
             this.notificationStatus = notificationStatus2;
         }
     }
 
-    private Notification generateNotification(String content) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.chat)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(content);
-        return mBuilder.build();
-    }
 
     @Override
     public boolean onStartJob(JobParameters params) {

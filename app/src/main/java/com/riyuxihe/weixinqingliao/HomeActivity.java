@@ -1,6 +1,8 @@
 package com.riyuxihe.weixinqingliao;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -10,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -25,7 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -501,7 +503,7 @@ public class HomeActivity extends SwipeActivity {
                 HomeActivity.this.finish();
             }
         });
-        ((NotificationManager) getSystemService("notification")).notify(10010, new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(getString(R.string.app_name)).setContentText("已退出").setAutoCancel(true).build());
+//        ((NotificationManager) getSystemService("notification")).notify(10010, new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(getString(R.string.app_name)).setContentText("已退出").setAutoCancel(true).build());
     }
 
     /* access modifiers changed from: private */
@@ -525,7 +527,30 @@ public class HomeActivity extends SwipeActivity {
         toUser.HeadImgUrl = "";
         notificationIntent.putExtra("to", toUser.toBundle());
         notificationIntent.putExtra("from", this.user.toBundle());
-        ((NotificationManager) getSystemService("notification")).notify(msg.FromUserName.hashCode(), new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(msg.fromNickName).setContentText(msg.Content).setContentIntent(PendingIntent.getActivity(this, msg.FromUserName.hashCode(), notificationIntent, 134217728)).setAutoCancel(true).build());
+
+        NotificationManager mNotificationManager = ((NotificationManager) getSystemService("notification"));
+        PendingIntent pintent = PendingIntent.getActivity(this,
+                msg.FromUserName.hashCode(), notificationIntent, 134217728);
+        String id = "clock_alarm_service_channel_id";
+        NotificationChannel mChannel = new NotificationChannel(id, "AlarmService",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        mChannel.setDescription("service");
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        mNotificationManager.createNotificationChannel(mChannel);
+        Notification notification = new Notification.Builder(HomeActivity.this, id)
+                .setSmallIcon(R.mipmap.chat)
+                .setLargeIcon(Icon.createWithResource(this, R.mipmap.chat))
+                .setContentTitle(msg.fromNickName)
+                .setContentText(msg.Content)
+                .setContentIntent(pintent)
+                .setAutoCancel(true)
+                .build();
+        mNotificationManager.notify(msg.FromUserName.hashCode(), notification);
+//        ((NotificationManager) getSystemService("notification")).notify(msg.FromUserName.hashCode(),
+//                new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.chat).setContentTitle(msg.fromNickName).
+//                        setContentText(msg.Content).setContentIntent(PendingIntent.getActivity(this,
+//                        msg.FromUserName.hashCode(), notificationIntent, 134217728)).setAutoCancel(true).build());
     }
 
     /* access modifiers changed from: private */
