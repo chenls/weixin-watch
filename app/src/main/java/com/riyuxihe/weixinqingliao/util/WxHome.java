@@ -50,7 +50,7 @@ public class WxHome {
         wxSchema = schema;
         wxHost = host;
         wxBaseUri = schema + "://" + host;
-        Log.d(TAG, "setWxBaseUri:base uri=" + wxBaseUri);
+//        Log.d(TAG, "setWxBaseUri:base uri=" + wxBaseUri);
     }
 
     public static Map<String, String> formSyncParams(Token token, String deviceId2, String syncKey) {
@@ -191,7 +191,7 @@ public class WxHome {
                 builtUri.appendQueryParameter(key, params.get(key));
             }
             String url = builtUri.build().toString();
-            Log.d(TAG, "syncCheck:url=" + url);
+//            Log.d(TAG, "syncCheck:url=" + url);
             String text = NetUtil.getHttpsResponse(url, 30000, token.cookie);
             Log.d(TAG, "syncCheck:result=" + text);
             return WxLogin.parseText(text);

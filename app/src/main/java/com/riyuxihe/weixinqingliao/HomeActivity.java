@@ -18,11 +18,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,12 +25,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.alibaba.fastjson.JSON;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.material.tabs.TabLayout;
 import com.riyuxihe.weixinqingliao.dao.MessageManager;
 import com.riyuxihe.weixinqingliao.model.Contact;
 import com.riyuxihe.weixinqingliao.model.Msg;
@@ -299,7 +300,7 @@ public class HomeActivity extends SwipeActivity {
 //        Log.d(TAG, "initBatchContact:" + JSON.toJSONString(request));
         CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), new Response.Listener<JSONObject>() {
             public void onResponse(JSONObject response) {
-                Log.d(HomeActivity.TAG, "initBatchContact:" + response.toString());
+//                Log.d(HomeActivity.TAG, "initBatchContact:" + response.toString());
                 HomeActivity.this.exContactList.addAll(JSON.parseObject(response.toString(), BatchContactResponse.class).ContactList);
                 boolean unused = HomeActivity.this.exContactLoaded = true;
                 HomeActivity.this.onExComplete();
@@ -473,7 +474,7 @@ public class HomeActivity extends SwipeActivity {
     public void onSyncChecked(Properties prop) {
         if (prop != null && !prop.isEmpty()) {
             String syncCheckStr = prop.getProperty(WxHome.SYNC_CHECK_KEY);
-            Log.d(TAG, "onSyncChecked:syncCheckStr=" + syncCheckStr);
+//            Log.d(TAG, "onSyncChecked:syncCheckStr=" + syncCheckStr);
             com.alibaba.fastjson.JSONObject syncCheckObj = JSON.parseObject(syncCheckStr);
             if (Constants.SyncCheckCode.SUCCESS.equals(syncCheckObj.getString(WxHome.RETCODE))) {
                 int code = Integer.parseInt(syncCheckObj.getString(WxHome.SELECTOR));
@@ -631,9 +632,9 @@ public class HomeActivity extends SwipeActivity {
         this.initFragment.comeNewMessage(msg);
         Log.d(TAG, "processMsg:send broadcast, msgType=" + msg.MsgType);
         broadcastMsg(msg);
-        if (!msg.FromUserName.equals(this.user.UserName) && !isMutedByUserName(msg.FromUserName)) {
+//        if (!msg.FromUserName.equals(this.user.UserName) && !isMutedByUserName(msg.FromUserName)) {
             sendNotification(msg);
-        }
+//        }
     }
 
     /* access modifiers changed from: private */

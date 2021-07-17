@@ -2,8 +2,8 @@ package com.riyuxihe.weixinqingliao;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +62,7 @@ public class ContactFragment extends Fragment {
             this.user.fromBundle(getArguments().getBundle("user"));
             this.contactList = getArguments().getParcelableArrayList("contact");
         }
-        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
+//        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token));
         this.mQueue = VolleySingleton.getInstance().getRequestQueue();
     }
 

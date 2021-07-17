@@ -138,7 +138,7 @@ public class WxLogin {
     public static Properties checkLoginStatus(String uuid) {
         try {
             String url = String.format(LOGIN_CHECK_URL, new Object[]{uuid}) + System.currentTimeMillis();
-            Log.d(TAG, "checkLoginStatus:url=" + url);
+//            Log.d(TAG, "checkLoginStatus:url=" + url);
             String text = NetUtil.getHttpsResponse(url, 30000);
 //            Log.d(TAG, "checkLoginStatus:result=" + text);
             return parseText(text);

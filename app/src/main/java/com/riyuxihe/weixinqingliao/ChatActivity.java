@@ -126,7 +126,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         this.token.fromBundle(intent.getBundleExtra(Prefs.Key.TOKEN));
         this.fromUser.fromBundle(intent.getBundleExtra("from"));
         this.toUser.fromBundle(intent.getBundleExtra("to"));
-        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token) + " from=" + JSON.toJSONString(this.fromUser) + " to=" + JSON.toJSONString(this.toUser));
+//        Log.d(TAG, "onCreate:token=" + JSON.toJSONString(this.token) + " from=" + JSON.toJSONString(this.fromUser) + " to=" + JSON.toJSONString(this.toUser));
         showHeadName(this.toUser.NickName);
         this.msgReceiver = new MsgReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -192,7 +192,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
     public void initData() {
         List<Msg> msgList = new MessageManager(this).getMsg(this.toUser.UserName);
-        Log.d(TAG, "initData:search messages from db messages = " + JSON.toJSONString(msgList));
+//        Log.d(TAG, "initData:search messages from db messages = " + JSON.toJSONString(msgList));
         for (Msg msg : msgList) {
             ChatMsgEntity entity = new ChatMsgEntity();
             entity.setText(msg.Content);
