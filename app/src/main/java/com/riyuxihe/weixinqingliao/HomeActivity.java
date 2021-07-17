@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -519,6 +520,10 @@ public class HomeActivity extends SwipeActivity {
 
     private void sendNotification(Msg msg) {
         Log.d(TAG, "sendNotification:content=" + msg.Content);
+
+        Vibrator vibrator = (Vibrator)this.getSystemService(this.VIBRATOR_SERVICE);
+        vibrator.vibrate(200);
+
         Intent notificationIntent = new Intent(this, ChatActivity.class);
         notificationIntent.putExtra(Prefs.Key.TOKEN, this.token.toBundle());
         User toUser = new User();
