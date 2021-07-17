@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">微信轻聊版</string>
+    <string name="app_name">微信手表版</string>
     <string name="bad_net_notice">网络连接不可用</string>
     <string name="change_account">切换账户</string>
     <string name="content_plus_1">请使用微信扫描二维码</string>
@@ -12,5 +12,5 @@
     <string name="notification_normal">消息同步进程</string>
     <string name="notification_using_mobile_data">消息同步进程（正在使用移动网络）</string>
     <string name="unknown_host_notice">网络出错，请断开手机和手表的蓝牙连接后重连</string>
-    <string name="waiting_notice">正在加载</string>
+    <string name="waiting_notice">正在加载…</string>
 </resources>
