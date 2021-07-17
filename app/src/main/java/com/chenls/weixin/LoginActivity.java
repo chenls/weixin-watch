@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import androidx.viewpager.widget.PagerAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -18,6 +17,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.chenls.weixin.model.Token;
 import com.chenls.weixin.util.Constants;
@@ -323,7 +325,10 @@ public class LoginActivity extends BaseActivity {
                                     LoginActivity.this.mFgHandler.obtainMessage(3, WxLogin.getBase64Image(avatarUrl)).sendToTarget();
                                 } else if (Constants.LoginCode.LOGIN.equals(code)) {
                                     Token token = WxLogin.getToken(prop.getProperty(WxLogin.REDIRECT_KEY));
-                                    if (token != null && token.ret == 0) {
+                                    if (token != null && token.cookie.isEmpty()) {
+                                        Toast.makeText(LoginActivity.this, "你的账号无法登录网页版微信！", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (token.ret == 0) {
                                         LoginActivity.this.mFgHandler.obtainMessage(4, token).sendToTarget();
                                         return;
                                     }

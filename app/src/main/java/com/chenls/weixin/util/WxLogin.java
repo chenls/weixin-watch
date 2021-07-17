@@ -246,6 +246,10 @@ public class WxLogin {
     }
 
     private static String cookiesToStr(List<String> cookies) {
+        if (cookies == null) {
+            Log.e(TAG, "cookiesToStr: cookies is null");
+            return "";
+        }
         StringBuilder stringBuilder = new StringBuilder();
         for (String cookie : cookies) {
             stringBuilder.append(HttpCookie.parse(cookie).get(0).toString() + ";");
