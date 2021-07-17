@@ -6,7 +6,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        applicationId "com.chenls.weixinqingliao"
+        applicationId "com.chenls.weixin"
         minSdkVersion 26
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 26
