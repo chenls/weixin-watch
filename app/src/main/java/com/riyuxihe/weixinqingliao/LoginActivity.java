@@ -44,7 +44,6 @@ public class LoginActivity extends BaseActivity {
     private ImageView mImageView;
     private TextView mNotice;
     private ProgressBar mProgressBar;
-    private VerticalViewPager mViewPager;
     private HandlerThread mhandlerThread;
 
     /* access modifiers changed from: protected */
