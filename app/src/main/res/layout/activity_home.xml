@@ -29,12 +29,11 @@
         android:id="@+id/notice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="25dp"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:paddingLeft="10.0dip"
-        android:paddingRight="10.0dip"
+        android:layout_marginTop="25dp"
+        android:paddingLeft="5.0dip"
+        android:paddingRight="5.0dip"
         android:text="@string/waiting_notice"
         android:textColor="@color/circular_button_disabled" />
 </RelativeLayout>

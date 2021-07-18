@@ -16,10 +16,10 @@
         android:id="@+id/notice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_gravity="top|center"
         android:gravity="center"
-        android:paddingLeft="10.0dip"
-        android:paddingRight="10.0dip"
+        android:paddingLeft="5.0dip"
+        android:paddingRight="5.0dip"
         android:text="@string/waiting_notice"
         android:textColor="@color/circular_button_disabled" />
 
@@ -30,7 +30,7 @@
         android:layout_gravity="bottom|center"
         android:layout_marginStart="20.0dip"
         android:layout_marginEnd="20.0dip"
-        android:layout_marginBottom="40.0dip"
+
         android:background="@drawable/round_btn"
         android:gravity="center"
         android:text="@string/change_account" />
