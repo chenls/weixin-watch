@@ -92,13 +92,13 @@ public class ChatMsgViewAdapter extends BaseAdapter {
             viewHolder.tvTime.setText("");
         } else {
             viewHolder.tvContent.setText("");
-            viewHolder.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.chatto_voice_playing, 0);
+            viewHolder.tvContent.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_volume_24, 0);
             viewHolder.tvTime.setText(entity.getTime());
         }
         viewHolder.tvContent.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (entity.getTime() != null && !entity.getTime().isEmpty()) {
-                    ChatMsgViewAdapter.this.playMusic(Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY + entity.getText());
+                    ChatMsgViewAdapter.this.playMusic(ctx.getFilesDir() + Constants.AUDIO_DIRECTORY + entity.getText());
                 }
             }
         });

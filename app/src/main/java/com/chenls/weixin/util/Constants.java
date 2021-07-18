@@ -1,7 +1,7 @@
 package com.chenls.weixin.util;
 
 public class Constants {
-    public static final String AUDIO_DIRECTORY = "/weixinQingliao/";
+    public static final String AUDIO_DIRECTORY = "/audio/";
     public static final int UNSYNC_LIMIT = 2;
     public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/51.0.2704.79 Chrome/51.0.2704.79 Safari/537.36";
 

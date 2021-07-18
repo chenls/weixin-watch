@@ -564,7 +564,7 @@ public class HomeActivity extends SwipeActivity {
         if (this.mIsLoaded && this.exContactLoaded) {
             String url = WxHome.getMsgSyncUrl(this.token);
             MsgSyncRequest msgSyncRequest = WxHome.formMsgSyncRequest(this.token, this.syncKey);
-//            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
+            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
             CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(msgSyncRequest), new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject response) {
 //                    Log.d(HomeActivity.TAG, "syncMsg:" + response.toString());
@@ -572,6 +572,7 @@ public class HomeActivity extends SwipeActivity {
                     if (msgSyncResponse.BaseResponse.Ret == 0 && !msgSyncResponse.SyncKey.toString().equals(HomeActivity.this.syncKey.toString())) {
                         Log.d(HomeActivity.TAG, "syncMsg:receive " + msgSyncResponse.AddMsgList.size() + " messages");
                         for (Msg msg : msgSyncResponse.AddMsgList) {
+                            Log.d(TAG, "onResponse: chenls msg.MsgType:" + msg.MsgType);
                             if (msg.MsgType == 51) {
                                 HomeActivity.this.handleInitNotifyMsg(msg);
                             }
@@ -787,7 +788,7 @@ public class HomeActivity extends SwipeActivity {
         /* access modifiers changed from: protected */
         public String doInBackground(String... strings) {
             String url = WxHome.getVoiceUrl(HomeActivity.this.token, strings[0]);
-            String outDir = Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY;
+            String outDir = getFilesDir() + Constants.AUDIO_DIRECTORY;
             FileUtil.createDir(outDir);
             String outPutPath = outDir + strings[0] + ".mp3";
             Log.d(HomeActivity.TAG, "VoiceTask::audio output path=" + outPutPath);

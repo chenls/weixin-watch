@@ -166,7 +166,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         this.voice_rcd_hint_rcding = findViewById(R.id.voice_rcd_hint_rcding);
         this.voice_rcd_hint_loading = findViewById(R.id.voice_rcd_hint_loading);
         this.voice_rcd_hint_tooshort = findViewById(R.id.voice_rcd_hint_tooshort);
-        this.mSensor = new SoundMeter();
+        this.mSensor = new SoundMeter(this);
         this.mEditTextContent = findViewById(R.id.et_sendmessage);
         this.chatting_mode_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -295,7 +295,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private boolean recorded(MotionEvent event) {
-        if (!Environment.getExternalStorageDirectory().exists()) {
+        if (!getFilesDir().exists()) {
             Toast.makeText(this, "No SDCard", 1).show();
             return false;
         }
@@ -309,7 +309,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             int del_Y = del_location[1];
             int del_x = del_location[0];
             if (event.getAction() == 0 && this.flag == 1) {
-                if (!Environment.getExternalStorageDirectory().exists()) {
+                if (!getFilesDir().exists()) {
                     Toast.makeText(this, "No SDCard", 1).show();
                     return false;
                 }
@@ -371,7 +371,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     this.del_re.setVisibility(8);
                     stop();
                     this.flag = 1;
-                    File file = new File(Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY + this.voiceName);
+                    File file = new File(getFilesDir() + Constants.AUDIO_DIRECTORY + this.voiceName);
                     if (file.exists()) {
                         file.delete();
                     }
@@ -489,7 +489,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         public VoiceInfo doInBackground(String... strings) {
             InputStream inputStream;
             try {
-                String filePath = Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY + strings[0];
+                String filePath = getFilesDir() + Constants.AUDIO_DIRECTORY + strings[0];
                 Log.d(ChatActivity.TAG, "VoiceTask::amr file path=" + filePath);
                 InputStream fileInputStream = new FileInputStream(filePath);
                 HttpURLConnection conn = (HttpURLConnection) new URL(StreamUtil.SPEECH_TO_TEXT).openConnection();

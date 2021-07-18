@@ -1,5 +1,6 @@
 package com.chenls.weixin;
 
+import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Environment;
 
@@ -11,6 +12,11 @@ public class SoundMeter {
     private static final double EMA_FILTER = 0.6d;
     private double mEMA = 0.0d;
     private MediaRecorder mRecorder = null;
+    private Context context;
+
+    public SoundMeter(Context context) {
+        this.context = context;
+    }
 
     public void start(String name) {
         if (Environment.getExternalStorageState().equals("mounted") && this.mRecorder == null) {
@@ -18,7 +24,7 @@ public class SoundMeter {
             this.mRecorder.setAudioSource(1);
             this.mRecorder.setOutputFormat(3);
             this.mRecorder.setAudioEncoder(1);
-            this.mRecorder.setOutputFile(Environment.getExternalStorageDirectory() + Constants.AUDIO_DIRECTORY + name);
+            this.mRecorder.setOutputFile(context.getFilesDir() + Constants.AUDIO_DIRECTORY + name);
             try {
                 this.mRecorder.prepare();
                 this.mRecorder.start();
