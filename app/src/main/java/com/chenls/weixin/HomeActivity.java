@@ -564,7 +564,7 @@ public class HomeActivity extends SwipeActivity {
         if (this.mIsLoaded && this.exContactLoaded) {
             String url = WxHome.getMsgSyncUrl(this.token);
             MsgSyncRequest msgSyncRequest = WxHome.formMsgSyncRequest(this.token, this.syncKey);
-            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
+//            Log.d(TAG, "syncMsg:" + JSON.toJSONString(msgSyncRequest));
             CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(msgSyncRequest), new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject response) {
 //                    Log.d(HomeActivity.TAG, "syncMsg:" + response.toString());
@@ -576,15 +576,17 @@ public class HomeActivity extends SwipeActivity {
                             if (msg.MsgType == 51) {
                                 HomeActivity.this.handleInitNotifyMsg(msg);
                             }
-                            if (msg.MsgType == 1 || msg.MsgType == 34) {
-                                Log.d(HomeActivity.TAG, "syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId);
-                                if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
-                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
-                                } else if (!WxHome.isGroupUserName(msg.ToUserName) || HomeActivity.this.chatSet.contains(msg.ToUserName)) {
-                                    HomeActivity.this.processMsg(msg);
-                                } else {
-                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
-                                }
+                            if (msg.MsgType != 1 && msg.MsgType != 34) {
+                                msg.MsgType = 1;
+                                msg.Content = "[暂不支持的消息]";
+                            }
+                            Log.d(HomeActivity.TAG, "syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId);
+                            if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
+                                HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
+                            } else if (!WxHome.isGroupUserName(msg.ToUserName) || HomeActivity.this.chatSet.contains(msg.ToUserName)) {
+                                HomeActivity.this.processMsg(msg);
+                            } else {
+                                HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
                             }
                         }
                         SyncKey unused = HomeActivity.this.syncKey = msgSyncResponse.SyncKey;

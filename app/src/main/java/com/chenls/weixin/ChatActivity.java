@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -547,8 +545,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 if (msg.FromUserName != null) {
                     Log.d(ChatActivity.TAG, "MsgReceiver::msg fromusername=" + msg.FromUserName + " chat tousername=" + msg.ToUserName);
                     if (msg.ToUserName.equals(ChatActivity.this.fromUser.UserName) && msg.FromUserName.equals(ChatActivity.this.toUser.UserName)) {
+                        Log.d(TAG, "onReceive: chenls1");
                         ChatMsgEntity entity = new ChatMsgEntity();
-                        if (msg.MsgType == 1 || msg.MsgType == 34) {
                             entity.setUserName(msg.FromUserName);
                             entity.setNickName(msg.fromNickName);
                             entity.setMemberUserName(msg.fromMemberUserName);
@@ -561,13 +559,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                                 entity.setTime(TimeUtil.toCeilSecondsFromMillis(msg.VoiceLength) + "\"");
                                 entity.setText(msg.MsgId + ".mp3");
                             }
-                        }
                         ChatActivity.this.mDataArrays.add(entity);
                         ChatActivity.this.mAdapter.notifyDataSetChanged();
                         ChatActivity.this.mListView.setSelection(ChatActivity.this.mListView.getCount() - 1);
                     } else if (msg.FromUserName.equals(ChatActivity.this.fromUser.UserName) && msg.ToUserName.equals(ChatActivity.this.toUser.UserName)) {
+                        Log.d(TAG, "onReceive: chenls2");
                         ChatMsgEntity entity2 = new ChatMsgEntity();
-                        if (msg.MsgType == 1 || msg.MsgType == 34) {
                             entity2.setUserName(msg.ToUserName);
                             entity2.setNickName(msg.toNickName);
                             entity2.setDate(TimeUtil.getDate());
@@ -578,7 +575,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                                 entity2.setTime(TimeUtil.toCeilSecondsFromMillis(msg.VoiceLength) + "\"");
                                 entity2.setText(msg.MsgId + ".mp3");
                             }
-                        }
                         ChatActivity.this.mDataArrays.add(entity2);
                         ChatActivity.this.mAdapter.notifyDataSetChanged();
                         ChatActivity.this.mListView.setSelection(ChatActivity.this.mListView.getCount() - 1);
