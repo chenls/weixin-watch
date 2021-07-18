@@ -40,7 +40,7 @@
             android:id="@+id/tv_chatcontent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="60dp"
+            android:layout_marginStart="10dp"
             android:layout_marginEnd="10.0dip"
             android:layout_toLeftOf="@+id/iv_userhead"
             android:clickable="true"

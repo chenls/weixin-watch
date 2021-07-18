@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10.0dip"
-            android:layout_marginEnd="60dp"
+            android:layout_marginEnd="10dp"
             android:layout_toRightOf="@+id/iv_userhead"
             android:gravity="center|left"
             android:lineSpacingExtra="2.0dip"
