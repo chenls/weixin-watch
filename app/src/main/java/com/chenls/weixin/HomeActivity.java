@@ -462,7 +462,7 @@ public class HomeActivity extends SwipeActivity {
                 this.initFragment.addExInitList(this.exContactList);
             }
             syncMsg();
-            syncMsg();
+//            syncMsg();
         }
     }
 
@@ -678,7 +678,7 @@ public class HomeActivity extends SwipeActivity {
 //            Log.d(TAG, "addNewGroupThenProcessMsg:" + JSON.toJSONString(request));
             CookieRequest cookieRequest = new CookieRequest(1, url, JSON.toJSONString(request), new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject response) {
-                    Log.d(HomeActivity.TAG, "addNewGroupThenProcessMsg:" + response.toString());
+//                    Log.d(HomeActivity.TAG, "addNewGroupThenProcessMsg:" + response.toString());
                     HomeActivity.this.chatSet.addAll(newChatSet);
                     HomeActivity.this.exContactList.addAll(JSON.parseObject(response.toString(), BatchContactResponse.class).ContactList);
                     HomeActivity.this.processMsg(msg);
