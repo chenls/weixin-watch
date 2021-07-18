@@ -92,8 +92,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private long endVoiceT;
     private int flag = 1;
     private ImageView img1;
-    private Button mBtnBack;
-    private Button mBtnSend;
+    private ImageView mBtnBack;
+    private ImageView mBtnSend;
     private EditText mEditTextContent;
     private RequestQueue mQueue;
     private MsgReceiver msgReceiver;
