@@ -576,17 +576,49 @@ public class HomeActivity extends SwipeActivity {
                             if (msg.MsgType == 51) {
                                 HomeActivity.this.handleInitNotifyMsg(msg);
                             }
-                            if (msg.MsgType != 1 && msg.MsgType != 34) {
-                                msg.MsgType = 1;
-                                msg.Content = "[暂不支持的消息]";
+                            switch (msg.MsgType) {
+                                case 3:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[图片消息]";
+                                    break;
+                                case 43:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[小视频消息]";
+                                    break;
+                                case 62:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[短视频消息]";
+                                    break;
+                                case 47:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[表情消息]";
+                                    break;
+//                                case 49:
+//                                    msg.MsgType = 1;
+//                                    msg.Content = "[多媒体]";
+//                                    break;
+                                case 37:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[好友请求]";
+                                    break;
+                                case 10000:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[系统消息]";
+                                    break;
+                                case 10002:
+                                    msg.MsgType = 1;
+                                    msg.Content = "[撤回消息]";
+                                    break;
                             }
-                            Log.d(HomeActivity.TAG, "syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId);
-                            if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
-                                HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
-                            } else if (!WxHome.isGroupUserName(msg.ToUserName) || HomeActivity.this.chatSet.contains(msg.ToUserName)) {
-                                HomeActivity.this.processMsg(msg);
-                            } else {
-                                HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
+                            if (msg.MsgType == 1 || msg.MsgType == 34) {
+                                Log.d(HomeActivity.TAG, "syncMsg:text=" + msg.Content + " msgId= " + msg.MsgId);
+                                if (WxHome.isGroupUserName(msg.FromUserName) && !HomeActivity.this.chatSet.contains(msg.FromUserName)) {
+                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.FromUserName, msg);
+                                } else if (!WxHome.isGroupUserName(msg.ToUserName) || HomeActivity.this.chatSet.contains(msg.ToUserName)) {
+                                    HomeActivity.this.processMsg(msg);
+                                } else {
+                                    HomeActivity.this.addNewGroupThenProcessMsg(msg.ToUserName, msg);
+                                }
                             }
                         }
                         SyncKey unused = HomeActivity.this.syncKey = msgSyncResponse.SyncKey;

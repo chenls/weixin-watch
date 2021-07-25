@@ -545,7 +545,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                 if (msg.FromUserName != null) {
                     Log.d(ChatActivity.TAG, "MsgReceiver::msg fromusername=" + msg.FromUserName + " chat tousername=" + msg.ToUserName);
                     if (msg.ToUserName.equals(ChatActivity.this.fromUser.UserName) && msg.FromUserName.equals(ChatActivity.this.toUser.UserName)) {
-                        Log.d(TAG, "onReceive: chenls1");
                         ChatMsgEntity entity = new ChatMsgEntity();
                             entity.setUserName(msg.FromUserName);
                             entity.setNickName(msg.fromNickName);
@@ -563,7 +562,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                         ChatActivity.this.mAdapter.notifyDataSetChanged();
                         ChatActivity.this.mListView.setSelection(ChatActivity.this.mListView.getCount() - 1);
                     } else if (msg.FromUserName.equals(ChatActivity.this.fromUser.UserName) && msg.ToUserName.equals(ChatActivity.this.toUser.UserName)) {
-                        Log.d(TAG, "onReceive: chenls2");
                         ChatMsgEntity entity2 = new ChatMsgEntity();
                             entity2.setUserName(msg.ToUserName);
                             entity2.setNickName(msg.toNickName);

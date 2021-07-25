@@ -79,8 +79,9 @@ public class Contact implements Parcelable, Comparable<Contact> {
     }
 
     public boolean isMuted() {
-        Log.d("Contact", "isMuted, NickName=" + this.NickName + " Statues=" + this.Statues + " ContactFlag=" + this.ContactFlag);
-        return (WxHome.isGroupUserName(this.UserName) && this.Statues == 0) || (this.ContactFlag & 512) == 1;
+        boolean ret = (WxHome.isGroupUserName(this.UserName) && this.Statues == 0) || (this.ContactFlag & 512) == 1;
+        Log.d("Contact", "isMuted = " + ret + ", NickName=" + this.NickName + " Statues=" + this.Statues + " ContactFlag=" + this.ContactFlag);
+        return ret;
     }
 
     public int describeContents() {
