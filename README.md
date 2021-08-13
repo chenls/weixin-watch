@@ -8,9 +8,9 @@
 
 ## 下载
 
-直接下载：[微信轻聊版.apk](./微信轻聊版.apk)
+直接下载：[app-release.apk](app/release/app-release.apk)
 
-蓝奏云下载：https://wwr.lanzoui.com/iphkqsk8kne 密码:666
+蓝奏云下载：https://wwr.lanzoui.com/izkR4slmv3a 密码:666
 
 ## 界面介绍
 
