@@ -32,9 +32,9 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/iv_userhead"
-            android:layout_width="40dip"
+            android:layout_width="35dip"
             android:src="@mipmap/chat"
-            android:layout_height="40dip"
+            android:layout_height="35dip"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:focusable="false" />

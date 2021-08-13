@@ -6,9 +6,11 @@
         <entry key="../../../../layout/custom_preview.xml" value="0.4427828348504551" />
         <entry key="app/src/main/res/drawable/chat_send_btn.xml" value="0.15462962962962962" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.4" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="app/src/main/res/layout/chatting_item_msg_text_left.xml" value="0.12318840579710146" />
         <entry key="app/src/main/res/layout/chatting_item_msg_text_right.xml" value="0.16246215943491424" />
         <entry key="app/src/main/res/layout/friend_list_item.xml" value="0.33541666666666664" />
+        <entry key="app/src/main/res/layout/login_view.xml" value="0.11629667003027246" />
       </map>
     </option>
   </component>

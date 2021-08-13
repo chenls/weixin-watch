@@ -42,6 +42,6 @@
         android:layout_gravity="center"
         android:minWidth="140dp"
         android:minHeight="140dp"
-        android:padding="40dp"
+        android:padding="30dp"
         android:scaleType="centerCrop" />
 </FrameLayout>
