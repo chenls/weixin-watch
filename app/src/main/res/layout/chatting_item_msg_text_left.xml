@@ -4,10 +4,12 @@
     android:layout_height="wrap_content"
     android:background="@color/black"
     android:orientation="vertical"
-    android:padding="6.0dip">
+    android:paddingStart="6dp"
+    android:paddingEnd="6dp">
 
     <LinearLayout
         android:layout_width="fill_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -15,7 +17,11 @@
         <TextView
             android:id="@+id/tv_sendtime"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="#ffbfbfbf"
+            android:padding="2.0dip"
+            android:textColor="@color/white"
+            android:textSize="12.0sp" />
     </LinearLayout>
 
     <RelativeLayout
@@ -27,6 +33,7 @@
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/iv_userhead"
             android:layout_width="40.0dip"
+            android:src="@mipmap/chat"
             android:layout_height="40.0dip"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -55,7 +62,6 @@
             android:focusable="true"
             android:gravity="center|left"
             android:lineSpacingExtra="2.0dip"
-            android:minHeight="50.0dip"
             android:textColor="@color/white"
             android:textSize="10.0sp" />
 
@@ -64,6 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_userhead"
+            android:lines="1"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/tv_chatcontent"
             android:gravity="center"
